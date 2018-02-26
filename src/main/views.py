@@ -12,3 +12,6 @@ def login(request):
 
 def redirect_to_index(request):
     return redirect('/')
+
+def error404(request):
+    return render(request, 'errors/page_404.html', context={})

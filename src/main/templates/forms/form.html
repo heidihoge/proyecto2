@@ -1,0 +1,12 @@
+{% load field_type  %}
+
+{{ form.non_field_errors }}
+{% for field in form %}
+    {% if field|field_type == 'ImageField' or field|field_type == 'FileField'  %}
+        {% include "forms/imagefilefield.html" with field=field %}
+    {% elif field|field_type == 'DateField' %}
+        {% include "forms/datefield.html" with field=field %}
+    {% else %}
+        {% include "forms/charfield.html" with field=field %}
+    {% endif %}
+{% endfor %}

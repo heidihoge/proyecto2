@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     #APPS DE TERCEROS
 
     #APPS PROPIAS
+    'main',
     # 'alumnos.apps.AlumnosConfig',
     'alumnos',
-    'main'
+    'profesores'
 
 ]
 # LOGIN_REQUIRED_FOR_CRUD = True
@@ -145,7 +146,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -164,3 +165,5 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_env","static_root")
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_env","media_root")
 
+DATE_INPUT_FORMATS = ['%d/%m/%Y']
+DATE_FORMAT = 'd/m/Y'
