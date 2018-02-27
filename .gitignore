@@ -179,3 +179,7 @@ venv.bak/
 
 
 # End of https://www.gitignore.io/api/django,python,intellij
+
+
+static_env/media_root/media_root
+src/frontend
