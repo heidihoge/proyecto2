@@ -11,8 +11,8 @@ menus = {
     "natacion": {
         "url": "/admin",
         "img": "admin/img/natacion.png",
-        "title": "GESTION DE CURSOS",
-        "desc": "Cursos y horarios",
+        "title": "GESTION DE CLASES",
+        "desc": "Cursos y Horarios",
     },
     "indumentaria": {
         "url": "/admin",
