@@ -7,8 +7,17 @@ from django.conf import settings
 
 urlpatterns = [
     path('', include('main.urls')),
+    #path('personas/', include('personas.urls')),
     path('alumnos/', include('alumnos.urls')),
-    path('profesores/', include('profesores.urls'))
+    path('profesores/', include('profesores.urls')),
+    path('clases/', include('clases.urls'))
+    #path('grupos/', include('grupos.urls')),
+    #path('diashoras/', include('diashoras.urls')),
+    #path('etiquetas/', include('etiquetas.urls'))
+    #path('etiquetasclases/', include('etiquetasclases.urls')),
+    #path('etiquetasgrupos/', include('etiquetasgrupos.urls')),
+    #path('inscripciones/', include('inscripciones.urls')),
+    #path('asistencias/', include('asistencias.urls')),
 ]
 
 
