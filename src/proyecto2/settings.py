@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     #APPS PROPIAS
     'main',
     # 'alumnos.apps.AlumnosConfig',
-    'alumnos',
-    'profesores'
+
+    'escuela'
 
 ]
 # LOGIN_REQUIRED_FOR_CRUD = True

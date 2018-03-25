@@ -7,8 +7,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('', include('main.urls')),
-    path('alumnos/', include('alumnos.urls')),
-    path('profesores/', include('profesores.urls'))
+    path('escuela/', include('escuela.urls')),
+
 ]
 
 
