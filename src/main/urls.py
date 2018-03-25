@@ -3,11 +3,15 @@ from django.urls import path, include
 from .views import list_alumnos, create_alumno, update_alumno, delete_alumno, list_personas, create_persona, \
     update_persona, delete_persona, list_empleados, update_empleado, create_empleado, delete_empleado, list_profesores, \
     create_profesor, update_profesor, delete_profesor, list_titulares, create_titular, update_titular, delete_titular, \
-    list_cuentas, create_cuenta, update_cuenta, delete_cuenta
+    list_cuentas, create_cuenta, update_cuenta, delete_cuenta, ProfesorAutocomplete
 
 from main import views
 
 urlpatterns = [
+    # Autocomplete
+    path('profesor-autocomplete/', ProfesorAutocomplete.as_view(), name='profesor-autocomplete'),
+
+    # Cruds
     path('', views.index),
     path('404', views.error404, name='404'),
     path('accounts/profile/', views.redirect_to_index),

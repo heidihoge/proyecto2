@@ -14,7 +14,7 @@ class Clase(models.Model):
     costo = models.IntegerField(default=0)
 
     def __str__(self):
-        return  self.objects
+        return  self.nombre
 
 # grupo
 

@@ -1,9 +1,11 @@
+from dal import autocomplete
 from django import forms
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.db.models import ManyToOneRel
 from django.forms import DateField
 
 from escuela import admin
+from main.models import Profesor
 from proyecto2 import settings
 from .models import Clase, Grupo, DiaHora, Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscripcion,Asistencia
 
@@ -15,14 +17,15 @@ class FomularioClaseForm(forms.ModelForm):
         fields = ['nombre','descripcion','costo']
 
 #Formulario Grupo
-
 class FomularioGrupo(forms.ModelForm):
-    id_clase = forms.ModelChoiceField(queryset=Clase.objects.all())
-
-    def __init__(self, *args, **kwargs):
-        super(FomularioGrupo, self).__init__(*args, **kwargs)
-        clase_rel = ManyToOneRel(Grupo.id_clase, Clase, 'id')
-        self.fields['id_clase'].widget = RelatedFieldWidgetWrapper(self.fields['id_clase'].widget, clase_rel, admin.admin.site)
+    id_clase = forms.ModelChoiceField(
+        queryset=Clase.objects.all(),
+        widget=autocomplete.ModelSelect2(url='clases-autocomplete')
+    )
+    id_profesor = forms.ModelChoiceField(
+        queryset=Profesor.objects.all(),
+        widget=autocomplete.ModelSelect2(url='profesor-autocomplete')
+    )
     class Meta:
         model = Grupo
         fields = ['id_clase', 'id_profesor', 'cupo_maximo','costo']

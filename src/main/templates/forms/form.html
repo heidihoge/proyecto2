@@ -1,15 +1,22 @@
 {% load field_type  %}
-{{ form }}
-{{ form.non_field_errors }}
 {% for field in form %}
-    {{ field|field_type }}
-    {% if field|field_type == 'ImageField' or field|field_type == 'FileField'  %}
-        {% include "forms/imagefilefield.html" with field=field %}
-    {% elif field|field_type == 'DateField' %}
-        {% include "forms/datefield.html" with field=field %}
-    {% elif field|field_type == 'IntegerField' %}
-        {% include "forms/integerfield.html" with field=field %}
-    {% else %}
-        {% include "forms/charfield.html" with field=field %}
-    {% endif %}
+{#    {{ field|field_type }}#}
+    <div class="form-group">
+    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="{{ field.id_for_label }}">{{ field.label }}<span
+            class="required"></span>
+    </label>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        {% if field|field_type == 'ImageField' or field|field_type == 'FileField'  %}
+            {% include "forms/imagefilefield.html" with field=field %}
+        {% elif field|field_type == 'DateField' %}
+            {% include "forms/datefield.html" with field=field %}
+        {% elif field|field_type == 'IntegerField' %}
+            {% include "forms/integerfield.html" with field=field %}
+        {% elif field|field_type == 'ModelChoiceField' %}
+            {{ field }}
+        {% else %}
+            {% include "forms/charfield.html" with field=field %}
+        {% endif %}
+        </div>
+    </div>
 {% endfor %}

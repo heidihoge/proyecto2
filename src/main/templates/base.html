@@ -38,6 +38,13 @@
 
             <!-- Custom Theme Style -->
             <link href="/static/build/css/custom.css" rel="stylesheet">
+            <style>
+            /* dal bootstrap css fix */
+            .select2-container {
+                width: 100% !important;
+                min-width: 10em !important;
+            }
+            </style>
 
         {% endblock head %}
     </head>
@@ -76,7 +83,7 @@
                 <!-- Bootstrap -->
                 <script src="/static/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
                 <!-- FastClick -->
-                <script src="/static/vendors/fastclick/lib/fastclick.js"></script>
+                <!-- <script src="/static/vendors/fastclick/lib/fastclick.js"></script> -->
                 <!-- NProgress -->
                 <script src="/static/vendors/nprogress/nprogress.js"></script>
                 <!-- bootstrap-progressbar -->
@@ -136,6 +143,9 @@
                               });
                     {% endfor %}
                 </script>
+            {% endif %}
+            {% if form %}
+                {{ form.media }}
             {% endif %}
     {% endblock body %}
     </body>

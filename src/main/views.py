@@ -1,5 +1,7 @@
+from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.db.models import Q
 
 
 # Create your views here.
@@ -21,6 +23,19 @@ def error404(request):
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
+
+class ProfesorAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Profesor.objects.none()
+
+        qs = Profesor.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(nombre__istartswith=self.q) | Q(cedula__isstartwith=self.q))
+
+        return qs
 
 
 from .forms import PersonaForm

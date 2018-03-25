@@ -1,16 +1,20 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
-from .views import list_asistencias,list_clases,list_dia_horas,list_etiquetas,list_etiquetas_clase,\
-    list_etiquetas_grupo,list_grupos,list_inscripciones,update_asistencia,update_clase,update_dia_hora,\
-    update_etiqueta,update_etiquetas_clase,update_etiquetas_grupo,update_grupo,update_inscripcion,create_asistencia,create_clase,\
-    create_dia_hora,create_etiqueta,create_etiquetas_clase,create_etiquetas_grupo,create_grupo,create_inscripcion,\
-    delete_asistencia,delete_clase,delete_dia_hora,delete_etiqueta,delete_etiquetas_clase,delete_etiquetas_grupo,delete_grupo,delete_inscripcion
-
-
+from .views import list_asistencias, list_clases, list_dia_horas, list_etiquetas, list_etiquetas_clase, \
+    list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase, update_dia_hora, \
+    update_etiqueta, update_etiquetas_clase, update_etiquetas_grupo, update_grupo, update_inscripcion, \
+    create_asistencia, create_clase, \
+    create_dia_hora, create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
+    delete_asistencia, delete_clase, delete_dia_hora, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
+    delete_grupo, delete_inscripcion, ClaseAutocomplete
 
 from main import views
 
 urlpatterns = [
+    # Autocomplete
+    path('clases-autocomplete/', ClaseAutocomplete.as_view(), name='clases-autocomplete'),
+
+    # Cruds
     path('', views.index),
     path('404', views.error404, name='404'),
     path('accounts/profile/', views.redirect_to_index),
