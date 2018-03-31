@@ -11,22 +11,170 @@
             <div class="x_panel">
                 <div class="x_content">
                     <br/>
-                    <form id="crearinscripcion" method="post" class="form-horizontal form-label-left" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {% include "forms/form.html" with form=form %}
+                    <div id="wizard" class="form_wizard wizard_horizontal">
+                        <ul class="wizard_steps anchor">
+                            <li>
+                                <a href="#step-1" class="selected" isdone="1" rel="1">
+                                    <span class="step_no">1</span>
+                                    <span class="step_descr">
+                                              Paso 1<br>
+                                              <small>Titular</small>
+                                          </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#step-2" class="done" isdone="1" rel="2">
+                                    <span class="step_no">2</span>
+                                    <span class="step_descr">
+                                              Paso 2<br>
+                                              <small>Alumnos</small>
+                                          </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#step-3" class="done" isdone="1" rel="3">
+                                    <span class="step_no">3</span>
+                                    <span class="step_descr">
+                                              Paso 3<br>
+                                              <small>Grupos</small>
+                                          </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#step-4" class="done" isdone="1" rel="4">
+                                    <span class="step_no">4</span>
+                                    <span class="step_descr">
+                                              Paso 4<br>
+                                              <small>Factura</small>
+                            </span>
+                                </a>
+                            </li>
+                        </ul>
 
-                        <div class="ln_solid"></div>
-                        <div class="form-group">
-                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                <a class="btn btn-primary" type="button" href="/inscripciones">Cancelar</a>
-                                <button class="btn btn-primary" type="reset">Limpiar</button>
-                                <input type="submit" class="btn btn-success" value="Guardar" />
+
+                        <div class="">
+                            <div id="step-1" class="content" style="display: block;">
+                                <div id="formulario-titular">
+                                    <form class="form-horizontal form-label-left">
+                                        {% include "forms/form.html" with form=formTitular %}
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="step-2" class="content" style="display: none;">
+                                <div id="formulario-alumno" style="text-align: center">
+                                    <button class="btn btn-success" onclick="alumnoExtra()" ><span class="glyphicon-plus"></span></button>
+                                    <button class="btn btn-danger" onclick="quitarAlumno()" ><span class="glyphicon-minus"></span></button>
+                                    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="step-3" class="content" style="display: none;">
+
+                            </div>
+                            <div id="step-4" class="content" style="display: none;">
+
                             </div>
                         </div>
-
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="formularios" style="display:none">
+
+        <div id="formulario-template-alumno">
+            <form class="form-horizontal form-label-left">
+                {% include "forms/form.html" with form=formAlumno %}
+            </form>
+        </div>
+        <div id="formulario-template-incripcion">
+            {% include "forms/form.html" with form=formInscripcion %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        // #comentario logica cuando se selecciona siguiente
+        window.wizardOnLeaveStep = function (element, context) {
+            console.log(arguments)
+            if (context.fromStep + 1 === context.toStep) {
+                switch (context.fromStep) {
+                    case 1: // Titular
+                        break;
+                    case 2: // Alumno
+                        break;
+                    case 3: // Inscribir
+                        break;
+                }
+            }
+
+            return true;
+        };
+
+        window.wizardOnFinish = function (element, context) {
+            console.log(arguments);
+            if (context.fromStep === 4) {
+                alert("Factura generada!");
+            }
+        };
+        var count = 0;
+        var quitarAlumno = function () {
+            if (count > 1) {
+                $('#panel-alumno-' + count).remove();
+                count--;
+            }
+        }
+        var alumnoExtra = function () {
+            count++;
+            var panel = $('<div></div>');
+            panel.attr('id', 'panel-alumno-' + count);
+            panel.addClass('panel');
+            var tab = $('<a></a>');
+            if (count > 1) {
+                tab.addClass('collapsed');
+            }
+            tab.addClass('panel-heading');
+            tab.attr('role', 'tab');
+            tab.attr('id', 'heading-' + count);
+            tab.attr('data-toggle', 'collapse');
+            tab.attr('data-parent', '#accordion');
+            tab.attr('href', '#collapse-' + count);
+            tab.attr('aria-expanded', false);
+            tab.attr('aria-controls', 'collapse-' + count);
+            var titulo = $('<h4></h4>');
+            titulo.addClass('panel-title');
+            titulo.text('#' + count);
+
+
+            tab.append(titulo);
+
+            var tabContent = $('<div></div>');
+            tabContent.addClass('panel-collapse');
+            tabContent.addClass('collapse');
+            if (count === 1) {
+                tabContent.addClass('in');
+            }
+            tabContent.attr('id', 'collapse-' + count);
+            tabContent.attr('role', 'tabpanel');
+            tabContent.attr('aria-labelledby', 'heading-' + count);
+            tabContent.attr('aria-expanded', false);
+
+
+            var tabContentPanel = $('<div></div>');
+            tabContentPanel.addClass('panel-body');
+            tabContentPanel.append($('#formulario-template-alumno').clone())
+            tabContent.append(tabContentPanel);
+            panel.append(tab);
+            panel.append(tabContent);
+            $('#formulario-alumno').find('#accordion').append(panel);
+        };
+
+        $(document).ready(function(){
+            alumnoExtra();
+        })
+
+    </script>
 {% endblock %}

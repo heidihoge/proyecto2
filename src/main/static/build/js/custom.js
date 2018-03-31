@@ -1821,11 +1821,27 @@ function init_SmartWizard() {
     }
     console.log('init_SmartWizard');
 
-    $('#wizard').smartWizard();
-
-    $('#wizard_verticle').smartWizard({
-        transitionEffect: 'slide'
+    $('#wizard').smartWizard({
+        transitionEffect: 'slide',
+        hideButtonsOnDisabled: true,
+        labelNext:'Siguiente',
+        labelPrevious:'Anterior',
+        labelFinish:'Guardar',
+        onLeaveStep: function(){
+            if (typeof window.wizardOnLeaveStep === 'function') {
+                return window.wizardOnLeaveStep.apply(null, arguments);
+            }
+            return true;
+        },
+        onFinish: function() {
+            if (typeof window.wizardOnFinish === 'function') {
+                return window.wizardOnFinish.apply(null, arguments);
+            }
+            return true;
+        }
     });
+    console.log($('#wizard'));
+
 
     $('.buttonNext').addClass('btn btn-success');
     $('.buttonPrevious').addClass('btn btn-primary');

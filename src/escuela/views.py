@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from dal import autocomplete
 from django.shortcuts import render
 
+from main.forms import TitularForm, AlumnoForm
+
 menus = {
     "ajustes": {
         "url": "/admin",
@@ -431,20 +433,15 @@ def list_inscripciones(request):
 
 def create_inscripcion(request):
     print(request.method)
-    if request.method == 'POST':
+    form_inscripcion = FomularioInscripcion()
+    form_titular = TitularForm()
+    form_alumno = AlumnoForm()
 
-        form = FomularioInscripcion(request.POST, request.FILES)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Inscripcion creada correctamente.')
-            return redirect('list_inscripciones')
-
-        messages.error(request, 'Error al crear inscripcion.')
-    else:
-        form = FomularioInscripcion()
-
-    return render(request, 'inscripciones-form.html', {'form': form})
+    return render(request, 'inscripciones-form.html', {
+        'formInscripcion': form_inscripcion,
+        'formTitular': form_titular,
+        'formAlumno': form_alumno
+    })
 
 
 def update_inscripcion(request, id):

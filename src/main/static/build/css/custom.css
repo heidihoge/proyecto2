@@ -3887,6 +3887,11 @@ fieldset {
     background: #1ABB9C;
     color: #fff
 }
+.wizard_horizontal ul.wizard_steps li a.done.error:before,
+.wizard_horizontal ul.wizard_steps li a.done.error .step_no {
+    background: #bb3c27;
+    color: #fff
+}
 .wizard_horizontal ul.wizard_steps li:first-child a:before {
     left: 50%
 }
@@ -4237,4 +4242,8 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 
 .dataTables_wrapper > .row{
   overflow:auto !important; /*prevent datatables overflowing its container*/
+}
+
+.stepContainer {
+    height: 100% !important;
 }
