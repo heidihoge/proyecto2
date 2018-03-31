@@ -1,6 +1,7 @@
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, Http404
 from django.db.models import Q
 
 
@@ -111,6 +112,12 @@ def list_titulares(request):
     titular = Titular.objects.all()
     return render(request, 'main/titulares.html', {'titulares': titular})
 
+
+def verificar_titular(request):
+    if request.method == 'POST':
+        form = TitularForm(request.POST, request.FILES)
+        return JsonResponse({"valid": form.is_valid(), "errors": form.errors})
+    raise Http404()
 
 def create_titular(request):
     print(request.method)

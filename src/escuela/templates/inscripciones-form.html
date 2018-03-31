@@ -55,15 +55,20 @@
                         <div class="">
                             <div id="step-1" class="content" style="display: block;">
                                 <div id="formulario-titular">
-                                    <form class="form-horizontal form-label-left">
+                                    <form class="form-horizontal form-label-left" enctype="multipart/form-data">
+                                        {% csrf_token %}
                                         {% include "forms/form.html" with form=formTitular %}
                                     </form>
                                 </div>
                             </div>
                             <div id="step-2" class="content" style="display: none;">
                                 <div id="formulario-alumno" style="text-align: center">
-                                    <button class="btn btn-success" onclick="alumnoExtra()" ><span class="glyphicon-plus"></span></button>
-                                    <button class="btn btn-danger" onclick="quitarAlumno()" ><span class="glyphicon-minus"></span></button>
+                                    <div class="btn-group btn-sm">
+                                        <button class="btn btn-sm btn-default" onclick="alumnoExtra()"><span
+                                                class="glyphicon-plus"></span></button>
+                                        <button class="btn btn-sm btn-default" onclick="quitarAlumno()"><span
+                                                class="glyphicon-minus"></span></button>
+                                    </div>
                                     <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
 
                                     </div>
@@ -85,10 +90,12 @@
 
         <div id="formulario-template-alumno">
             <form class="form-horizontal form-label-left">
+                {% csrf_token %}
                 {% include "forms/form.html" with form=formAlumno %}
             </form>
         </div>
         <div id="formulario-template-incripcion">
+            {% csrf_token %}
             {% include "forms/form.html" with form=formInscripcion %}
         </div>
     </div>
@@ -97,56 +104,155 @@
 {% block javascripts %}
     {{ block.super }}
     <script>
+
+        var wizard = null;
+
+        function notifyError(message) {
+            PNotify.prototype.options.delay = 3000;
+            new PNotify({
+                title: 'Error',
+                text: message,
+                type: 'error',
+                styling: 'bootstrap3'
+            });
+        }
+
+        function verificarTitular() {
+            var titularForm = $('#formulario-titular').find('form');
+            function clean(){
+                titularForm.find('.feedback-message').text('');
+                titularForm.find('.text-danger').removeClass('text-danger');
+                titularForm.find('.has-error').removeClass('has-error');
+            }
+            var formData = new FormData(titularForm[0]);
+            $.post({
+                url: '{% url 'verificar_titular' %}',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+            .done(function(data) {
+                if (data.valido) {
+                    clean();
+                    wizard.smartWizard('setError', {stepnum:1, iserror:false});
+                } else {
+                    clean();
+                    var errDesc = '';
+                    for (campo in data.errors) {
+                        if (data.errors.hasOwnProperty(campo)) {
+                            errDesc = data.errors[campo];
+                            titularForm.find('[name=' + campo + ']')
+                                .siblings('.feedback-message')
+                                .addClass('text-danger')
+                                .text(errDesc)
+                                .parent()
+                                .parent()
+                                .addClass('has-error');
+                        }
+                    }
+
+                    wizard.smartWizard('setError', {stepnum:1, iserror:true});
+                    notifyError("Complete los campos obligatorios.");
+                }
+            });
+
+            var valido = true;
+
+        }
         // #comentario logica cuando se selecciona siguiente
         window.wizardOnLeaveStep = function (element, context) {
-            console.log(arguments)
-            if (context.fromStep + 1 === context.toStep) {
-                switch (context.fromStep) {
-                    case 1: // Titular
-                        break;
-                    case 2: // Alumno
-                        break;
-                    case 3: // Inscribir
-                        break;
-                }
+            console.log(arguments);
+
+            switch (context.fromStep) {
+                case 1: // Titular
+                    verificarTitular();
+                    break;
+                case 2: // Alumno
+                    //verificarAlumno();
+                    break;
+                case 3: // Inscribir
+                    //verificarInscripcion();
+                    break;
             }
 
             return true;
         };
 
+        // #comentario: Se ejecuta cuando se presiona el boton Guardar.
         window.wizardOnFinish = function (element, context) {
             console.log(arguments);
             if (context.fromStep === 4) {
                 alert("Factura generada!");
             }
         };
-        var count = 0;
+
+        // #comentario: Cantidad de alumnos.
+        var alumnosCount = 0;
+
+        // #comentario: reduce la cantidad de alumnos.
         var quitarAlumno = function () {
-            if (count > 1) {
-                $('#panel-alumno-' + count).remove();
-                count--;
+            if (alumnosCount > 1) {
+                $('#panel-alumno-' + alumnosCount).remove();
+                alumnosCount--;
             }
-        }
+        };
+
+        var formTemplateAlumno = null;
+
+        // #comentario: incrementa la cantidad de alumnos.
         var alumnoExtra = function () {
-            count++;
-            var panel = $('<div></div>');
-            panel.attr('id', 'panel-alumno-' + count);
+            alumnosCount++;
+            var bindId = "-alumno-" + alumnosCount;
+            var panel = $('<div></div>'); //crea elemento
+            panel.attr('id', 'panel-alumno-' + alumnosCount);
             panel.addClass('panel');
             var tab = $('<a></a>');
-            if (count > 1) {
+            if (alumnosCount > 1) {
                 tab.addClass('collapsed');
             }
             tab.addClass('panel-heading');
             tab.attr('role', 'tab');
-            tab.attr('id', 'heading-' + count);
+            tab.attr('id', 'heading-' + alumnosCount);
             tab.attr('data-toggle', 'collapse');
             tab.attr('data-parent', '#accordion');
-            tab.attr('href', '#collapse-' + count);
+            tab.attr('href', '#collapse-' + alumnosCount);
             tab.attr('aria-expanded', false);
-            tab.attr('aria-controls', 'collapse-' + count);
+            tab.attr('aria-controls', 'collapse-' + alumnosCount);
             var titulo = $('<h4></h4>');
             titulo.addClass('panel-title');
-            titulo.text('#' + count);
+            var numero = $('<span></span>');
+            numero.text("#" + alumnosCount + " ");
+            titulo.append(numero);
+            var apellido = $('<span></span>');
+            apellido.attr('data-bind', 'apellido' + bindId);
+            titulo.append(apellido);
+
+            var nombre = $('<span></span>');
+            nombre.attr('data-bind', 'nombre' + bindId);
+            titulo.append(nombre);
+            /*
+             var rightNav = $('<ul></ul>');
+             rightNav.addClass('nav');
+             rightNav.addClass('navbar-right');
+
+             var navContent = $('<li></li>');
+             rightNav.append(navContent);
+
+             var borrarAlumno = $('<a></a>');
+             borrarAlumno.addClass('');
+             borrarAlumno.attr('style', 'padding: 0 10px 0 0;')
+             navContent.append(borrarAlumno);
+
+             var borrarIcon = $('<i></i>');
+             borrarIcon.addClass('fa');
+             borrarIcon.addClass('fa-close');
+             borrarIcon.addClass('text-danger');
+
+             borrarAlumno.append(borrarIcon);
+
+             tab.append(rightNav);
+             */
 
 
             tab.append(titulo);
@@ -154,27 +260,84 @@
             var tabContent = $('<div></div>');
             tabContent.addClass('panel-collapse');
             tabContent.addClass('collapse');
-            if (count === 1) {
+            if (alumnosCount === 1) {
                 tabContent.addClass('in');
             }
-            tabContent.attr('id', 'collapse-' + count);
+            tabContent.attr('id', 'collapse-' + alumnosCount);
             tabContent.attr('role', 'tabpanel');
-            tabContent.attr('aria-labelledby', 'heading-' + count);
+            tabContent.attr('aria-labelledby', 'heading-' + alumnosCount);
             tabContent.attr('aria-expanded', false);
 
 
             var tabContentPanel = $('<div></div>');
             tabContentPanel.addClass('panel-body');
-            tabContentPanel.append($('#formulario-template-alumno').clone())
+            if (formTemplateAlumno === null) {
+                formTemplateAlumno = $('#formulario-template-alumno');
+            }
+            var alumnoForm = formTemplateAlumno.clone();
+            alumnoForm.find('input[name=apellido]').attr('data-bind', 'apellido' + bindId);
+            alumnoForm.find('input[name=nombre]').attr('data-bind', 'nombre' + bindId);
+            tabContentPanel.append(alumnoForm);
             tabContent.append(tabContentPanel);
             panel.append(tab);
             panel.append(tabContent);
             $('#formulario-alumno').find('#accordion').append(panel);
+
+            bind();
         };
 
-        $(document).ready(function(){
+
+        // #comentario: Agrega el primer alumno. (siempre minimo: 1)
+        $(document).ready(function () {
             alumnoExtra();
-        })
+            wizard = $('#wizard');
+        });
+
+        var bind = function () {
+            var elements = document.querySelectorAll('[data-bind]'), scope = {};
+
+            elements.forEach(function (element) {
+                if (element.type === 'text') {
+                    var propToBind = element.getAttribute("data-bind");
+
+                    addScopeProp(propToBind);
+
+                    element.onkeyup = function () {
+                        scope[propToBind] = element.value;
+                    };
+
+                }
+            });
+
+            function addScopeProp(prop) {
+                if (!scope.hasOwnProperty(prop)) {
+                    var value;
+
+                    Object.defineProperty(scope, prop, {
+                        set: function (newValue) {
+                            elements.forEach(function (element) {
+                                if (element.getAttribute('data-bind') === prop) {
+                                    if (element.type === 'text') {
+                                        element.value = newValue;
+                                    } else {
+                                        element.innerHTML = newValue;
+                                        if (prop.substring(0, 8) === 'apellido' && newValue.length > 0) {
+                                            element.innerHTML += ", ";
+                                        }
+                                    }
+                                }
+                            })
+                        },
+                        get: function () {
+                            return value;
+                        },
+                        enumerable: true
+                    });
+                }
+            }
+
+        }
+
 
     </script>
 {% endblock %}
