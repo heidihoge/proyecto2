@@ -51,7 +51,7 @@ class Alumno(Persona):
 class Empleado(Persona):
     salario = models.IntegerField(default=0)
     def __str__(self):
-        return self.cedula + " " + self.nombre + str(self.salario)
+        return self.cedula + " " + self.nombre
 
 #Profesor
 class Profesor(Empleado):

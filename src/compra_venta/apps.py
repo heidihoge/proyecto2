@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ComprasConfig(AppConfig):
-    name = 'compras'
+    name = 'compra_venta'

@@ -26,7 +26,7 @@ class Grupo(models.Model):
     costo = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.costo + self.cupo_maximo
+        return self.id_clase.nombre
 
 
 # dia_hora
@@ -44,7 +44,7 @@ class DiaHora(models.Model):
     hora = models.TimeField()
 
     def __str__(self):
-        return self.objects
+        return self.id_grupo
 
 # etiqueta
 
@@ -63,7 +63,7 @@ class EtiquetaClase(models.Model):
     etiqueta = models.ForeignKey(Etiqueta, on_delete=models.SET_NULL,null=True)
 
     def __str__(self):
-        return self.objects
+        return self.id_clase
 
 # etiqueta_grupo
 
@@ -72,7 +72,7 @@ class EtiquetaGrupo(models.Model):
     etiqueta = models.ForeignKey(Etiqueta, on_delete=models.SET_NULL,null=True)
 
     def __str__(self):
-        return self.objects
+        return self.id_grupo
 
 # inscripcion
 
@@ -83,7 +83,7 @@ class Inscripcion(models.Model):
     fecha_fin = models.DateField(default=datetime.date.today)
 
     def __str__(self):
-        return self.objects
+        return self.id_grupo
 
 # asistencia
 
@@ -93,4 +93,4 @@ class Asistencia(models.Model):
     fecha = models.DateField(default=datetime.date.today)
 
     def __str__(self):
-        return self.objects
+        return self.id_grupo

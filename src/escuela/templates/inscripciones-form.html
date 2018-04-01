@@ -133,7 +133,7 @@
                 processData: false
             })
             .done(function(data) {
-                if (data.valido) {
+                if (data.valid) {
                     clean();
                     wizard.smartWizard('setError', {stepnum:1, iserror:false});
                 } else {
