@@ -14,9 +14,9 @@ class Persona(models.Model):
     fecha_nacimiento = models.DateField(default=datetime.date.today)
     sexo = models.CharField(max_length=1, choices=SEXO)
     direccion = models.CharField(max_length=50)
-    telefono1 = models.CharField(max_length=50)
-    telefono2 = models.CharField(max_length=50)
-    fotocopia_cedula = models.ImageField(upload_to='media_root', verbose_name='Imagen')
+    telefono1 = models.CharField(max_length=50, null=True, blank=True)
+    telefono2 = models.CharField(max_length=50, null=True, blank=True)
+    fotocopia_cedula = models.ImageField(upload_to='media_root', verbose_name='Fotocopia de Cédula', null=True, blank=True)
 
     def __str__(self):
         return self.nombre + " " + self.apellido
@@ -38,9 +38,9 @@ class Titular(Persona):
 #Alumno
 
 class Alumno(Persona):
-    imagen = models.ImageField(upload_to='media_root', verbose_name='Imagen')
-    ficha= models.FileField(upload_to='media_root')
-    ficha_inscripcion = models.FileField(upload_to='media_root')
+    imagen = models.ImageField(upload_to='media_root', verbose_name='Foto')
+    ficha= models.FileField(upload_to='media_root',  verbose_name='Ficha médica')
+    ficha_inscripcion = models.FileField(upload_to='media_root', verbose_name='Ficha de inscripción')
     titular_cuenta = models.ForeignKey(Titular, on_delete=models.SET_NULL,
     blank=True,
     null=True)

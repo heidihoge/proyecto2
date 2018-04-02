@@ -105,7 +105,17 @@
     {{ block.super }}
     <script>
 
+        // #comentario: elemento wizard
         var wizard = null;
+
+        // #comentario: Cantidad de alumnos.
+        var alumnosCount = 0;
+
+        // #comentario: Template del alumno
+        var formTemplateAlumno = null;
+
+        // #comentario: Formulario del titular
+        var formTitular = null;
 
         function notifyError(message) {
             PNotify.prototype.options.delay = 3000;
@@ -157,12 +167,25 @@
                 }
             });
 
-            var valido = true;
+        }
+
+        // #comentario: Carga los datos obtenidos a partir del autocompletado (persona)
+        function cargar(form, datos) {
+
+            form.trigger("reset");
+
+            for (var campo in datos.fields ) {
+                if (datos.fields.hasOwnProperty(campo)) {
+                    form.find('[name=' + campo + '][type!=file]').val(datos.fields[campo]);
+                }
+            }
+            form.find('[name=cedula]').val(datos.id);
+
 
         }
+
         // #comentario logica cuando se selecciona siguiente
         window.wizardOnLeaveStep = function (element, context) {
-            console.log(arguments);
 
             switch (context.fromStep) {
                 case 1: // Titular
@@ -181,27 +204,23 @@
 
         // #comentario: Se ejecuta cuando se presiona el boton Guardar.
         window.wizardOnFinish = function (element, context) {
-            console.log(arguments);
             if (context.fromStep === 4) {
                 alert("Factura generada!");
             }
         };
 
-        // #comentario: Cantidad de alumnos.
-        var alumnosCount = 0;
 
         // #comentario: reduce la cantidad de alumnos.
-        var quitarAlumno = function () {
+        function quitarAlumno () {
             if (alumnosCount > 1) {
                 $('#panel-alumno-' + alumnosCount).remove();
                 alumnosCount--;
             }
-        };
+        }
 
-        var formTemplateAlumno = null;
 
         // #comentario: incrementa la cantidad de alumnos.
-        var alumnoExtra = function () {
+        function alumnoExtra () {
             alumnosCount++;
             var bindId = "-alumno-" + alumnosCount;
             var panel = $('<div></div>'); //crea elemento
@@ -272,9 +291,10 @@
             var tabContentPanel = $('<div></div>');
             tabContentPanel.addClass('panel-body');
             if (formTemplateAlumno === null) {
-                formTemplateAlumno = $('#formulario-template-alumno');
+                formTemplateAlumno = $('#formulario-template-alumno').find('form');
             }
             var alumnoForm = formTemplateAlumno.clone();
+            alumnoForm.addClass('text-left');
             alumnoForm.find('input[name=apellido]').attr('data-bind', 'apellido' + bindId);
             alumnoForm.find('input[name=nombre]').attr('data-bind', 'nombre' + bindId);
             tabContentPanel.append(alumnoForm);
@@ -282,17 +302,32 @@
             panel.append(tab);
             panel.append(tabContent);
             $('#formulario-alumno').find('#accordion').append(panel);
+            alumnoForm.find('.select2').remove();
+            alumnoForm.find('[name=cedula]').trigger('autocompleteLightInitialize');
+
+            alumnoForm.on('select2:select', function(event) {
+
+                cargar(alumnoForm, event.params.data);
+            });
 
             bind();
-        };
+        }
 
 
-        // #comentario: Agrega el primer alumno. (siempre minimo: 1)
         $(document).ready(function () {
+            // #comentario: Agrega el primer alumno. (siempre minimo: 1)
             alumnoExtra();
             wizard = $('#wizard');
+            if(formTitular === null) {
+                formTitular = $('#formulario-titular').find('form');
+            }
+
+            formTitular.on('select2:select', function(event) {
+                cargar(formTitular, event.params.data);
+            });
         });
 
+        // #comentario: Esto es para que el nombre y apellido del alumno se vea en la cabecera del accordion (paso 2)
         var bind = function () {
             var elements = document.querySelectorAll('[data-bind]'), scope = {};
 

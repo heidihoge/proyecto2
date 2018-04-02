@@ -35,6 +35,8 @@
                 <link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
                 <link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
                 <link href="/static/vendors/jQuery-Smart-Wizard/styles/smart_wizard.css" rel="stylesheet">
+                <link href="/static/vendors/select2/dist/css/select2.css" rel="stylesheet">
+                <link href="/static/autocomplete_light/select2.css" rel="stylesheet">
             {% endblock stylesheets %}
 
             <!-- Custom Theme Style -->
@@ -101,6 +103,7 @@
                 <script src="/static/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
                 <!-- Select2 -->
                 <script src="/static/vendors/select2/dist/js/select2.full.min.js"></script>
+                <script src="/static/vendors/select2/dist/js/i18n/es.js"></script>
                 <!-- Datatables -->
                 <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
                 <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -121,6 +124,9 @@
                 <script src="/static/vendors/pnotify/dist/pnotify.js"></script>
                 <script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
                 <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+                <script src="/static/autocomplete_light/jquery.init.js"></script>
+                <script src="/static/autocomplete_light/autocomplete.init.js"></script>
+                <script src="/static/vendors/autocomplete_light/select2.init.js"></script>
             {% endblock %}
             <!-- Custom Theme Scripts -->
             <script src="/static/build/js/custom.js"></script>
@@ -145,9 +151,6 @@
                               });
                     {% endfor %}
                 </script>
-            {% endif %}
-            {% if form %}
-                {{ form.media }}
             {% endif %}
     {% endblock body %}
     </body>

@@ -14,6 +14,10 @@
             {% include "forms/integerfield.html" with field=field %}
         {% elif field|field_type == 'ModelChoiceField' %}
             {{ field }}
+        {% elif field|field_type == 'CustomModelChoiceField' %}
+            {{ field }}
+        {% elif field|field_type == 'ChoiceField' %}
+            {{ field }}
         {% else %}
             {% include "forms/charfield.html" with field=field %}
         {% endif %}

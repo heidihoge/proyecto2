@@ -1,11 +1,19 @@
+import json
+
+import datetime
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, Http404
 from django.db.models import Q
 
 
 # Create your views here.
+from proyecto2 import settings
+
+
 @login_required
 def index(request):
     return render(request, 'index.html', context={})
@@ -37,6 +45,38 @@ class ProfesorAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(nombre__istartswith=self.q) | Q(cedula__isstartwith=self.q))
 
         return qs
+
+class PersonaAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Persona.objects.none()
+
+        qs = Persona.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(cedula__istartswith=self.q) | Q(apellido__istartswith=self.q))
+
+        return qs
+
+    def _get_fields_as_json(self, result):
+        # return json.loads(serializers.serialize('json', [result]))[0]['fields']
+        result = result.__dict__
+        del result['_state']
+        if isinstance(result['fecha_nacimiento'], datetime.date):
+            result['fecha_nacimiento'] = result['fecha_nacimiento'].strftime(settings.DATE_FORMAT)
+        return result
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return [
+            {
+                'id': result.cedula,
+                'text': str(result.cedula) + ' (' + self.get_result_label(result) + ')',
+                'pk': result.pk,
+                'fields': self._get_fields_as_json(result)
+            } for result in context['object_list']
+        ]
 
 
 from .forms import PersonaForm
@@ -115,7 +155,15 @@ def list_titulares(request):
 
 def verificar_titular(request):
     if request.method == 'POST':
-        form = TitularForm(request.POST, request.FILES)
+        titular = None
+        if 'cedula' in request.POST:
+            cedula = request.POST['cedula']
+            try:
+                titular = Persona.objects.get(cedula=cedula)
+            except:
+                titular = None
+
+        form = TitularForm(request.POST, request.FILES, instance=titular)
         return JsonResponse({"valid": form.is_valid(), "errors": form.errors})
     raise Http404()
 
