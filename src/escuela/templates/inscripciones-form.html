@@ -172,15 +172,17 @@
         // #comentario: Carga los datos obtenidos a partir del autocompletado (persona)
         function cargar(form, datos) {
 
+            form.find('[name=sexo]').iCheck('uncheck');
             form.trigger("reset");
-
             for (var campo in datos.fields ) {
                 if (datos.fields.hasOwnProperty(campo)) {
                     form.find('[name=' + campo + '][type!=file]').val(datos.fields[campo]);
+                    if(campo === 'sexo') {
+                        form.find('[name=sexo][value='+ datos.fields[campo] +']').iCheck('check');
+                    }
                 }
             }
             form.find('[name=cedula]').val(datos.id);
-
 
         }
 
@@ -304,15 +306,51 @@
             $('#formulario-alumno').find('#accordion').append(panel);
             alumnoForm.find('.select2').remove();
             alumnoForm.find('[name=cedula]').trigger('autocompleteLightInitialize');
-
+            configurarCalendario(alumnoForm.find('[name^=fecha]'));
+            configurarICheck(alumnoForm.find('[name=sexo]'));
             alumnoForm.on('select2:select', function(event) {
-
+                nombre.text("");
+                apellido.text("");
                 cargar(alumnoForm, event.params.data);
+                var fields = event.params.data.fields;
+                if(fields) {
+                    var hasNombre = false;
+                    if (fields.hasOwnProperty('nombre')){
+                        nombre.text(fields['nombre']);
+                        hasNombre = true;
+                    }
+                    if (fields.hasOwnProperty('apellido')){
+                        apellido.text(fields['apellido'] + (hasNombre?', ':''));
+                    }
+                }
             });
 
             bind();
         }
 
+        function configurarICheck(element) {
+            element.parents('ul').attr('style', 'list-style-type: none;padding:0');
+            element.iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+        }
+
+        function configurarCalendario(element) {
+            var config = {
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre'],
+
+                }
+            };
+
+            element.daterangepicker(config);
+            element.inputmask();
+        }
 
         $(document).ready(function () {
             // #comentario: Agrega el primer alumno. (siempre minimo: 1)
@@ -320,6 +358,8 @@
             wizard = $('#wizard');
             if(formTitular === null) {
                 formTitular = $('#formulario-titular').find('form');
+                configurarCalendario(formTitular.find('[name=fecha_nacimiento]'));
+                configurarICheck(formTitular.find('[name=sexo]'));
             }
 
             formTitular.on('select2:select', function(event) {

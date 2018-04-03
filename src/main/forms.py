@@ -18,6 +18,10 @@ class PersonaForm(forms.ModelForm):
         queryset=Persona.objects.all(),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'})
     )
+    sexo = forms.ChoiceField(
+        choices=Persona.SEXO,
+        widget=forms.RadioSelect(choices=Persona.SEXO)
+    )
     class Meta:
         model = Persona
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula']
@@ -29,6 +33,10 @@ class TitularForm(forms.ModelForm):
     cedula = CustomModelChoiceField(
         queryset=Persona.objects.all(),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'}),
+    )
+    sexo = forms.ChoiceField(
+        choices=Persona.SEXO,
+        widget=forms.RadioSelect(choices=Persona.SEXO)
     )
     tipo_responsable = forms.ChoiceField(choices=Titular.OPCIONES_TIPO_TUTOR)
     tipo_responsable.widget.attrs = {'class': 'form-control'}
@@ -45,6 +53,10 @@ class AlumnoForm(forms.ModelForm):
     cedula = CustomModelChoiceField(
         queryset=Persona.objects.all(),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'})
+    )
+    sexo = forms.ChoiceField(
+        choices=Persona.SEXO,
+        widget=forms.RadioSelect(choices=Persona.SEXO)
     )
     class Meta:
         model = Alumno
