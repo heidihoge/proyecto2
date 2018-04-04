@@ -11,7 +11,7 @@ from .models import Clase, Grupo, DiaHora, Etiqueta, EtiquetaClase, EtiquetaGrup
 
 
 #Formulario Clase
-class FomularioClaseForm(forms.ModelForm):
+class FomularioClase(forms.ModelForm):
     class Meta:
         model = Clase
         fields = ['nombre','descripcion','costo']

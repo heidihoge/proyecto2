@@ -17,6 +17,9 @@ class Persona(models.Model):
     telefono1 = models.CharField(max_length=50, null=True, blank=True)
     telefono2 = models.CharField(max_length=50, null=True, blank=True)
     fotocopia_cedula = models.ImageField(upload_to='media_root', verbose_name='Fotocopia de Cédula', null=True, blank=True)
+    ESTADO = (('A', 'ACTIVO'),
+              ('IN', 'INACTIVO'))
+    estado = models.CharField(max_length=1, choices=ESTADO)
 
     def __str__(self):
         return self.nombre + " " + self.apellido
@@ -63,3 +66,12 @@ class Cuenta(models.Model):
     monto = models.IntegerField()
     saldo = models.IntegerField()
     id_persona = models.ForeignKey(Persona, on_delete=models.SET_NULL,null=True)
+
+#Cuenta
+class Proveedor(models.Model):
+    nombre= models.CharField(max_length=50)
+    ruc=  models.CharField(max_length=8, unique=True)
+    actividad_economica= models.CharField(max_length=50, null=True, blank=True)
+    direccion= models.CharField(max_length=50)
+    telefono= models.CharField(max_length=50, null=True, blank=True)
+

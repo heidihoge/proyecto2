@@ -42,6 +42,7 @@
                             <th>Teléfono1</th>
                             <th>Teléfono2</th>
                             <th>Fotocopia Cedula</th>
+                            <th>estado</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -56,6 +57,7 @@
                             <td>{{ persona.direccion }}</td>
                             <td>{{ persona.telefono1 }}</td>
                             <td>{{ persona.telefono2 }}</td>
+                            <td>{{ persona.estado }}</td>
                             <td>{% if persona.fotocopia_cedula %}<a href="/media/{{ persona.fotocopia_cedula }}">fotocopia_cedula</a>{%
                                 else %}(sin
                                 fotocopia){% endif %}

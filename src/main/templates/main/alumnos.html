@@ -40,6 +40,7 @@
                                 <th>Fecha de nacimiento</th>
                                 <th>Imagen</th>
                                 <th>Ficha</th>
+                                <th>estado</th>
                                 <th>Acción</th>
                             </tr>
                             </thead>
@@ -54,6 +55,7 @@
                                     <td>{{ alumno.telefono }}</td>
                                     <td>{{ alumno.fecha_nacimiento }}</td>
                                     <td>{% if alumno.ficha %}
+                                    <td>{% if alumno.estado %}
                                         <img height="100px" src="/media/{{ alumno.imagen }}">{% else %}sin
                                         foto{% endif %}</td>
                                     <td>{% if alumno.ficha %}<a href="/media/{{ alumno.ficha }}">ficha</a>{% else %}(sin

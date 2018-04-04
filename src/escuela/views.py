@@ -70,7 +70,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 
-from .forms import FomularioClaseForm,FomularioGrupo, FomularioAsistencia, FomularioDiaHora, FomularioEtiqueta, FomularioEtiquetaClase, FomularioEtiquetaGrupo, FomularioInscripcion
+from .forms import FomularioClase,FomularioGrupo, FomularioAsistencia, FomularioDiaHora, FomularioEtiqueta, FomularioEtiquetaClase, FomularioEtiquetaGrupo, FomularioInscripcion
 from .models import Clase,Grupo,Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia, DiaHora
 
 
@@ -99,7 +99,7 @@ def create_clase(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = FomularioClaseForm(request.POST, request.FILES)
+        form = FomularioClase(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -108,7 +108,7 @@ def create_clase(request):
 
         messages.error(request, 'Error al crear la clase.')
     else:
-        form = FomularioClaseForm()
+        form = FomularioClase()
 
     return render(request, 'clases-form.html', {'form': form})
 
@@ -119,7 +119,7 @@ def update_clase(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioClaseForm(request.POST, request.FILES, instance=clase)
+        form = FomularioClase(request.POST, request.FILES, instance=clase)
 
         if form.is_valid():
             form.save()
@@ -127,7 +127,7 @@ def update_clase(request, id):
             return redirect('list_clases')
         messages.error(request, 'Error al modificar Clase.')
     else:
-        form = FomularioClaseForm(instance=clase)
+        form = FomularioClase(instance=clase)
 
     return render(request, 'clases-form.html', {'form': form, 'clase': clase})
 

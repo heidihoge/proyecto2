@@ -42,6 +42,7 @@
                             <th>Teléfono1</th>
                             <th>Teléfono2</th>
                             <th>Fotocopia Cedula</th>
+                            <th>Estado</th>
                             <th>Tipo responsable</th>
                         </tr>
                         </thead>
@@ -57,6 +58,7 @@
                             <td>{{ titular.direccion }}</td>
                             <td>{{ titular.telefono1 }}</td>
                             <td>{{ titular.telefono2 }}</td>
+                            <td>{{ titular.estado }}</td>
                             <td>{{ titular.tipo_responsable }}</td>
                             <td>{% if titular.fotocopia_cedula %}<a href="/media/{{ titular.fotocopia_cedula }}">fotocopia_cedula</a>{%
                                 else %}(sin

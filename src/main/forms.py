@@ -24,7 +24,7 @@ class PersonaForm(forms.ModelForm):
     )
     class Meta:
         model = Persona
-        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula']
+        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','estado']
 
 
 #Formulario Titular
@@ -43,7 +43,7 @@ class TitularForm(forms.ModelForm):
     fecha_nacimiento = DateField(input_formats=settings.DATE_INPUT_FORMATS)
     class Meta:
         model = Titular
-        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable']
+        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable','estado']
 
 
 

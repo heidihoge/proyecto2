@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'main',
     # 'alumnos.apps.AlumnosConfig',
 
-    'escuela'
+    'escuela',
+    'compra_venta'
 
 ]
 # LOGIN_REQUIRED_FOR_CRUD = True
