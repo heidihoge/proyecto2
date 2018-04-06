@@ -60,7 +60,7 @@ class AlumnoForm(forms.ModelForm):
     )
     class Meta:
         model = Alumno
-        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','imagen','ficha','ficha_inscripcion','titular_cuenta']
+        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','imagen','ficha','ficha_inscripcion','estado']
 
 
 

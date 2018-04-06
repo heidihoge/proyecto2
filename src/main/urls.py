@@ -28,8 +28,9 @@ urlpatterns = [
 
     path('alumnos', list_alumnos, name='list_alumnos'),
     path('alumnos/new', create_alumno, name='create_alumno'),
-    path('alumnos/<int:id>/', update_alumno, name='update_alumno'),
-    path('alumnos/delete/<int:id>', delete_alumno, name='delete_alumno'),
+    path('alumnos/<int:id>/update', update_alumno, name='update_alumno'),
+    path('alumnos/<int:id>/delete', delete_alumno, name='delete_alumno'),
+
 
     path('empleados', list_empleados, name='list_empleados'),
     path('empleados/new', create_empleado, name='create_empleado'),
@@ -44,8 +45,8 @@ urlpatterns = [
     path('titulares', list_titulares, name='list_titulares'),
     path('titulares/verificar', verificar_titular, name='verificar_titular'),
     path('titulares/new', create_titular, name='create_titular'),
-    path('titulares/<int:id>/', update_titular, name='update_titular'),
-    path('titulares/delete/<int:id>', delete_titular, name='delete_titular'),
+    path('titulares/<int:id>/update', update_titular, name='update_titular'),
+    path('titulares/<int:id>/delete/', delete_titular, name='delete_titular'),
 
     path('cuentas', list_cuentas, name='list_cuentas'),
     path('cuentas/new', create_cuenta, name='create_cuenta'),

@@ -67,11 +67,5 @@ class Cuenta(models.Model):
     saldo = models.IntegerField()
     id_persona = models.ForeignKey(Persona, on_delete=models.SET_NULL,null=True)
 
-#Cuenta
-class Proveedor(models.Model):
-    nombre= models.CharField(max_length=50)
-    ruc=  models.CharField(max_length=8, unique=True)
-    actividad_economica= models.CharField(max_length=50, null=True, blank=True)
-    direccion= models.CharField(max_length=50)
-    telefono= models.CharField(max_length=50, null=True, blank=True)
+
 
