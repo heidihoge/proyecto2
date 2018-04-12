@@ -8,7 +8,7 @@
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/alumnos/new""><i  class="fa fa-plus-square"></i> NUEVO ALUMNO</a>
+                    <a class="btn btn-primary pull-right" href="/alumnos/new"><i  class="fa fa-plus-square"></i> NUEVO ALUMNO</a>
 
                 </div>
             </div>
@@ -35,12 +35,11 @@
                                 <th>Cédula</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
+                                <th>Fecha de Nacimiento</th>
                                 <th>Dirección</th>
                                 <th>Teléfono</th>
-                                <th>Fecha de nacimiento</th>
                                 <th>Imagen</th>
                                 <th>Ficha</th>
-                                <th>estado</th>
                                 <th>Acción</th>
                             </tr>
                             </thead>
@@ -51,15 +50,16 @@
                                     <td>{{ alumno.cedula }}</td>
                                     <td>{{ alumno.nombre }}</td>
                                     <td>{{ alumno.apellido }}</td>
+                                    <td>{{ alumno.fecha_nacimiento }}</td>
                                     <td>{{ alumno.direccion }}</td>
-                                    <td>{{ alumno.telefono }}</td>
+                                    <td>{{ alumno.telefono1 }}</td>
 
                                     <td>{% if alumno.ficha %}
                                         <img height="100px" src="/media/{{ alumno.imagen }}">{% else %}sin
                                         foto{% endif %}</td>
                                     <td>{% if alumno.ficha %}<a href="/media/{{ alumno.ficha }}">ficha</a>{% else %}(sin
                                         ficha){% endif %}</td>
-                                     <td>{{ alumno.estado }}</td>
+
                                     <td><a class="btn btn-info btn-xs" href="/alumnos/{{ alumno.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                            data-target="#eliminar-modal" onclick="formEliminar({{ alumno.id }})">Eliminar</a></td>

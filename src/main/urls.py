@@ -36,13 +36,13 @@ urlpatterns = [
 
     path('empleados', list_empleados, name='list_empleados'),
     path('empleados/new', create_empleado, name='create_empleado'),
-    path('empleados/<int:id>/', update_empleado, name='update_empleado'),
-    path('empleados/delete/<int:id>', delete_empleado, name='delete_empleado'),
+    path('empleados/<int:id>/update', update_empleado, name='update_empleado'),
+    path('empleados/<int:id>/delete', delete_empleado, name='delete_empleado'),
 
     path('profesores', list_profesores, name='list_profesores'),
     path('profesores/new', create_profesor, name='create_profesor'),
-    path('profesores/<int:id>/', update_profesor, name='update_profesor'),
-    path('profesores/delete/<int:id>', delete_profesor, name='delete_profesor'),
+    path('profesores/<int:id>/update', update_profesor, name='update_profesor'),
+    path('profesores/<int:id>/delete', delete_profesor, name='delete_profesor'),
 
     path('titulares', list_titulares, name='list_titulares'),
     path('titulares/verificar', verificar_titular, name='verificar_titular'),

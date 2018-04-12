@@ -65,7 +65,8 @@
                                         <img height="100px" src="/media/{{ empleado.fotocopia_cedula }}">{% else %}sin
                                         fotocopia{% endif %}</td>
                                     <td>{% if empleado.fotocopia_cedula %}<a href="/media/{{ empleado.fotocopia_cedula }}">fotocopia</a>{% else %}(sin fotocopia){% endif %}</td>
-                                    <td><a class="btn btn-info btn-xs" href="/empleados/{{ empleado.id }}">Editar </a>
+
+                                    <td><a class="btn btn-info btn-xs" href="/empleados/{{ empleado.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                            data-target="#eliminar-modal" onclick="formEliminar({{ empleado.id }})">Eliminar</a></td>
                                 </tr>
@@ -110,7 +111,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/empledos/delete/' + id);
+            $('#eliminar-form').attr('action', '/empleados/' + id + '/delete');
         }
     </script>
 {% endblock %}
