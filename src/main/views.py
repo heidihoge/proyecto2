@@ -2,7 +2,7 @@ import json
 
 import datetime
 from dal import autocomplete
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
@@ -26,6 +26,9 @@ def redirect_to_index(request):
 
 def error404(request):
     return render(request, 'errors/page_404.html', context={})
+
+def error403(request):
+    return render(request, 'errors/page_403.html', context={})
 
 
 # ---------------------VISTA PERSONAS --------------------------------
@@ -167,6 +170,7 @@ def verificar_titular(request):
         return JsonResponse({"valid": form.is_valid(), "errors": form.errors})
     raise Http404()
 
+@permission_required('add_titular', raise_exception=True)
 def create_titular(request):
     print(request.method)
     if request.method == 'POST':
