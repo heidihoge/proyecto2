@@ -39,6 +39,7 @@ class FomularioDiaHora(forms.ModelForm):
 
 #Formulario Etiqueta
 class FomularioEtiqueta(forms.ModelForm):
+    color = forms.CharField(widget=forms.TextInput(attrs={'class':'with-colorpicker'}))
     class Meta:
         model = Etiqueta
         fields = ['nombre', 'descripcion', 'color']

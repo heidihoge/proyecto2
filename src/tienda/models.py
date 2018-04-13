@@ -1,4 +1,5 @@
 import datetime
+import datetime
 
 from django.db import models
 
@@ -7,7 +8,7 @@ from main.models import  Cuenta
 
 
 
-# Tipo de documento
+# Factura
 class Factura(models.Model):
     nombre = models.CharField(max_length=50)
     ruc = models.CharField(max_length=8, unique=True)
@@ -18,8 +19,8 @@ class Factura(models.Model):
     punto_emision= models.IntegerField(default=0)
     nro_inicial=models.IntegerField(default=0)
     nro_final=models.IntegerField(default=0)
-    vigencia_desde=models.DateField
-    vigencia_hasta= models.DateField
+    vigencia_desde=models.DateField(default=datetime.date.today)
+    vigencia_hasta= models.DateField(default=datetime.date.today)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=1, choices=ESTADO)

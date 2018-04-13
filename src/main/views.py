@@ -67,7 +67,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         result = result.__dict__
         del result['_state']
         if isinstance(result['fecha_nacimiento'], datetime.date):
-            result['fecha_nacimiento'] = result['fecha_nacimiento'].strftime(settings.DATE_FORMAT)
+            result['fecha_nacimiento'] = result['fecha_nacimiento'].strftime(settings.DATE_INPUT_FORMATS[0])
         return result
 
     def get_results(self, context):

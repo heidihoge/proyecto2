@@ -1,71 +1,72 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from .forms import FomularioFactura
 
 from .forms import FomularioCategoriaProducto, FomularioProducto
 from .models import Producto, CategoriaProducto
 
 # Create your views here.
 
-# ---------------------VISTA TIPODOCUMENTO --------------------------------
-# from compra_venta.forms import FomularioDocumento
-# from compra_venta.models import TipoDocumento
-#
-#
-# def list_documentos(request):
-#     documentos = TipoDocumento.objects.all()
-#     return render(request, 'documentos.html', {'documentos': documentos})
-#
-#
-# def create_documento(request):
-#     print(request.method)
-#     if request.method == 'POST':
-#
-#         form = FomularioDocumento(request.POST, request.FILES)
-#
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Documento creado correctamente.')
-#             return redirect('list_documentos')
-#
-#         messages.error(request, 'Error al crear asistencia.')
-#     else:
-#         form = FomularioDocumento()
-#
-#     return render(request, 'documentos-form.html', {'form': form})
-#
-#
-# def update_documento(request, id):
-#     try:
-#         documento = TipoDocumento.objects.get(id=id)
-#     except:
-#         return redirect('404')
-#     if request.method == 'POST':
-#         form = FomularioDocumento(request.POST, request.FILES, instance=documento)
-#
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Documento actualizado correctamente.')
-#             return redirect('list_documentos')
-#         messages.error(request, 'Error al modificar Documento.')
-#     else:
-#         form = FomularioDocumento(instance=documento)
-#
-#     return render(request, 'documentos-form.html', {'form': form, 'documentos': documento})
-#
-#
-# def delete_documento(request, id):
-#     try:
-#         documento = TipoDocumento.objects.get(id=id)
-#     except:
-#         return redirect('404')
-#
-#     if request.method == 'POST':
-#         documento.delete()
-#         messages.success(request, 'Documento eliminado correctamente.')
-#
-#     return redirect('list_documentos')
+# ---------------------VISTA FACTURA --------------------------------
 
-# ---------------------VISTA TIMBRADO --------------------------------
+from tienda.models import Factura
+
+
+def list_facturas(request):
+    facturas = Factura.objects.all()
+    return render(request, 'facturas.html', {'facturas': facturas})
+
+
+def create_factura(request):
+    print(request.method)
+    if request.method == 'POST':
+
+        form = FomularioFactura(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Factura creado correctamente.')
+            return redirect('list_facturas')
+
+        messages.error(request, 'Error al Factura.')
+    else:
+        form = FomularioFactura()
+
+    return render(request, 'facturas-form.html', {'form': form})
+
+
+def update_factura(request, id):
+    try:
+        factura = Factura.objects.get(id=id)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FomularioFactura(request.POST, request.FILES, instance=factura)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Factura actualizado correctamente.')
+            return redirect('list_facturas')
+        messages.error(request, 'Error al modificar Factura.')
+    else:
+        form = FomularioFactura(instance=factura)
+
+    return render(request, 'facturas-form.html', {'form': form, 'factura': factura})
+
+
+def delete_factura(request, id):
+    try:
+        factura = Factura.objects.get(id=id)
+    except:
+        return redirect('404')
+
+    if request.method == 'POST':
+        factura.delete()
+        messages.success(request, 'Factura eliminado correctamente.')
+
+    return redirect('list_facturas')
+
+
 
 # ---------------------VISTA CATEGORIA PRODUCTO --------------------------------
 def list_categoria_productos(request):

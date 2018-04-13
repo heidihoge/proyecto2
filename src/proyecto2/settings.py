@@ -169,4 +169,4 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_env","static_root")
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_env","media_root")
 
 DATE_INPUT_FORMATS = ['%d/%m/%Y']
-DATE_FORMAT = '%d/%m/%Y'
+DATE_FORMAT = 'd/m/Y'

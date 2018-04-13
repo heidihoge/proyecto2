@@ -1493,7 +1493,25 @@ function init_InputMask() {
 
     $(":input").inputmask();
 
+    configurarCalendario($("[data-inputmask]"));
+
 };
+
+function configurarCalendario(element) {
+    var config = {
+        singleDatePicker: true,
+        showDropdowns: true,
+        locale: {
+            format: 'DD/MM/YYYY',
+            daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre'],
+
+        }
+    };
+
+    element.daterangepicker(config);
+    element.inputmask();
+}
 
 /* COLOR PICKER */
 
@@ -1506,6 +1524,7 @@ function init_ColorPicker() {
 
     $('.demo1').colorpicker();
     $('.demo2').colorpicker();
+    $('#id_color').colorpicker();
 
     $('#demo_forceformat').colorpicker({
         format: 'rgba',

@@ -7,22 +7,23 @@ from django.forms import DateField
 
 
 from proyecto2 import settings
-from .models import Producto, CategoriaProducto
+from .models import Factura, Producto, CategoriaProducto
     # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
 
 
 
-#Formulario TipoDocumento
-#class FomularioDocumento(forms.ModelForm):
-#   class Meta:
-#        model = TipoDocumento
-#        fields = ['nombre','descripcion']
+#Formulario factura
+class FomularioFactura(forms.ModelForm):
+    class Meta:
+        model = Factura
+        fields = ['nombre','ruc','actividad_economica','direccion','telefono','numero_timbrado','punto_emision','nro_inicial','nro_final','vigencia_desde','vigencia_hasta','estado']
 
-# #Formulario Timbrado
-# class FomularioTimbrado(forms.ModelForm):
+
+# #Formulario CategoriaProducto
+# class FomularioCategoriaProducto(forms.ModelForm):
 #     class Meta:
-#         model = Timbrado
-#         fields = ['','','','','','','','','','']
+#         model = CategoriaProducto
+#         fields = ['', '', '', '', '', '', '', '', '', '']
 #
 # #Formulario CategoriaProducto
 class FomularioCategoriaProducto(forms.ModelForm):
