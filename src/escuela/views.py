@@ -240,7 +240,7 @@ def update_dia_hora(request, id):
             return redirect('list_dia_horas')
         messages.error(request, 'Error al modificar DIA Y HORA.')
     else:
-        form = FomularioGrupo(instance=dia_hora)
+        form = FomularioDiaHora(instance=dia_hora)
 
     return render(request, 'dia_horas.html', {'form': form, 'dia_horas': dia_hora})
 
@@ -253,7 +253,7 @@ def delete_dia_hora(request, id):
 
     if request.method == 'POST':
         dia_hora.delete()
-        messages.success(request, 'dia_horas eliminado correctamente.')
+        messages.success(request, 'Horario eliminado correctamente.')
 
     return redirect('list_dia_horas')
 

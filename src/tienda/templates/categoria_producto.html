@@ -3,13 +3,12 @@
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Lista de Asistencia</h3>
+            <h3>Lista de Categorias</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="escuela/asistencia/new"><i  class="fa fa-plus-square"></i> NUEVA ASISTENCIA</a>
-
+                    <a class="btn btn-primary pull-right" href="/tienda/categoria_productos/new"><i  class="fa fa-plus-square"></i> NUEVA CATEGORIA </a>
 
                 </div>
             </div>
@@ -32,26 +31,25 @@
 
                             <thead>
                             <tr>
-                                <th>id_alumno</th>
-                                <th>id_grupo</th>
-                                <th>fecha</th>
-                                <th>Acción</th>
+                                <th>Nombre</th>
+                                <th>Descripion</th>
+
                             </tr>
                             </thead>
                             <tbody>
 
-                            {% for asistencia in asistencias %}
+                            {% for categoriaproducto in tienda %}
                                 <tr>
-                                    <td>{{ asistencia.id_alumno }}</td>
-                                    <td>{{ asistencia.id_grupo }}</td>
-                                    <td>{{ asistencia.fecha }}</td>
-                                    <td><a class="btn btn-info btn-xs" href="/escuela/asistencia/{{ asistencia.id }}/update">Editar </a>
+                                    <td>{{ categoriaproducto.nombre }}</td>
+                                    <td>{{ categoriaproducto.descripcion }}</td>
+
+                                     <td><a class="btn btn-info btn-xs" href="/tienda/categoria_productos/{{ categoriaproducto.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ asistencia.id}})">Eliminar</a></td>
+                                           data-target="#eliminar-modal" onclick="formEliminar({{categoriaproducto.id}})">Eliminar</a></td>
                                 </tr>
                             {% endfor %}
 
-                            </tbody>
+                             </tbody>
                         </table>
 
 
@@ -73,7 +71,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar esta Asistencia?</h4>
+                    <h4>Esta seguro que desea eliminar este Producto?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -90,7 +88,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/escuela/asistencia/' + id_alumno + '/delete);
+            $('#eliminar-form').attr('action', '/tienda/categoria_productos/' + id + '/delete' );
         }
     </script>
 {% endblock %}>

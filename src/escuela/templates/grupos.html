@@ -3,12 +3,12 @@
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Lista de Grupos</h3>
+            <h3>Lista de Clases</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/grupos/new"><i  class="fa fa-plus-square"></i> NUEVO GRUPO</a>
+                    <a class="btn btn-primary pull-right" href="/escuela/grupos/new"><i  class="fa fa-plus-square"></i> NUEVO GRUPO </a>
 
                 </div>
             </div>
@@ -48,13 +48,13 @@
                                     <td>{{ grupo.id_profesor }}</td>
                                     <td>{{ grupo.cupo_maximo }}</td>
                                     <td>{{ grupo.costo }}</td>
-                                    <td><a class="btn btn-info btn-xs" href="/grupos/{{ grupo.id }}">Editar </a>
+                                    <td><a class="btn btn-info btn-xs" href="/escuela/grupos/{{ grupo.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ grupo.id }})">Eliminar</a></td>
+                                           data-target="#eliminar-modal" onclick="formEliminar({{grupo.id}})">Eliminar</a></td>
                                 </tr>
                             {% endfor %}
 
-                            </tbody>
+                             </tbody>
                         </table>
 
 
@@ -76,7 +76,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar este grupo?</h4>
+                    <h4>Esta seguro que desea eliminar esta Clase?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -93,7 +93,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/grupos/delete/' + id);
+            $('#eliminar-form').attr('action', '/escuela/grupos/' + id + '/delete' );
         }
     </script>
 {% endblock %}>

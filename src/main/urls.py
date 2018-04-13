@@ -52,8 +52,8 @@ urlpatterns = [
 
     path('cuentas', list_cuentas, name='list_cuentas'),
     path('cuentas/new', create_cuenta, name='create_cuenta'),
-    path('cuentas/<int:id>/', update_cuenta, name='update_cuenta'),
-    path('cuentas/delete/<int:id>', delete_cuenta, name='delete_cuenta'),
+    path('cuentas/<int:id>/update', update_cuenta, name='update_cuenta'),
+    path('cuentas/<int:id>/delete', delete_cuenta, name='delete_cuenta'),
 
   
 

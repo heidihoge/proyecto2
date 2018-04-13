@@ -7,16 +7,16 @@ from django.forms import DateField
 
 
 from proyecto2 import settings
-from .models import TipoDocumento\
+from .models import Producto, CategoriaProducto
     # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
 
 
 
 #Formulario TipoDocumento
-class FomularioDocumento(forms.ModelForm):
-    class Meta:
-        model = TipoDocumento
-        fields = ['nombre','descripcion']
+#class FomularioDocumento(forms.ModelForm):
+#   class Meta:
+#        model = TipoDocumento
+#        fields = ['nombre','descripcion']
 
 # #Formulario Timbrado
 # class FomularioTimbrado(forms.ModelForm):
@@ -25,17 +25,17 @@ class FomularioDocumento(forms.ModelForm):
 #         fields = ['','','','','','','','','','']
 #
 # #Formulario CategoriaProducto
-# class FomularioCategoriaProducto(forms.ModelForm):
-#     class Meta:
-#         model = CategoriaProducto
-#         fields = ['', '', '', '', '', '', '', '', '', '']
+class FomularioCategoriaProducto(forms.ModelForm):
+     class Meta:
+         model = CategoriaProducto
+         fields = ['nombre', 'descripcion']
 #
 # #Formulario Producto
-# class FomularioProducto(forms.ModelForm):
-#     class Meta:
-#         model = Producto
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
+class FomularioProducto(forms.ModelForm):
+     class Meta:
+         model = Producto
+         fields = ['nombre', 'descripcion', 'categoria', 'precio', 'descuento', 'iva', 'estado']
+
 # #Formulario Existencia
 # class FormularioExistencia(forms.ModelForm):
 #     class Meta:

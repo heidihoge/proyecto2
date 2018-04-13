@@ -40,7 +40,6 @@
                             <th>Sexo</th>
                             <th>Dirección</th>
                             <th>Teléfono1</th>
-                            <th>Teléfono2</th>
                             <th>Fotocopia Cedula</th>
                             <th>salario</th>
                             <th>especialidad</th>
@@ -58,16 +57,14 @@
                                     <td>{{ profesor.sexo }}</td>
                                     <td>{{ profesor.direccion }}</td>
                                     <td>{{ profesor.telefono1 }}</td>
-                                    <td>{{ profesor.telefono2 }}</td>
-                                    <td>{{ profesor.fotocopia_cedula }}</td>
-                                    <td>{{ profesor.especialidad }}</td>
-                                    <td>{{ profesor.salario}}</td>
-                                    
                                     <td>{% if profesor.fotocopia_cedula %}
                                         <img height="100px" src="/media/{{ profesor.fotocopia_cedula }}">{% else %}sin
                                         fotocopia{% endif %}</td>
-                                    <td>{% if profesor.fotocopia_cedula %}<a href="/media/{{ profesor.fotocopia_cedula }}">fotocopia</a>{% else %}(sin fotocopia){% endif %}</td>
-                                    <td><a class="btn btn-info btn-xs" href="/profesores/{{ profesor.id }}">Editar </a>
+                                    <td>{{ profesor.salario}}</td>
+                                    <td>{{ profesor.especialidad }}</td>
+
+
+                                    <td><a class="btn btn-info btn-xs" href="/profesores/{{ profesor.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                            data-target="#eliminar-modal" onclick="formEliminar({{ profesor.id }})">Eliminar</a></td>
                                 </tr>

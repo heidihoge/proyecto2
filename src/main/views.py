@@ -333,7 +333,7 @@ def update_empleado(request, id):
             return redirect('list_empleados')
         messages.error(request, 'Error al modificar Empleado.')
     else:
-        form = Empleado(instance=empleado)
+        form = EmpleadoForm(instance=empleado)
 
     return render(request, 'main/empleados-form.html', {'form': form, 'empleado': empleado})
 
@@ -401,7 +401,7 @@ def update_profesor(request, id):
             return redirect('list_profesores')
         messages.error(request, 'Error al modificar Profesor.')
     else:
-        form = Profesor(instance=profesor)
+        form = ProfesorForm(instance=profesor)
 
     return render(request, 'main/profesores-form.html', {'form': form, 'profesor': profesor})
 
@@ -464,7 +464,7 @@ def update_cuenta(request, id):
             return redirect('list_cuentas')
         messages.error(request, 'Error al modificar Cuenta.')
     else:
-        form = Profesor(instance=cuenta)
+        form = ProfesorForm(instance=cuenta)
 
     return render(request, 'main/cuentas-form.html', {'form': form, 'cuenta': cuenta})
 

@@ -8,7 +8,7 @@
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/inscripciones/new"><i  class="fa fa-plus-square"></i> NUEVA INSCRIPCION</a>
+                    <a class="btn btn-primary pull-right" href="/escuela/inscripciones/new"><i  class="fa fa-plus-square"></i> NUEVA INSCRIPCION</a>
 
                 </div>
             </div>
@@ -47,7 +47,7 @@
                                     <td>{{ inscripcion.fecha_inicio }}</td>
                                     <td>{{ inscripcion.fecha_fin }}</td>
 
-                                    <td><a class="btn btn-info btn-xs" href="/inscripciones/{{ inscripcion.id }}">Editar </a>
+                                    <td><a class="btn btn-info btn-xs" href="/escuela/inscripciones/{{ inscripcion.id }}">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                            data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Eliminar</a></td>
                                 </tr>
@@ -92,7 +92,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/inscripciones/delete/' + id);
+            $('#eliminar-form').attr('action', 'escuela/inscripciones/' + id + '/delete);
         }
     </script>
 {% endblock %}>

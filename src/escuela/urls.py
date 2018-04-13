@@ -62,4 +62,5 @@ urlpatterns = [
     path('inscripciones/<int:id>/delete', delete_inscripcion, name='delete_inscripcion'),
 
 
+
 ]

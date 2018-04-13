@@ -1,14 +1,14 @@
-{% extends "base.html" %}
+{{% extends "base.html" %}
 {% block content %}
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Lista de dias horas</h3>
+            <h3>Lista de Horarios</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/horario/new"><i  class="fa fa-plus-square"></i> NUEVO DIA-HORA</a>
+                    <a class="btn btn-primary pull-right" href="/escuela/horario/new"><i  class="fa fa-plus-square"></i> NUEVO HORARIO </a>
 
                 </div>
             </div>
@@ -31,26 +31,26 @@
 
                             <thead>
                             <tr>
-                                <th>id_grupo</th>
-                                <th>dia</th>
-                                <th>hora</th>
+                                <th>Id_grupo</th>
+                                <th>Dia</th>
+                                <th>Hora</th>
                                 <th>Acción</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            {% for dia in dia_horas %}
+                            {% for diahora in escuela %}
                                 <tr>
-                                    <td>{{ dia.id_grupo }}</td>
-                                    <td>{{ dia.dia }}</td>
-                                    <td>{{ dia.hora }}</td>
-                                    <td><a class="btn btn-info btn-xs" href="/dias_horas/{{ dia_horas.id }}">Editar </a>
+                                    <td>{{ diahora.id }}</td>
+                                    <td>{{ diahora.dia }}</td>
+                                    <td>{{ diahora.hora }}</td>
+                                   <td><a class="btn btn-info btn-xs" href="/escuela/horario/{{ diahora.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ dia_horas.id }})">Eliminar</a></td>
+                                           data-target="#eliminar-modal" onclick="formEliminar({{diahora.id}})">Eliminar</a></td>
                                 </tr>
                             {% endfor %}
 
-                            </tbody>
+                             </tbody>
                         </table>
 
 
@@ -72,7 +72,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar este Dia Hora?</h4>
+                    <h4>Esta seguro que desea eliminar esta Clase?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -89,7 +89,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/dias_horas/delete/' + id);
+            $('#eliminar-form').attr('action', '/escuela/horario/' + id + '/delete' );
         }
     </script>
 {% endblock %}>

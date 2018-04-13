@@ -4,6 +4,7 @@ from django.urls import path, include
 # from .views import list_documentos, create_documento, delete_documento, update_documento
 from tienda import views
 from main import views
+from tienda.views import list_productos, create_producto, update_producto, delete_producto, list_categoria_productos, create_categoria_producto, update_categoria_producto, delete_categoria_producto
 
 urlpatterns = [
     # # Autocomplete
@@ -15,4 +16,18 @@ urlpatterns = [
     path('accounts/profile/', views.redirect_to_index),
     path('accounts/logout/', LogoutView.as_view(next_page='login', template_name='registration/logged_out.html')),
     path('accounts/', include('django.contrib.auth.urls')),
+
+
+    path('productos', list_productos, name='list_productos'),
+    path('productos/new', create_producto, name='create_producto'),
+    path('productos/<int:id>/update', update_producto, name='update_producto'),
+    path('productos/<int:id>/delete', delete_producto, name='delete_producto'),
+
+    path('categoria_productos', list_categoria_productos, name='list_categoria_productos'),
+    path('categoria_productos/new', create_categoria_producto, name='create_categoria_producto'),
+    path('categoria_productos/<int:id>/update', update_categoria_producto, name='update_categoria_producto'),
+    path('categoria_productos/<int:id>/delete', delete_categoria_producto, name='delete_categoria_producto'),
+
      ]
+
+
