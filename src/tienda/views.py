@@ -74,6 +74,8 @@ def list_categoria_productos(request):
     return render(request, 'categoria_producto.html', {'categoria_producto': categoria_producto})
 
 
+
+
 def create_categoria_producto(request):
     print(request.method)
     if request.method == 'POST':
@@ -98,7 +100,7 @@ def update_categoria_producto(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioProducto(request.POST, request.FILES, instance=categoria_producto)
+        form = FomularioCategoriaProducto(request.POST, request.FILES, instance=categoria_producto)
 
         if form.is_valid():
             form.save()
@@ -108,7 +110,7 @@ def update_categoria_producto(request, id):
     else:
         form = FomularioCategoriaProducto(instance=categoria_producto)
 
-    return render(request, 'categoria_producto.html', {'form': form, 'categoria_producto': categoria_producto})
+    return render(request, 'categoria_producto-form.html', {'form': form, 'categoria_producto': categoria_producto})
 
 
 def delete_categoria_producto(request, id):
@@ -125,12 +127,12 @@ def delete_categoria_producto(request, id):
 
 # ---------------------VISTA PRODUCTO --------------------------------
 def list_productos(request):
-    producto = Producto.objects.all()
-    return render(request, 'producto.html', {'producto': producto})
+    productos = Producto.objects.all()
+    return render(request, 'producto.html', {'productos': productos})
 
 
 def create_producto(request):
-    print(request.method)
+
     if request.method == 'POST':
 
         form = FomularioProducto(request.POST, request.FILES)
@@ -144,12 +146,13 @@ def create_producto(request):
     else:
         form = FomularioProducto()
 
+
     return render(request, 'producto-form.html', {'form': form})
 
 
-def update_producto(request, id):
+def update_producto(request, codigo):
     try:
-        producto = Producto.objects.get(id=id)
+        producto = Producto.objects.get(codigo=codigo)
     except:
         return redirect('404')
     if request.method == 'POST':
@@ -160,15 +163,16 @@ def update_producto(request, id):
             messages.success(request, 'Producto se ha actualizado correctamente.')
             return redirect('list_productos')
         messages.error(request, 'Error al modificar Producto.')
+        print(form.errors)
     else:
         form = FomularioProducto(instance=producto)
 
-    return render(request, 'producto.html', {'form': form, 'producto': producto})
+    return render(request, 'producto-form.html', {'form': form, 'producto': producto})
 
 
-def delete_producto(request, id):
+def delete_producto(request, codigo):
     try:
-        producto = Producto.objects.get(id=id)
+        producto = Producto.objects.get(codigo=codigo)
     except:
         return redirect('404')
 

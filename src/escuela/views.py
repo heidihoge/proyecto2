@@ -437,7 +437,7 @@ def create_inscripcion(request):
     form_inscripcion = FomularioInscripcion()
     form_titular = TitularForm()
     form_alumno = AlumnoForm()
-    del form_alumno.fields['titular_cuenta']
+    # del form_alumno.fields['titular_cuenta']
 
     return render(request, 'inscripciones-form.html', {
         'formInscripcion': form_inscripcion,

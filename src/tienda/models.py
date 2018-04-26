@@ -31,32 +31,31 @@ class CategoriaProducto(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=150)
 
-
+    def __str__(self):
+        return  self.nombre
 # producto
 
 class Producto(models.Model):
+    from decimal import Decimal
+    codigo = models.CharField(max_length=8, unique=True)
     nombre = models.CharField(max_length=50)
+    foto_producto = models.ImageField(upload_to='media_root', verbose_name='Foto producto', null=True,blank=True)
     descripcion = models.CharField(max_length=150)
     categoria = models.ForeignKey(CategoriaProducto, on_delete=models.SET_NULL,null=True)
-    precio = models.IntegerField(default=0)
-    descuento= models.DecimalField(max_digits=3, decimal_places=2, default=0)
-    IVA = ((0.05,'5%'),
-           (0.10,'10%'),
-           (0,'E'))
+    precio_venta = models.IntegerField(default=0)
+    costo = models.IntegerField(default=0)
+    IVA = ((Decimal("0.05"),'5%'),
+           (Decimal("0.10"),'10%'),
+           (Decimal("0.0"),'Exentas'))
     iva = models.DecimalField(choices=IVA,max_digits=3, decimal_places=2)
     ESTADO = (('A', 'ACTIVO'),
            ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=1, choices=ESTADO)
+    existencia = models.IntegerField(default=0)
 
     def __str__(self):
         return  self.nombre
 
-
-# stock_productos
-
-class Existencia(models.Model):
-    id_producto = models.ForeignKey(CategoriaProducto, on_delete=models.CASCADE,null=True)
-    existencia_actual = models.IntegerField(default=0)
 
 
 # compras

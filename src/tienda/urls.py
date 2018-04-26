@@ -21,8 +21,8 @@ urlpatterns = [
 
     path('productos', list_productos, name='list_productos'),
     path('productos/new', create_producto, name='create_producto'),
-    path('productos/<int:id>/update', update_producto, name='update_producto'),
-    path('productos/<int:id>/delete', delete_producto, name='delete_producto'),
+    path('productos/<str:codigo>/update', update_producto, name='update_producto'),
+    path('productos/<str:codigo>/delete', delete_producto, name='delete_producto'),
 
     path('categoria_productos', list_categoria_productos, name='list_categoria_productos'),
     path('categoria_productos/new', create_categoria_producto, name='create_categoria_producto'),

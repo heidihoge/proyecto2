@@ -1,4 +1,4 @@
-% extends "base.html" %}
+{% extends "base.html" %}
 {% block content %}
 
     <div class="page-title">
@@ -32,31 +32,43 @@
 
                             <thead>
                             <tr>
-                                <th>Id_Producto</th>
-                                <th>Categoria_Id</th>
-                                <th>Nombre</th>
-                                <th>Descripion</th>
-                                <th>Precio</th>
-                                <th>Descuento</th>
-                                <th>IVA</th>
-                                <th>Estado</th>
+
+                                <th>codigo</th>
+                                <th>nombre</th>
+                                <th>descripcion</th>
+                                <th>categoria</th>
+                                <th>precio_venta</th>
+                                <th>costo</th>
+                                <th>iva</th>
+                                <th>estado</th>
+                                <th>existencia</th>
+                                <th>foto_producto</th>
+
+                                <th>Accion</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            {% for producto in tienda %}
+                            {% for producto in productos %}
                                 <tr>
-                                    <td>{{ producto.id }}</td>
-                                    <td>{{ producto.categoria_id }}</td>
-                                    <td>{{ producto.nombre }}</td>
-                                    <td>{{ producto.descripcion }}</td>
-                                    <td>{{ producto.precio }}</td>
-                                    <td>{{ producto.descuento }}</td>
+                                    <td>{{ producto.codigo }}</td>
+                                    <td>{{ producto.nombre}}</td>
+                                    <td>{{ producto.descripcion}}</td>
+                                    <td>{{ producto.categoria }}</td>
+                                    <td>{{ producto.precio_venta }}</td>
+                                    <td>{{ producto.costo }}</td>
                                     <td>{{ producto.iva }}</td>
                                     <td>{{ producto.estado }}</td>
-                                    <td><a class="btn btn-info btn-xs" href="/tienda/productos{{ producto.id }}/update">Editar </a>
+                                    <td>{{ producto.existencia}}</td>
+                                    <td>{% if producto.foto_producto %}
+                                        <img height="100px" src="/media/{{ producto.foto_producto }}">{% else %}sin
+                                        foto{% endif %}</td>
+
+
+
+                                    <td><a class="btn btn-info btn-xs" href="/tienda/productos/{{ producto.codigo }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ producto.id}})">Eliminar</a></td>
+                                           data-target="#eliminar-modal" onclick="formEliminar('{{ producto.codigo }}')">Eliminar</a></td>
                                 </tr>
                             {% endfor %}
 
@@ -98,8 +110,11 @@
         </div>
     </div>
     <script>
-        function formEliminar(id){
-            $('#eliminar-form').attr('action', '/tienda/producto' + id + '/delete);
+        function formEliminar(codigo){
+            console.log(codigo);
+            $('#eliminar-form').attr('action', '/tienda/productos/' + codigo + '/delete');
+            console.log(codigo);
+            console.log($('#eliminar-form').attr('action'));
         }
     </script>
 {% endblock %}>

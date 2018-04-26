@@ -1,6 +1,5 @@
-
 <input type="number" id="{{ field.id_for_label }}" required="required" name="{{ field.html_name }}"
-       {% if field.value %}value="{{ field.value }}"{% endif %} class="form-control col-md-7 col-xs-12">
+       value="{{ field.value|default:0 }}" class="form-control col-md-7 col-xs-12" {% if field.field.disabled %}disabled{% endif %}>
 {% if field.errors %}
     <ul class="parsley-errors-list" id="parsley-id-5">
         {% for error in field.errors %}

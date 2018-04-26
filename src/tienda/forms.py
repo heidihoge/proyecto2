@@ -4,19 +4,19 @@ from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.db.models import ManyToOneRel
 from django.forms import DateField
 
-
-
 from proyecto2 import settings
 from .models import Factura, Producto, CategoriaProducto
-    # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
 
 
+# ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
 
-#Formulario factura
+
+# Formulario factura
 class FomularioFactura(forms.ModelForm):
     class Meta:
         model = Factura
-        fields = ['nombre','ruc','actividad_economica','direccion','telefono','numero_timbrado','punto_emision','nro_inicial','nro_final','vigencia_desde','vigencia_hasta','estado']
+        fields = ['nombre', 'ruc', 'actividad_economica', 'direccion', 'telefono', 'numero_timbrado', 'punto_emision',
+                  'nro_inicial', 'nro_final', 'vigencia_desde', 'vigencia_hasta', 'estado']
 
 
 # #Formulario CategoriaProducto
@@ -27,15 +27,28 @@ class FomularioFactura(forms.ModelForm):
 #
 # #Formulario CategoriaProducto
 class FomularioCategoriaProducto(forms.ModelForm):
-     class Meta:
-         model = CategoriaProducto
-         fields = ['nombre', 'descripcion']
+    class Meta:
+        model = CategoriaProducto
+        fields = ['nombre', 'descripcion']
+
+
 #
 # #Formulario Producto
 class FomularioProducto(forms.ModelForm):
-     class Meta:
-         model = Producto
-         fields = ['nombre', 'descripcion', 'categoria', 'precio', 'descuento', 'iva', 'estado']
+    existencia = forms.IntegerField(disabled=True, initial=0)
+    iva = forms.ChoiceField(
+        choices=Producto.IVA,
+        widget=forms.RadioSelect(choices=Producto.IVA)
+    )
+    estado = forms.ChoiceField(
+        choices=Producto.ESTADO,
+        widget=forms.RadioSelect(choices=Producto.ESTADO)
+    )
+    class Meta:
+        model = Producto
+        fields = ['codigo', 'nombre', 'foto_producto', 'descripcion', 'categoria', 'precio_venta', 'costo',
+                  'iva', 'estado', 'existencia']
+
 
 # #Formulario Existencia
 # class FormularioExistencia(forms.ModelForm):
