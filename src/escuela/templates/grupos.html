@@ -31,8 +31,8 @@
 
                             <thead>
                             <tr>
+
                                 <th>id_clase</th>
-                                <th>descripcion</th>
                                 <th>id_profesor</th>
                                 <th>cupo_maximo</th>
                                 <th>costo</th>
@@ -44,7 +44,6 @@
                             {% for grupo in grupos %}
                                 <tr>
                                     <td>{{ grupo.id_clase }}</td>
-                                    <td>{{ grupo.descripcion }}</td>
                                     <td>{{ grupo.id_profesor }}</td>
                                     <td>{{ grupo.cupo_maximo }}</td>
                                     <td>{{ grupo.costo }}</td>

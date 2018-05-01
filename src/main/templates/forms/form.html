@@ -18,6 +18,8 @@
             {{ field }}
         {% elif field|field_type == 'ChoiceField' %}
             {{ field }}
+        {% elif field|field_type == 'MultipleChoiceField' %}
+            {{ field }}
         {% elif field|field_type == 'RadioSelect' %}
             {{ field }}
         {% else %}

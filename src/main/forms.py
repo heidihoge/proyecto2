@@ -14,6 +14,9 @@ class CustomModelChoiceField(forms.ModelChoiceField):
 #Formulario Persona
 class PersonaForm(forms.ModelForm):
     fecha_nacimiento = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    direccion = forms.CharField(label='Dirección')
+    telefono1 = forms.CharField(label='Teléfono')
+    telefono2 = forms.CharField(label='Otro contacto')
     cedula = CustomModelChoiceField(
         queryset=Persona.objects.all(),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'})
@@ -30,6 +33,9 @@ class PersonaForm(forms.ModelForm):
 #Formulario Titular
 
 class TitularForm(forms.ModelForm):
+    direccion = forms.CharField(label='Dirección')
+    telefono1 = forms.CharField(label='Teléfono')
+    telefono2 = forms.CharField(label='Otro contacto')
     cedula = CustomModelChoiceField(
         queryset=Persona.objects.all(),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'}),
@@ -45,11 +51,17 @@ class TitularForm(forms.ModelForm):
         model = Titular
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable','estado']
 
-
+    estado = forms.ChoiceField(
+        choices= Titular.ESTADO,
+        widget=forms.RadioSelect(choices=Titular.ESTADO)
+    )
 
 #Formulario Alumno
 class AlumnoForm(forms.ModelForm):
     fecha_nacimiento = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    direccion = forms.CharField(label='Dirección')
+    telefono1 = forms.CharField(label='Teléfono')
+    telefono2 = forms.CharField(label='Otro contacto')
     cedula = CustomModelChoiceField(
         queryset=Persona.objects.all(),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'})
@@ -62,25 +74,42 @@ class AlumnoForm(forms.ModelForm):
         model = Alumno
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','imagen','ficha','ficha_inscripcion','estado']
 
-
+    estado = forms.ChoiceField(
+        choices=Alumno.ESTADO,
+        widget=forms.RadioSelect(choices=Alumno.ESTADO)
+    )
 
 #Formulario Empleado
 class EmpleadoForm(forms.ModelForm):
     fecha_nacimiento = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    direccion = forms.CharField(label='Dirección')
+    telefono1 = forms.CharField(label='Teléfono')
+    telefono2 = forms.CharField(label='Otro contacto')
 
     class Meta:
         model = Empleado
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','salario']
 
 
+
+
 #Formulario Profesor
 class ProfesorForm(forms.ModelForm):
     fecha_nacimiento = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    direccion = forms.CharField(label='Dirección')
+    telefono1 = forms.CharField(label='Teléfono')
+    telefono2 = forms.CharField(label='Otro contacto')
+
+
 
     class Meta:
         model = Profesor
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','salario','especialidad']
 
+    sexo = forms.ChoiceField(
+        choices=Persona.SEXO,
+        widget=forms.RadioSelect(choices=Persona.SEXO)
+    )
 
 #Formulario Cuenta
 class CuentaForm(forms.ModelForm):

@@ -37,6 +37,12 @@ class FomularioDiaHora(forms.ModelForm):
         model = DiaHora
         fields = ['id_grupo', 'dia', 'hora']
 
+    dia = forms.MultipleChoiceField(
+        choices=DiaHora.DIA,
+        widget=forms.CheckboxSelectMultiple(choices=DiaHora.DIA, attrs={'class':'flat'})
+    )
+
+
 #Formulario Etiqueta
 class FomularioEtiqueta(forms.ModelForm):
     color = forms.CharField(widget=forms.TextInput(attrs={'class':'with-colorpicker'}))

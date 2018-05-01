@@ -4247,3 +4247,8 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 .stepContainer {
     height: 100% !important;
 }
+
+
+ul.flat li {
+    display: unset;
+}

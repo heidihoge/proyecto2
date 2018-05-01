@@ -26,7 +26,7 @@ class Grupo(models.Model):
     costo = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.id_clase.nombre
+        return self.id_clase.nombre +' - Profe: '+ self.id_profesor.nombre +','+ self.id_profesor.apellido
 
 
 # dia_hora
