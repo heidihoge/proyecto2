@@ -6,7 +6,7 @@ from .views import list_asistencias, list_clases, list_dia_horas, list_etiquetas
     create_asistencia, create_clase, \
     create_dia_hora, create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
     delete_asistencia, delete_clase, delete_dia_hora, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
-    delete_grupo, delete_inscripcion, ClaseAutocomplete
+    delete_grupo, delete_inscripcion, ClaseAutocomplete, GrupoAutocomplete
 
 from main import views
 
@@ -55,6 +55,9 @@ urlpatterns = [
     path('grupos/new', create_grupo, name='create_grupo'),
     path('grupos/<int:id>/update', update_grupo, name='update_grupo'),
     path('grupos/<int:id>/delete', delete_grupo, name='delete_grupo'),
+
+    path('grupo-autocomplete/', GrupoAutocomplete.as_view(), name='grupo-autocomplete'),
+
 
     path('inscripciones', list_inscripciones, name='list_inscripciones'),
     path('inscripciones/new', create_inscripcion, name='create_inscripcion'),

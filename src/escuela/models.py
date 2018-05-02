@@ -32,19 +32,21 @@ class Grupo(models.Model):
 # dia_hora
 
 class DiaHora(models.Model):
-    DIA = (('L', 'Lunes'),
-           ('M', 'Martes'),
-           ('X', 'Miercoles'),
-           ('J', 'Jueves'),
-           ('V', 'Viernes')
-           )
 
-    id_grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
-    dia = models.CharField(max_length=1, choices=DIA)
-    hora = models.TimeField()
+    lunes = models.BooleanField(default=False, null=False, blank=True)
+    martes = models.BooleanField(default=False, null=False, blank=True)
+    miercoles = models.BooleanField(default=False, null=False, blank=True)
+    jueves = models.BooleanField(default=False, null=False, blank=True)
+    viernes = models.BooleanField(default=False, null=False, blank=True)
+    sabado = models.BooleanField(default=False, null=False, blank=True)
+    domingo = models.BooleanField(default=False, null=False, blank=True)
+
+    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True)
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
 
     def __str__(self):
-        return self.id_grupo
+        return str(self.grupo_id)
 
 # etiqueta
 
@@ -68,29 +70,29 @@ class EtiquetaClase(models.Model):
 # etiqueta_grupo
 
 class EtiquetaGrupo(models.Model):
-    id_grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
     etiqueta = models.ForeignKey(Etiqueta, on_delete=models.SET_NULL,null=True)
 
     def __str__(self):
-        return self.id_grupo
+        return self.grupo
 
 # inscripcion
 
 class Inscripcion(models.Model):
-    id_grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
     id_alumno = models.ForeignKey(Alumno,on_delete=models.SET_NULL,null=True)
     fecha_inicio = models.DateField(default=datetime.date.today)
     fecha_fin = models.DateField(default=datetime.date.today)
 
     def __str__(self):
-        return self.id_grupo
+        return self.grupo
 
 # asistencia
 
 class Asistencia(models.Model):
     id_alumno = models.ForeignKey(Alumno, on_delete=models.SET_NULL,null=True)
-    id_grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
     fecha = models.DateField(default=datetime.date.today)
 
     def __str__(self):
-        return self.id_grupo
+        return self.grupo

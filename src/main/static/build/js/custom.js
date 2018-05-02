@@ -205,10 +205,14 @@ $(document).ready(function() {
 
 // iCheck
 $(document).ready(function() {
-    if ($("input.flat")[0]) {
+    if ($("input.flat,input.flat-only")[0]) {
         $(document).ready(function() {
             $('input.flat').iCheck({
                 checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+            $('input.flat-only').iCheck({
+                checkboxClass: 'icheckbox_flat-green icheckbox_flat-only',
                 radioClass: 'iradio_flat-green'
             });
         });
@@ -2450,6 +2454,22 @@ function init_compose() {
     });
 
 };
+
+/* Clockpicker */
+
+function init_clockpicker() {
+    if (typeof($.fn.clockpicker) === 'undefined') {
+        return;
+    }
+    console.log('init_clockpicker');
+
+    $('input.clock').clockpicker({
+        placement: 'bottom',
+        align: 'left',
+        autoclose: true,
+        'default': 'now'
+    });
+}
 
 /* CALENDAR */
 
@@ -5144,5 +5164,5 @@ $(document).ready(function() {
     init_CustomNotification();
     init_autosize();
     init_autocomplete();
-
+    init_clockpicker();
 });

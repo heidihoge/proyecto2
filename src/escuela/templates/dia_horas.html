@@ -1,4 +1,5 @@
 {{% extends "base.html" %}
+{% load dias  %}
 {% block content %}
 
     <div class="page-title">
@@ -31,19 +32,19 @@
 
                             <thead>
                             <tr>
-                                <th>Id_grupo</th>
-                                <th>Dia</th>
+                                <th>Grupo</th>
+                                <th>Dias</th>
                                 <th>Hora</th>
                                 <th>Acción</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            {% for diahora in escuela %}
+                            {% for diahora in dia_horas %}
                                 <tr>
-                                    <td>{{ diahora.id }}</td>
-                                    <td>{{ diahora.dia }}</td>
-                                    <td>{{ diahora.hora }}</td>
+                                    <td>{{ diahora.grupo }}</td>
+                                    <td>{{ diahora|dias }}</td>
+                                    <td>{{ diahora.hora_inicio }} - {{ diahora.hora_fin }}</td>
                                    <td><a class="btn btn-info btn-xs" href="/escuela/horario/{{ diahora.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                            data-target="#eliminar-modal" onclick="formEliminar({{diahora.id}})">Eliminar</a></td>

@@ -5,6 +5,7 @@ from django.db.models import ManyToOneRel
 from django.forms import DateField
 
 from escuela import admin
+from main.forms import CustomModelChoiceField
 from main.models import Profesor
 from proyecto2 import settings
 from .models import Clase, Grupo, DiaHora, Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscripcion,Asistencia
@@ -33,14 +34,57 @@ class FomularioGrupo(forms.ModelForm):
 
 #Formulario DiaHora
 class FomularioDiaHora(forms.ModelForm):
+    grupo_id = CustomModelChoiceField(
+        queryset=Grupo.objects.all(),
+        widget=autocomplete.ModelSelect2(url='grupo-autocomplete', attrs={'data-language': 'es'})
+    )
+    hora_inicio = forms.Field(
+        widget=forms.TextInput(attrs={'class': 'clock form-control'})
+    )
+    hora_fin = forms.Field(
+        widget=forms.TextInput(attrs={'class': 'clock form-control'})
+    )
+    lunes = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+    martes = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+    miercoles = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+    jueves = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+    viernes = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+    sabado = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+    domingo = forms.Field(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
+    )
+
+
+
     class Meta:
         model = DiaHora
-        fields = ['id_grupo', 'dia', 'hora']
-
-    dia = forms.MultipleChoiceField(
-        choices=DiaHora.DIA,
-        widget=forms.CheckboxSelectMultiple(choices=DiaHora.DIA, attrs={'class':'flat'})
-    )
+        fields = ['grupo_id', 'hora_inicio', 'hora_fin', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
 
 
 #Formulario Etiqueta
@@ -61,17 +105,17 @@ class FomularioEtiquetaClase(forms.ModelForm):
 class FomularioEtiquetaGrupo(forms.ModelForm):
     class Meta:
         model = EtiquetaGrupo
-        fields = ['id_grupo', 'etiqueta']
+        fields = ["grupo", 'etiqueta']
 
 #Formulario Inscripcion
 class FomularioInscripcion(forms.ModelForm):
     class Meta:
         model = Inscripcion
-        fields = ['id_grupo', 'id_alumno','fecha_inicio','fecha_fin']
+        fields = ["grupo", 'id_alumno', 'fecha_inicio', 'fecha_fin']
 
 #Formulario Asistencia
 class FomularioAsistencia(forms.ModelForm):
     class Meta:
         model = Asistencia
-        fields = ['id_alumno','id_grupo', 'fecha']
+        fields = ['id_alumno', "grupo", 'fecha']
 

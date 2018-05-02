@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from dal import autocomplete
 from django import forms
+from django.db.models import Q
 from django.shortcuts import render
 
 from main.forms import TitularForm, AlumnoForm
@@ -215,6 +216,10 @@ def create_dia_hora(request):
         form = FomularioDiaHora(request.POST, request.FILES)
 
         if form.is_valid():
+
+            grupo_id = request.POST['grupo_id']
+            grupo = Grupo.objects.get(id=int(grupo_id))
+            form.instance.grupo = grupo
             form.save()
             messages.success(request, 'Dia_hora creada correctamente.')
             return redirect('list_dia_horas')
@@ -235,14 +240,19 @@ def update_dia_hora(request, id):
         form = FomularioDiaHora(request.POST, request.FILES, instance=dia_hora)
 
         if form.is_valid():
+
+            grupo_id = request.POST['grupo_id']
+            grupo = Grupo.objects.get(id=int(grupo_id))
+            form.instance.grupo = grupo
+
             form.save()
             messages.success(request, 'DIA Y HORA actualizado correctamente.')
             return redirect('list_dia_horas')
         messages.error(request, 'Error al modificar DIA Y HORA.')
     else:
-        form = FomularioDiaHora(instance=dia_hora)
+        form = FomularioDiaHora(instance=dia_hora, initial={'grupo_id': dia_hora.grupo_id})
 
-    return render(request, 'dia_horas.html', {'form': form, 'dia_horas': dia_hora})
+    return render(request, 'dia_horas-form.html', {'form': form, 'dia_horas': dia_hora})
 
 
 def delete_dia_hora(request, id):
@@ -533,3 +543,18 @@ def delete_asistencia(request, id):
         messages.success(request, 'Asistencia eliminada correctamente.')
 
     return redirect('list_asistencias')
+
+
+class GrupoAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Grupo.objects.none()
+
+        qs = Grupo.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(id_clase__nombre__istartswith=self.q) | Q(id_profesor__nombre__istartswith=self.q) \
+                           | Q(id_profesor__apellido__istartswith=self.q))
+
+        return qs
