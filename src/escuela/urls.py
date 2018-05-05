@@ -1,11 +1,11 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
-from .views import list_asistencias, list_clases, list_dia_horas, list_etiquetas, list_etiquetas_clase, \
-    list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase, update_dia_hora, \
+from .views import list_asistencias, list_clases, list_etiquetas, list_etiquetas_clase, \
+    list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase,  \
     update_etiqueta, update_etiquetas_clase, update_etiquetas_grupo, update_grupo, update_inscripcion, \
     create_asistencia, create_clase, \
-    create_dia_hora, create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
-    delete_asistencia, delete_clase, delete_dia_hora, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
+   create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
+    delete_asistencia, delete_clase,  delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
     delete_grupo, delete_inscripcion, ClaseAutocomplete, GrupoAutocomplete
 
 from main import views
@@ -31,10 +31,10 @@ urlpatterns = [
     path('clases/<int:id>/update', update_clase, name='update_clase'),
     path('clases/<int:id>/delete', delete_clase, name='delete_clase'),
 
-    path('horario', list_dia_horas, name='list_dia_horas'),
-    path('horario/new', create_dia_hora, name='create_dia_hora'),
-    path('horario/<int:id>/update', update_dia_hora, name='update_dia_hora'),
-    path('horario/<int:id>/delete', delete_dia_hora, name='delete_dia_hora'),
+    # path('horario', list_dia_horas, name='list_dia_horas'),
+    # path('horario/new', create_dia_hora, name='create_dia_hora'),
+    # path('horario/<int:id>/update', update_dia_hora, name='update_dia_hora'),
+    # path('horario/<int:id>/delete', delete_dia_hora, name='delete_dia_hora'),
 
     path('etiqueta', list_etiquetas, name='list_etiquetas'),
     path('etiqueta/new', create_etiqueta, name='create_etiqueta'),

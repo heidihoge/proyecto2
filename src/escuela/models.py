@@ -24,15 +24,6 @@ class Grupo(models.Model):
     id_profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL,null=True)
     cupo_maximo = models.IntegerField(default=0)
     costo = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.id_clase.nombre +' - Profe: '+ self.id_profesor.nombre +','+ self.id_profesor.apellido
-
-
-# dia_hora
-
-class DiaHora(models.Model):
-
     lunes = models.BooleanField(default=False, null=False, blank=True)
     martes = models.BooleanField(default=False, null=False, blank=True)
     miercoles = models.BooleanField(default=False, null=False, blank=True)
@@ -40,13 +31,31 @@ class DiaHora(models.Model):
     viernes = models.BooleanField(default=False, null=False, blank=True)
     sabado = models.BooleanField(default=False, null=False, blank=True)
     domingo = models.BooleanField(default=False, null=False, blank=True)
-
-    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True)
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
 
-    def __str__(self):
-        return str(self.grupo_id)
+
+    class Meta:
+        unique_together = (('id_clase', 'id_profesor','hora_inicio','hora_fin','lunes','martes','miercoles','jueves','viernes','sabado','domingo'),)
+
+# dia_hora
+
+# class DiaHora(models.Model):
+#
+#     lunes = models.BooleanField(default=False, null=False, blank=True)
+#     martes = models.BooleanField(default=False, null=False, blank=True)
+#     miercoles = models.BooleanField(default=False, null=False, blank=True)
+#     jueves = models.BooleanField(default=False, null=False, blank=True)
+#     viernes = models.BooleanField(default=False, null=False, blank=True)
+#     sabado = models.BooleanField(default=False, null=False, blank=True)
+#     domingo = models.BooleanField(default=False, null=False, blank=True)
+#
+#     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True)
+#     hora_inicio = models.TimeField()
+#     hora_fin = models.TimeField()
+#
+#     def __str__(self):
+#         return str(self.grupo_id)
 
 # etiqueta
 

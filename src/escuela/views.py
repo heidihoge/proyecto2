@@ -71,8 +71,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 
-from .forms import FomularioClase,FomularioGrupo, FomularioAsistencia, FomularioDiaHora, FomularioEtiqueta, FomularioEtiquetaClase, FomularioEtiquetaGrupo, FomularioInscripcion
-from .models import Clase,Grupo,Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia, DiaHora
+from .forms import FomularioClase,FomularioGrupo, FomularioAsistencia, FomularioEtiqueta, FomularioEtiquetaClase, FomularioEtiquetaGrupo, FomularioInscripcion
+from .models import Clase,Grupo,Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia
 
 
 
@@ -203,69 +203,69 @@ def delete_grupo(request, id):
     return redirect('list_grupos')
 
 
-# ---------------------VISTA DIA_HORA --------------------------------
-def list_dia_horas(request):
-    dia_hora = DiaHora.objects.all()
-    return render(request, 'dia_horas.html', {'dia_horas': dia_hora})
-
-
-def create_dia_hora(request):
-    print(request.method)
-    if request.method == 'POST':
-
-        form = FomularioDiaHora(request.POST, request.FILES)
-
-        if form.is_valid():
-
-            grupo_id = request.POST['grupo_id']
-            grupo = Grupo.objects.get(id=int(grupo_id))
-            form.instance.grupo = grupo
-            form.save()
-            messages.success(request, 'Dia_hora creada correctamente.')
-            return redirect('list_dia_horas')
-
-        messages.error(request, 'Error al crear dias y horas.')
-    else:
-        form = FomularioDiaHora()
-
-    return render(request, 'dia_horas-form.html', {'form': form})
-
-
-def update_dia_hora(request, id):
-    try:
-        dia_hora = DiaHora.objects.get(id=id)
-    except:
-        return redirect('404')
-    if request.method == 'POST':
-        form = FomularioDiaHora(request.POST, request.FILES, instance=dia_hora)
-
-        if form.is_valid():
-
-            grupo_id = request.POST['grupo_id']
-            grupo = Grupo.objects.get(id=int(grupo_id))
-            form.instance.grupo = grupo
-
-            form.save()
-            messages.success(request, 'DIA Y HORA actualizado correctamente.')
-            return redirect('list_dia_horas')
-        messages.error(request, 'Error al modificar DIA Y HORA.')
-    else:
-        form = FomularioDiaHora(instance=dia_hora, initial={'grupo_id': dia_hora.grupo_id})
-
-    return render(request, 'dia_horas-form.html', {'form': form, 'dia_horas': dia_hora})
-
-
-def delete_dia_hora(request, id):
-    try:
-        dia_hora = DiaHora.objects.get(id=id)
-    except:
-        return redirect('404')
-
-    if request.method == 'POST':
-        dia_hora.delete()
-        messages.success(request, 'Horario eliminado correctamente.')
-
-    return redirect('list_dia_horas')
+# # ---------------------VISTA DIA_HORA --------------------------------
+# def list_dia_horas(request):
+#     dia_hora = DiaHora.objects.all()
+#     return render(request, 'dia_horas.html', {'dia_horas': dia_hora})
+#
+#
+# def create_dia_hora(request):
+#     print(request.method)
+#     if request.method == 'POST':
+#
+#         form = FomularioDiaHora(request.POST, request.FILES)
+#
+#         if form.is_valid():
+#
+#             grupo_id = request.POST['grupo_id']
+#             grupo = Grupo.objects.get(id=int(grupo_id))
+#             form.instance.grupo = grupo
+#             form.save()
+#             messages.success(request, 'Dia_hora creada correctamente.')
+#             return redirect('list_dia_horas')
+#
+#         messages.error(request, 'Error al crear dias y horas.')
+#     else:
+#         form = FomularioDiaHora()
+#
+#     return render(request, 'dia_horas-form.html', {'form': form})
+#
+#
+# def update_dia_hora(request, id):
+#     try:
+#         dia_hora = DiaHora.objects.get(id=id)
+#     except:
+#         return redirect('404')
+#     if request.method == 'POST':
+#         form = FomularioDiaHora(request.POST, request.FILES, instance=dia_hora)
+#
+#         if form.is_valid():
+#
+#             grupo_id = request.POST['grupo_id']
+#             grupo = Grupo.objects.get(id=int(grupo_id))
+#             form.instance.grupo = grupo
+#
+#             form.save()
+#             messages.success(request, 'DIA Y HORA actualizado correctamente.')
+#             return redirect('list_dia_horas')
+#         messages.error(request, 'Error al modificar DIA Y HORA.')
+#     else:
+#         form = FomularioDiaHora(instance=dia_hora, initial={'grupo_id': dia_hora.grupo_id})
+#
+#     return render(request, 'dia_horas-form.html', {'form': form, 'dia_horas': dia_hora})
+#
+#
+# def delete_dia_hora(request, id):
+#     try:
+#         dia_hora = DiaHora.objects.get(id=id)
+#     except:
+#         return redirect('404')
+#
+#     if request.method == 'POST':
+#         dia_hora.delete()
+#         messages.success(request, 'Horario eliminado correctamente.')
+#
+#     return redirect('list_dia_horas')
 
 # ---------------------VISTA ETIQUETA --------------------------------
 

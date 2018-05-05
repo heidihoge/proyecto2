@@ -52,6 +52,7 @@ class Alumno(Persona):
 #Empleado
 
 class Empleado(Persona):
+    rol=  models.CharField(max_length=50, default='Profesor', null=True)
     salario = models.IntegerField(default=0)
     def __str__(self):
         return self.cedula + " " + self.nombre
@@ -59,6 +60,8 @@ class Empleado(Persona):
 #Profesor
 class Profesor(Empleado):
     especialidad = models.CharField(max_length=50)
+    def __str__(self):
+        return self.nombre + " " + self.apellido + " (" + self.especialidad + " )"
 
 #Cuenta
 class Cuenta(models.Model):

@@ -39,10 +39,11 @@
                             <th>Fecha de nacimiento</th>
                             <th>Sexo</th>
                             <th>Dirección</th>
-                            <th>Teléfono1</th>
+                            <th>Teléfono</th>
                             <th>Fotocopia Cedula</th>
-                            <th>salario</th>
-                            <th>especialidad</th>
+                            <th>Salario(Gs):</th>
+                            <th>Especialidad: </th>
+                                <th>Otro contacto: </th>
                             <th>Acción</th>
                             </tr>
                             </thead>
@@ -62,6 +63,7 @@
                                         fotocopia{% endif %}</td>
                                     <td>{{ profesor.salario}}</td>
                                     <td>{{ profesor.especialidad }}</td>
+                                <td>{{ profesor.telefono2 }}</td>
 
 
                                     <td><a class="btn btn-info btn-xs" href="/profesores/{{ profesor.id }}/update">Editar </a>

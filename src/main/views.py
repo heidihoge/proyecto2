@@ -384,12 +384,12 @@ def create_profesor(request):
     else:
         form = ProfesorForm()
 
-    return render(request, 'main/personas-form.html', {'form': form})
+    return render(request, 'main/profesores-form.html', {'form': form})
 
 
 def update_profesor(request, id):
     try:
-        profesor = Empleado.objects.get(id=id)
+        profesor = Profesor.objects.get(id=id)
     except:
         return redirect('404')
     if request.method == 'POST':
@@ -408,7 +408,7 @@ def update_profesor(request, id):
 
 def delete_profesor(request, id):
     try:
-        profesor = Empleado.objects.get(id=id)
+        profesor = Profesor.objects.get(id=id)
     except:
         return redirect('404')
 

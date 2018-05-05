@@ -85,10 +85,14 @@ class EmpleadoForm(forms.ModelForm):
     direccion = forms.CharField(label='Dirección')
     telefono1 = forms.CharField(label='Teléfono')
     telefono2 = forms.CharField(label='Otro contacto')
+    sexo = forms.ChoiceField(
+        choices=Persona.SEXO,
+        widget=forms.RadioSelect(choices=Persona.SEXO)
+    )
 
     class Meta:
         model = Empleado
-        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','salario']
+        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','salario','rol']
 
 
 
@@ -99,8 +103,6 @@ class ProfesorForm(forms.ModelForm):
     direccion = forms.CharField(label='Dirección')
     telefono1 = forms.CharField(label='Teléfono')
     telefono2 = forms.CharField(label='Otro contacto')
-
-
 
     class Meta:
         model = Profesor

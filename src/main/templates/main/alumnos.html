@@ -38,6 +38,7 @@
                                 <th>Fecha de Nacimiento</th>
                                 <th>Dirección</th>
                                 <th>Teléfono</th>
+                                <th>Otro contacto</th>
                                 <th>Imagen</th>
                                 <th>Ficha</th>
                                 <th>Acción</th>
@@ -53,6 +54,7 @@
                                     <td>{{ alumno.fecha_nacimiento }}</td>
                                     <td>{{ alumno.direccion }}</td>
                                     <td>{{ alumno.telefono1 }}</td>
+                                    <td>{{ alumno.telefono2 }}</td>
 
                                     <td>{% if alumno.ficha %}
                                         <img height="100px" src="/media/{{ alumno.imagen }}">{% else %}sin

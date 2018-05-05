@@ -39,10 +39,11 @@
                             <th>Fecha de nacimiento</th>
                             <th>Sexo</th>
                             <th>Dirección</th>
-                            <th>Teléfono1</th>
-                            <th>Teléfono2</th>
+                            <th>Teléfono</th>
                             <th>Fotocopia Cedula</th>
-                            <th>salario</th>
+                            <th>Salario(Gs):</th>
+                            <th>Rol:</th>
+                                <th>Otro contacto:</th>
                             <th>Acción</th>
                             </tr>
                             </thead>
@@ -57,7 +58,7 @@
                                     <td>{{ empleado.sexo }}</td>
                                     <td>{{ empleado.direccion }}</td>
                                     <td>{{ empleado.telefono1 }}</td>
-                                    <td>{{ empleado.telefono2 }}</td>
+
 
 
                                     <td>{% if empleado.fotocopia_cedula %}
@@ -66,6 +67,8 @@
 
 
                                     <td>{{ empleado.salario}}</td>
+                                    <td>{{ empleado.rol}}</td>
+                                <td>{{ empleado.telefono2 }}</td>
 
                                     <td><a class="btn btn-info btn-xs" href="/empleados/{{ empleado.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
