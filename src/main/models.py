@@ -19,7 +19,7 @@ class Persona(models.Model):
     fotocopia_cedula = models.ImageField(upload_to='media_root', verbose_name='Fotocopia de Cédula', null=True, blank=True)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
-    estado = models.CharField(max_length=1, choices=ESTADO)
+    estado = models.CharField(max_length=1, choices=ESTADO, default='A')
 
     def __str__(self):
         return self.nombre + " " + self.apellido

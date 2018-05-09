@@ -13,6 +13,10 @@ from .models import Factura, Producto, CategoriaProducto
 
 # Formulario factura
 class FomularioFactura(forms.ModelForm):
+    estado = forms.ChoiceField(
+        choices=Factura.ESTADO,
+        widget=forms.RadioSelect(choices=Factura.ESTADO)
+    )
     class Meta:
         model = Factura
         fields = ['nombre', 'ruc', 'actividad_economica', 'direccion', 'telefono', 'numero_timbrado', 'punto_emision',

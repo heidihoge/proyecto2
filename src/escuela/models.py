@@ -35,27 +35,9 @@ class Grupo(models.Model):
     hora_fin = models.TimeField()
 
 
-    class Meta:
-        unique_together = (('id_clase', 'id_profesor','hora_inicio','hora_fin','lunes','martes','miercoles','jueves','viernes','sabado','domingo'),)
-
 # dia_hora
 
-# class DiaHora(models.Model):
-#
-#     lunes = models.BooleanField(default=False, null=False, blank=True)
-#     martes = models.BooleanField(default=False, null=False, blank=True)
-#     miercoles = models.BooleanField(default=False, null=False, blank=True)
-#     jueves = models.BooleanField(default=False, null=False, blank=True)
-#     viernes = models.BooleanField(default=False, null=False, blank=True)
-#     sabado = models.BooleanField(default=False, null=False, blank=True)
-#     domingo = models.BooleanField(default=False, null=False, blank=True)
-#
-#     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True)
-#     hora_inicio = models.TimeField()
-#     hora_fin = models.TimeField()
-#
-#     def __str__(self):
-#         return str(self.grupo_id)
+
 
 # etiqueta
 
@@ -102,6 +84,7 @@ class Asistencia(models.Model):
     id_alumno = models.ForeignKey(Alumno, on_delete=models.SET_NULL,null=True)
     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
     fecha = models.DateField(default=datetime.date.today)
-
+    class Meta:
+        unique_together=(('id_alumno','grupo','fecha'),)
     def __str__(self):
         return self.grupo
