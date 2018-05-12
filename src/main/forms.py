@@ -72,11 +72,13 @@ class AlumnoForm(forms.ModelForm):
     )
     class Meta:
         model = Alumno
+
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','imagen','ficha','ficha_inscripcion','estado']
 
     estado = forms.ChoiceField(
         choices=Alumno.ESTADO,
-        widget=forms.RadioSelect(choices=Alumno.ESTADO)
+        widget=forms.RadioSelect(choices=Alumno.ESTADO),
+        initial = 'A'
     )
 
 #Formulario Empleado

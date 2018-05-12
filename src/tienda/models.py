@@ -11,7 +11,7 @@ from main.models import  Cuenta
 # Factura
 class Factura(models.Model):
     nombre = models.CharField(max_length=50)
-    ruc = models.CharField(max_length=8, unique=True)
+    ruc = models.CharField(max_length=9, unique=True)
     actividad_economica = models.CharField(max_length=50, null=True, blank=True)
     direccion = models.CharField(max_length=50)
     telefono = models.CharField(max_length=50, null=True, blank=True)
@@ -23,7 +23,8 @@ class Factura(models.Model):
     vigencia_hasta= models.DateField(default=datetime.date.today)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
-    estado = models.CharField(max_length=1, choices=ESTADO)
+    estado = models.CharField(max_length=1, choices=ESTADO, default='A')
+
 
 
 # categoriaProdutos
@@ -63,15 +64,17 @@ class Producto(models.Model):
 class CompraCabecera(models.Model):
     descripcion = models.CharField(max_length=150,default='')
     proveedor= models.CharField(max_length=150, default='')
-    fecha= models.DateField
+    fecha = models.DateField(default=datetime.date.today)
     TIPO_PAGO = (('Contado', 'Contado'),
               ('Crédito', 'Crédito'))
     tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO,default='Contado')
     monto_total = models.IntegerField(default=0)
+    def __str__(self):
+        return  self.id
 
 class CompraDetalle(models.Model):
-    id_cab_compra= models.ForeignKey(CompraCabecera, on_delete=models.CASCADE,null=True)
-    id_producto=models.ForeignKey(Producto, on_delete=models.SET_NULL,null=True)
+    compra= models.ForeignKey(CompraCabecera, on_delete=models.CASCADE,null=True)
+    producto=models.ForeignKey(Producto, on_delete=models.SET_NULL,null=True)
     cantidad = models.IntegerField(default=0)
     precio= models.IntegerField(default=0)
 

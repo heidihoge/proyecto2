@@ -4,7 +4,8 @@ from django.urls import path, include
 
 from tienda import views
 from main import views
-from tienda.views import list_productos, create_producto, update_producto, delete_producto, list_categoria_productos, create_categoria_producto, update_categoria_producto, delete_categoria_producto
+from tienda.views import list_productos, create_producto, update_producto, delete_producto, list_categoria_productos, \
+    create_categoria_producto, update_categoria_producto, delete_categoria_producto, comprar, list_compras
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura
 
 urlpatterns = [
@@ -35,6 +36,10 @@ urlpatterns = [
     path('facturas/<int:id>/update', update_factura, name='update_factura'),
     path('facturas/<int:id>/delete', delete_factura, name='delete_factura'),
 
-     ]
+    path('compras', list_compras, name='list_compras'),
+    path('compras/new', comprar, name='comprar'),
+
+
+]
 
 

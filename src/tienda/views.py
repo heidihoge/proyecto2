@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .forms import FomularioFactura
+from .forms import FomularioFactura, FormularioCompra, inlineformset_factory, FormularioCompraDetalle
 
 from .forms import FomularioCategoriaProducto, FomularioProducto
-from .models import Producto, CategoriaProducto
+from .models import Producto, CategoriaProducto, CompraCabecera, CompraDetalle
 
 # Create your views here.
 
@@ -182,15 +182,126 @@ def delete_producto(request, codigo):
 
     return redirect('list_productos')
 
-# ---------------------VISTA EXISTENCIA --------------------------------
 
-# ---------------------VISTA TIPO PAGO --------------------------------
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 
+def list_compras(request):
+    compras = CompraCabecera.objects.all()
+    return render(request, 'compras.html', {'compras': compras})
+
+
+
+
+def comprar(request):
+    CompraFormSet = inlineformset_factory(CompraCabecera, CompraDetalle, extra=0, can_delete=True)
+
+    if request.method == 'POST':
+
+        form = FormularioCompra(request.POST, request.FILES,instance=CompraCabecera)
+        CompraFormSet= CompraFormSet(request.POST, request.FILES,instance=CompraCabecera)
+
+        if form.is_valid() and CompraFormSet.is_valid():
+            form.save()
+            messages.success(request, 'Compra registrada correctamente')
+            CompraFormSet.save()
+            return redirect('list_compras')
+
+        messages.error(request, 'Error al crear producto.')
+    else:
+        form = FormularioCompra(instance=CompraCabecera)
+        CompraFormSet=CompraFormSet(instance=CompraCabecera)
+
+
+
+    return render(request, 'compras-form.html', {'form': form})
+
+def update_compra(request, id):
+    try:
+        compra = CompraCabecera.objects.get(id=id)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FomularioFactura(request.POST, request.FILES, instance=compra)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Compra actualizado correctamente.')
+            return redirect('list_compras')
+        messages.error(request, 'Error al modificar Compra.')
+    else:
+        form = FomularioFactura(instance=compra)
+
+    return render(request, 'compras-form.html', {'form': form, 'compras': compra})
+
+
+
+
 # ---------------------VISTA COMPRA DETALLE --------------------------------
 
-# ---------------------VISTA VENTA CABECERA --------------------------------
+def list_detalle_compra(request):
+    detalle = CompraCabecera.objects.all()
+    return render(request, 'compras-detalle.html', {'detalles': detalle})
+
+
+
+
+def agrega_detalle(request):
+    if request.method == 'POST':
+
+        form = FormularioCompraDetalle(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'detalle registrada correctamente')
+            return redirect('list_detalle_compras')
+
+        messages.error(request, 'Error al crear detalle.')
+    else:
+        form = FormularioCompraDetalle()
+
+
+    return render(request, 'compras-form.html', {'form': form})
+
+def update_compra_detalle(request, id):
+    try:
+        detalle = CompraDetalle.objects.get(id=id)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FormularioCompraDetalle(request.POST, request.FILES, instance=detalle)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'detalle actualizado correctamente.')
+            return redirect('list_detalle_compra')
+        messages.error(request, 'Error al modificar detalle.')
+    else:
+        form = FormularioCompraDetalle(instance=detalle)
+
+    return render(request, 'compras-detalle-form.html', {'form': form, 'detalles': detalle})
+
+
+
+
+
+def update_factura(request, id):
+    try:
+        factura = Factura.objects.get(id=id)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FomularioFactura(request.POST, request.FILES, instance=factura)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Factura actualizado correctamente.')
+            return redirect('list_facturas')
+        messages.error(request, 'Error al modificar Factura.')
+    else:
+        form = FomularioFactura(instance=factura)
+
+    return render(request, 'facturas-form.html', {'form': form, 'factura': factura})
 
 # ---------------------VISTA VENTA DETALLE --------------------------------
 

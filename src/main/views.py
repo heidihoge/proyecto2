@@ -240,6 +240,7 @@ def create_alumno(request):
 
         form = AlumnoForm(request.POST, request.FILES)
 
+
         if form.is_valid():
             form.save()
             messages.success(request, 'Alumno creado correctamente.')

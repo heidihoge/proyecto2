@@ -4,18 +4,21 @@ from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.db.models import ManyToOneRel
 from django.forms import DateField
 
+
 from proyecto2 import settings
-from .models import Factura, Producto, CategoriaProducto
+from .models import Factura, Producto, CategoriaProducto, CompraCabecera, CompraDetalle
 
 
-# ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
+# ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
+# CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
 
 
 # Formulario factura
 class FomularioFactura(forms.ModelForm):
     estado = forms.ChoiceField(
         choices=Factura.ESTADO,
-        widget=forms.RadioSelect(choices=Factura.ESTADO)
+        widget=forms.RadioSelect(choices=Factura.ESTADO),
+        initial = 'A'
     )
     class Meta:
         model = Factura
@@ -46,7 +49,8 @@ class FomularioProducto(forms.ModelForm):
     )
     estado = forms.ChoiceField(
         choices=Producto.ESTADO,
-        widget=forms.RadioSelect(choices=Producto.ESTADO)
+        widget=forms.RadioSelect(choices=Producto.ESTADO),
+        initial = 'A'
     )
     class Meta:
         model = Producto
@@ -54,31 +58,22 @@ class FomularioProducto(forms.ModelForm):
                   'iva', 'estado', 'existencia']
 
 
-# #Formulario Existencia
-# class FormularioExistencia(forms.ModelForm):
-#     class Meta:
-#         model = Existencia
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
-# #Formulario TipoPago
-# class FormularioTipoPago(forms.ModelForm):
-#     class Meta:
-#         model = TipoPago
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
-# #Formulario CompraCabecera
-# class FormularioCompraCabecera(forms.ModelForm):
-#     class Meta:
-#         model = CompraCabecera
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
-#
-# #Formulario CompraDetalle
-# class FormularioCompraDetalle(forms.ModelForm):
-#     class Meta:
-#         model = CompraDetalle
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
+
+#Formulario CompraCabecera
+class FormularioCompra(forms.ModelForm):
+    class Meta:
+        model = CompraCabecera
+
+        fields = ['descripcion', 'proveedor', 'fecha','tipo_pago', 'monto_total']
+
+class FormularioCompraDetalle(forms.ModelForm):
+    class Meta:
+        model = CompraDetalle
+
+        fields = ['producto', 'cantidad', 'precio']
+
+
+
 # #Formulario VentaCabecera
 # class FormularioVentaCabecera(forms.ModelForm):
 #     class Meta:
