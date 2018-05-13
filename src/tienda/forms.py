@@ -61,12 +61,21 @@ class FomularioProducto(forms.ModelForm):
 
 #Formulario CompraCabecera
 class FormularioCompra(forms.ModelForm):
+
+    monto_total = forms.IntegerField(disabled=True, initial=0)
+    total_iva = forms.IntegerField(disabled=True, initial=0)
+    tipo_pago = forms.ChoiceField(
+        choices=CompraCabecera.TIPO_PAGO,
+        widget=forms.RadioSelect(choices=CompraCabecera.TIPO_PAGO)
+    )
     class Meta:
         model = CompraCabecera
 
-        fields = ['descripcion', 'proveedor', 'fecha','tipo_pago', 'monto_total']
+        fields = ['descripcion', 'proveedor', 'fecha','tipo_pago', 'monto_total',
+                  'nro_factura','total_iva_5','total_iva_10', 'total_iva']
 
 class FormularioCompraDetalle(forms.ModelForm):
+    cantidad = forms.IntegerField(initial=1)
     class Meta:
         model = CompraDetalle
 

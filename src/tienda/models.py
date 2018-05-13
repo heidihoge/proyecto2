@@ -69,14 +69,18 @@ class CompraCabecera(models.Model):
               ('Crédito', 'Crédito'))
     tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO,default='Contado')
     monto_total = models.IntegerField(default=0)
+    nro_factura = models.CharField(max_length=150, default='')
+    total_iva_5 = models.IntegerField(default=0)
+    total_iva_10 = models.IntegerField(default=0)
+    total_iva = models.IntegerField(default=0)
     def __str__(self):
         return  self.id
 
 class CompraDetalle(models.Model):
-    compra= models.ForeignKey(CompraCabecera, on_delete=models.CASCADE,null=True)
-    producto=models.ForeignKey(Producto, on_delete=models.SET_NULL,null=True)
+    compra = models.ForeignKey(CompraCabecera, on_delete=models.CASCADE,null=True)
+    producto = models.CharField(max_length=250,null=True)
     cantidad = models.IntegerField(default=0)
-    precio= models.IntegerField(default=0)
+    precio = models.IntegerField(default=0)
 
 
 # cliente

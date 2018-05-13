@@ -1,0 +1,66 @@
+<div class="row">
+    <!-- Fecha -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.fecha %}
+        {% include "forms/datefield.html" with field=form.fecha %}
+        {% include "forms/field-errors.html" with field=form.fecha %}
+    </div>
+
+    <!-- Proveedor -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.proveedor %}
+        {% include "forms/charfield.html" with field=form.proveedor %}
+        {% include "forms/field-errors.html" with field=form.proveedor %}
+    </div>
+
+    <!-- Nro Factura -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.nro_factura%}
+        {% include "forms/charfield.html" with field=form.nro_factura %}
+        {% include "forms/field-errors.html" with field=form.nro_factura %}
+    </div>
+
+    <!-- Tipo de pago -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.tipo_pago%}
+        {{ form.tipo_pago }}
+        {% include "forms/field-errors.html" with field=form.tipo_pago %}
+    </div>
+</div>
+<div class="row">
+    <!-- Descripcion -->
+    <div class="form-group col-md-12 col-sm-12 col-xs-12">
+        {% include "forms/label.html" with field=form.descripcion%}
+        {% include "forms/charfield.html" with field=form.descripcion %}
+        {% include "forms/field-errors.html" with field=form.descripcion %}
+    </div>
+</div>
+<div class="row">
+    <!-- Monto total -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.monto_total%}
+        {% include "forms/integerfield.html" with field=form.monto_total %}
+        {% include "forms/field-errors.html" with field=form.monto_total %}
+    </div>
+
+    <!-- IVA 10 total -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.total_iva_10%}
+        {% include "forms/integerfield.html" with field=form.total_iva_10 %}
+        {% include "forms/field-errors.html" with field=form.total_iva_10 %}
+    </div>
+
+    <!-- IVA 5 total -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.total_iva_5%}
+        {% include "forms/integerfield.html" with field=form.total_iva_5 %}
+        {% include "forms/field-errors.html" with field=form.total_iva_5 %}
+    </div>
+
+    <!-- Monto total -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 disabled">
+        {% include "forms/label.html" with field=form.total_iva%}
+        {% include "forms/integerfield.html" with field=form.total_iva %}
+        {% include "forms/field-errors.html" with field=form.total_iva %}
+    </div>
+</div>

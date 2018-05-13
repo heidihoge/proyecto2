@@ -2,7 +2,7 @@
 {% block content %}
     <div class="page-title">
         <div class="title_left">
-            <h3>Nueva Factura</h3>
+            <h3><strong>Nueva Compra</strong></h3>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -11,16 +11,42 @@
             <div class="x_panel">
                 <div class="x_content">
                     <br/>
-                    <form id="creardetcompra" method="post" class="form-horizontal form-label-left" enctype="multipart/form-data">
+                    <form id="creardetcompra" method="post" class="form-horizontal" enctype="multipart/form-data">
                         {% csrf_token %}
-                        {% include "forms/form.html" with form=form %}
+                        {{ formularioDetalleSet.management_form }}
+                        {% include "cabecera.html" with form=form %}
 
+                        <fieldset>
+                            <legend></legend>
+                            <div class="center text-center">
+                                 <div class="btn-group btn-sm">
+                                    <button class="btn btn-sm btn-danger elimina-detalle" onclick="eliminaDetalle();event.preventDefault();"><span class="glyphicon-minus"></span></button>
+                                    <button class="btn btn-sm btn-success agrega-detalle" onclick="agregaDetalle();event.preventDefault();"><span class="glyphicon-plus"></span></button>
+                                </div>
+                            </div>
+
+                            <table class="table table-striped bulk_action jambo_table">
+                                <thead>
+
+                                <tr>
+                                    <th class="" class="numero">Nro</th>
+                                    <th class="hidden" class="id">id</th>
+                                    <th class="col-md-10 col-sm-8" class="producto">Descripcion</th>
+                                    <th class="col-md-1 col-sm-2" class="cantidad">Cantidad</th>
+                                    <th class="col-md-1 col-sm-2" class="precio">Precio</th>
+                                </tr>
+                                </thead>
+                                <tbody id="detalles">
+
+                                </tbody>
+                            </table>
+
+                        </fieldset>
                         <div class="ln_solid"></div>
                         <div class="form-group">
-                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <div class="col-md-12 text-center">
                                 <a class="btn btn-primary" type="button" href="/tienda/compras/">Cancelar</a>
-                                <button class="btn btn-primary" type="reset">Limpiar</button>
-                                <input type="submit" class="btn btn-success" value="Guardar" />
+                                <input type="submit" class="btn btn-success" value="Guardar"/>
                             </div>
                         </div>
 
@@ -29,4 +55,83 @@
             </div>
         </div>
     </div>
+    <div class="hidden">
+        <table>
+        <tr id="row-template" >
+
+            <td class="numero text-center"></td>
+            <td class="hidden">{{ formularioDetalleSet.empty_form.id }}</td>
+            <td class="producto"
+                style="padding: 0">{% include "forms/charfield.html" with field=formularioDetalleSet.empty_form.producto %}</td>
+            <td class="cantidad"
+                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.cantidad %}</td>
+            <td class="precio"
+                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.precio %}</td>
+            <td></td>
+        </tr>
+            </table>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        function configurarICheck(element) {
+            element.parents('ul').attr('style', 'list-style-type: none;padding:0; display: flex');
+            element.parents('label').attr('style', 'padding: 6px;margin:0');
+            element.iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+        }
+        $(document).ready(function () {
+            window.rowTemplate = $('#row-template');
+            configurarICheck($('[name=tipo_pago]'));
+            window.totalForms = $('#id_compradetalle_set-TOTAL_FORMS');
+            agregaDetalle();
+
+            $('form input').keydown(function (event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $('#id_total_iva_10,#id_total_iva_5').on('change', calcularTotalIva);
+
+        });
+
+        function agregaDetalle(){
+            var formIdx = window.totalForms.val();
+            var row = $('<tr></tr>');
+            row.attr('id', 'id_compradetalle_set-' + parseInt(formIdx));
+            row.append(window.rowTemplate.html().replace(/__prefix__/g, formIdx));
+            console.log(formIdx);
+            row.find('.numero').append(parseInt(formIdx) + 1);
+            $('#detalles').append(row);
+            $('.cantidad input[type=number],.precio input[type=number]').on('change', function(){
+                calcularTotales();
+            });
+            window.totalForms.val(parseInt(formIdx) + 1);
+        }
+        function eliminaDetalle(){
+            var formIdx = window.totalForms.val();
+            $('#id_compradetalle_set-' + (parseInt(formIdx)-1)).remove();
+            window.totalForms.val(Math.max(parseInt(formIdx) - 1, 0));
+        }
+
+        function calcularTotales() {
+            var formIdx = parseInt(window.totalForms.val());
+            var suma = 0;
+            for(var i = 0; i < formIdx ; i ++ ) {
+                console.log('#id_compradetalle_set-' + (i) + '-cantidad');
+                suma += ($('#id_compradetalle_set-' + i + '-cantidad').val() * $('#id_compradetalle_set-' + i + '-precio').val());
+            }
+            $('#id_monto_total').val(suma);
+        }
+
+        function calcularTotalIva() {
+            var total = parseInt($('#id_total_iva_10').val()) + parseInt($('#id_total_iva_5').val());
+            $('#id_total_iva').val(total);
+        }
+    </script>
 {% endblock %}

@@ -1,6 +1,7 @@
 from django.contrib import messages
+from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
-from .forms import FomularioFactura, FormularioCompra, inlineformset_factory, FormularioCompraDetalle
+from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle
 
 from .forms import FomularioCategoriaProducto, FomularioProducto
 from .models import Producto, CategoriaProducto, CompraCabecera, CompraDetalle
@@ -14,6 +15,7 @@ from tienda.models import Factura
 
 def list_facturas(request):
     facturas = Factura.objects.all()
+    inlineformset_factory
     return render(request, 'facturas.html', {'facturas': facturas})
 
 
@@ -194,27 +196,29 @@ def list_compras(request):
 
 
 def comprar(request):
-    CompraFormSet = inlineformset_factory(CompraCabecera, CompraDetalle, extra=0, can_delete=True)
+    compra = CompraCabecera()
+
+    FormularioDetalleSet = inlineformset_factory(CompraCabecera, CompraDetalle, extra=0, can_delete=True, form=FormularioCompraDetalle)
 
     if request.method == 'POST':
 
-        form = FormularioCompra(request.POST, request.FILES,instance=CompraCabecera)
-        CompraFormSet= CompraFormSet(request.POST, request.FILES,instance=CompraCabecera)
+        form = FormularioCompra(request.POST, request.FILES,instance=compra)
+        formularioDetalleSet = FormularioDetalleSet(request.POST, request.FILES,instance=compra)
 
-        if form.is_valid() and CompraFormSet.is_valid():
+        if form.is_valid() and formularioDetalleSet.is_valid():
             form.save()
+            formularioDetalleSet.save()
             messages.success(request, 'Compra registrada correctamente')
-            CompraFormSet.save()
             return redirect('list_compras')
 
         messages.error(request, 'Error al crear producto.')
     else:
-        form = FormularioCompra(instance=CompraCabecera)
-        CompraFormSet=CompraFormSet(instance=CompraCabecera)
+        form = FormularioCompra(instance=compra)
+        formularioDetalleSet=FormularioDetalleSet(instance=compra)
 
 
 
-    return render(request, 'compras-form.html', {'form': form})
+    return render(request, 'compras-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet})
 
 def update_compra(request, id):
     try:
