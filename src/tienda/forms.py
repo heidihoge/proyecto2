@@ -4,9 +4,10 @@ from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.db.models import ManyToOneRel
 from django.forms import DateField
 
-
+from main.forms import CustomModelChoiceField
 from proyecto2 import settings
-from .models import Factura, Producto, CategoriaProducto, CompraCabecera, CompraDetalle
+from .models import Factura, Producto, CategoriaProducto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
+    Cliente
 
 
 # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
@@ -82,23 +83,55 @@ class FormularioCompraDetalle(forms.ModelForm):
         fields = ['producto', 'cantidad', 'precio']
 
 
+#Formulario Venta Cabecera
+class FormularioVenta(forms.ModelForm):
 
-# #Formulario VentaCabecera
-# class FormularioVentaCabecera(forms.ModelForm):
-#     class Meta:
-#         model = VentaCabecera
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
-# #Formulario VentaDetalle
-# class FormularioVentaDetalle(forms.ModelForm):
-#     class Meta:
-#         model = VentaDetalle
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
-#
-# #Formulario Pagos
-#
-# class FormularioPago(forms.ModelForm):
-#     class Meta:
-#         model = Pagos
-#         fields = ['', '', '', '', '', '', '', '', '', '']
+    monto_total = forms.IntegerField(initial=0)
+    total_iva = forms.IntegerField(initial=0)
+    total_iva_5 = forms.IntegerField(initial=0)
+    total_iva_10 = forms.IntegerField(initial=0)
+    total_exentas = forms.IntegerField(initial=0)
+    tipo_pago = forms.ChoiceField(
+        choices=CompraCabecera.TIPO_PAGO,
+        widget=forms.RadioSelect(choices=CompraCabecera.TIPO_PAGO)
+    )
+    cliente = CustomModelChoiceField(
+        label='Ruc Cliente',
+        queryset=Cliente.objects.all(),
+        widget=autocomplete.ModelSelect2(url='cliente-autocomplete',
+                                         attrs={'data-tags': 'true', 'data-language': 'es'}),
+    )
+    talonario_factura = CustomModelChoiceField(
+        queryset=Factura.objects.all(),
+        widget=autocomplete.ModelSelect2(url='factura-autocomplete',
+                                         attrs={'data-language': 'es'})
+    )
+    class Meta:
+        model = VentaCabecera
+
+        fields = ['talonario_factura', 'cliente', 'fecha','tipo_pago', 'monto_total',
+                  'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
+                  'total_iva_5','total_iva_10', 'total_iva', 'total_exentas']
+
+class FormularioCliente(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nombre_razon', 'ruc_cliente', 'direccion', 'telefono']
+
+class FormularioVentaDetalle(forms.ModelForm):
+    cantidad = forms.IntegerField(initial=1)
+    producto = CustomModelChoiceField(
+        queryset=Producto.objects.all(),
+        widget=autocomplete.ModelSelect2(url='producto-autocomplete',
+                                         attrs={'data-language': 'es'})
+    )
+    monto_5 = forms.IntegerField(initial=0)
+    monto_10 = forms.IntegerField(initial=0)
+    monto_exento = forms.IntegerField(initial=0)
+    class Meta:
+        model = VentaDetalle
+
+        fields = ['producto', 'cantidad', 'precio', 'monto_5', 'monto_10', 'monto_exento']
+
+
+

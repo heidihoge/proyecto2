@@ -14,7 +14,7 @@
                     <form id="creardetcompra" method="post" class="form-horizontal" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ formularioDetalleSet.management_form }}
-                        {% include "cabecera.html" with form=form %}
+                        {% include "cabecera-compra.html" with form=form %}
 
                         <fieldset>
                             <legend></legend>

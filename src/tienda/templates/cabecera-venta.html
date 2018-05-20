@@ -1,0 +1,124 @@
+<div class="row" id="bloque-factura">
+    <div class="col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-body  no-padding text-center">
+                <h3 class="blokk bloque-factura-nombre">Pececitos_de_Jesús</h3>
+                <h5 class="blokk bloque-factura-actividad-economica">Servicios_Profesionales</h5>
+                <p class="blokk bloque-factura-direccion">Direccion_de_la_casa_y_numero</p>
+                <p>Tel: <span class="blokk bloque-factura-telefono">999888777</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 ">
+        <div class="panel panel-default no-padding text-center">
+            <div class="panel-body no-padding">
+                <p style="margin:0">
+                    <small><strong>Timbrado Nro <span
+                            class="blokk bloque-factura-numero-timbrado">88888888</span></strong><br>
+                        Inicio de Vigencia: <span class="blokk bloque-factura-vigencia-desde">01-01-2017</span><br>
+                        Fin de Vigencia: <span class="blokk bloque-factura-vigencia-hasta">01-01-2018</span>
+                    </small>
+                    <br>
+
+                    <strong>RUC: <span class="blokk bloque-factura-ruc">4444444-5</span></strong>
+                </p>
+                <h4 class="" style="margin: 0;">Factura</h4>
+                <h3 style="margin:5px">Nro: <span class="blokk bloque-factura-punto-emision">001-001</span>-<span
+                        class="blokk bloque-factura-nro-factura">0000001</span></h3>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div class="row">
+    <!-- Fecha -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.fecha %}
+        {% include "forms/datefield.html" with field=form.fecha %}
+        {% include "forms/field-errors.html" with field=form.fecha %}
+    </div>
+
+    <!-- Cliente -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.cliente %}
+        {{ form.cliente }}
+        {% include "forms/field-errors.html" with field=form.cliente %}
+
+    </div>
+
+    <!-- Timbrado -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.talonario_factura %}
+        {{ form.talonario_factura }}
+        {% include "forms/field-errors.html" with field=form.talonario_factura %}
+    </div>
+
+    <!-- Nro Factura -->
+    {{ form.nro_factura.as_hidden }}
+    {{ form.nro_factura_punto_emision.as_hidden }}
+    {{ form.nro_factura_numero.as_hidden }}
+
+    <!-- Tipo de pago -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.tipo_pago %}
+        {{ form.tipo_pago }}
+        {% include "forms/field-errors.html" with field=form.tipo_pago %}
+    </div>
+</div>
+<!-- Cliente -->
+<div class="row">
+    {{ formularioCliente.ruc_cliente.as_hidden }}
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=formularioCliente.nombre_razon %}
+        {% include "forms/charfield.html" with field=formularioCliente.nombre_razon %}
+        {% include "forms/field-errors.html" with field=formularioCliente.nombre_razon %}
+    </div>
+    <div class="form-group col-md-6 col-sm-6 col-xs-12">
+        {% include "forms/label.html" with field=formularioCliente.direccion %}
+        {% include "forms/charfield.html" with field=formularioCliente.direccion %}
+        {% include "forms/field-errors.html" with field=formularioCliente.direccion %}
+    </div>
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=formularioCliente.telefono %}
+        {% include "forms/charfield.html" with field=formularioCliente.telefono %}
+        {% include "forms/field-errors.html" with field=formularioCliente.telefono %}
+    </div>
+</div>
+<div class="row">
+    <!-- Monto total -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.monto_total %}
+        {% include "forms/integerfield.html" with field=form.monto_total %}
+        {% include "forms/field-errors.html" with field=form.monto_total %}
+    </div>
+
+    <!-- IVA 10 total -->
+    <div class="form-group col-md-2 col-sm-2 col-xs-12">
+        {% include "forms/label.html" with field=form.total_iva_10 %}
+        {% include "forms/integerfield.html" with field=form.total_iva_10 %}
+        {% include "forms/field-errors.html" with field=form.total_iva_10 %}
+    </div>
+
+    <!-- IVA 5 total -->
+    <div class="form-group col-md-2 col-sm-2 col-xs-12">
+        {% include "forms/label.html" with field=form.total_iva_5 %}
+        {% include "forms/integerfield.html" with field=form.total_iva_5 %}
+        {% include "forms/field-errors.html" with field=form.total_iva_5 %}
+    </div>
+
+    <!-- EXENTAS total -->
+    <div class="form-group col-md-2 col-sm-2 col-xs-12">
+        {% include "forms/label.html" with field=form.total_exentas %}
+        {% include "forms/integerfield.html" with field=form.total_exentas %}
+        {% include "forms/field-errors.html" with field=form.total_exentas %}
+    </div>
+
+    <!-- Monto total -->
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 disabled">
+        {% include "forms/label.html" with field=form.total_iva %}
+        {% include "forms/integerfield.html" with field=form.total_iva %}
+        {% include "forms/field-errors.html" with field=form.total_iva %}
+    </div>
+</div>

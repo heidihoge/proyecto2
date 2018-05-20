@@ -5,7 +5,8 @@ from django.urls import path, include
 from tienda import views
 from main import views
 from tienda.views import list_productos, create_producto, update_producto, delete_producto, list_categoria_productos, \
-    create_categoria_producto, update_categoria_producto, delete_categoria_producto, comprar, list_compras
+    create_categoria_producto, update_categoria_producto, delete_categoria_producto, comprar, list_compras, vender, \
+    ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura
 
 urlpatterns = [
@@ -14,6 +15,11 @@ urlpatterns = [
     path('', views.index),
     path('404', views.error404, name='404'),
     path('403', views.error403, name='403'),
+
+    path('cliente-autocomplete/', ClienteAutocomplete.as_view(), name='cliente-autocomplete'),
+    path('factura-autocomplete/', FacturaAutocomplete.as_view(), name='factura-autocomplete'),
+    path('producto-autocomplete/', ProductoAutocomplete.as_view(), name='producto-autocomplete'),
+
 
     path('accounts/profile/', views.redirect_to_index),
     path('accounts/logout/', LogoutView.as_view(next_page='login', template_name='registration/logged_out.html')),
@@ -35,6 +41,8 @@ urlpatterns = [
     path('facturas/new', create_factura, name='create_factura'),
     path('facturas/<int:id>/update', update_factura, name='update_factura'),
     path('facturas/<int:id>/delete', delete_factura, name='delete_factura'),
+
+    path('ventas/new', vender, name='vender'),
 
     path('compras', list_compras, name='list_compras'),
     path('compras/new', comprar, name='comprar'),

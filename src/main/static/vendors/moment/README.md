@@ -10,14 +10,14 @@ A lightweight JavaScript date library for parsing, validating, manipulating, and
 ## Port to ECMAScript 6 (version 2.10.0)
 
 Moment 2.10.0 does not bring any new features, but the code is now written in
-ECMAScript 6 modules and placed inside `src/`. Previously `moment.js`, `locale/*.js` and
+ECMAScript 6 modules and placed inside `src/`. Previously `moment.min.js`, `locale/*.js` and
 `test/moment/*.js`, `test/locale/*.js` contained the source of the project. Now
 the source is in `src/`, temporary build (ECMAScript 5) files are placed under
-`build/umd/` (for running tests during development), and the `moment.js` and
+`build/umd/` (for running tests during development), and the `moment.min.js` and
 `locale/*.js` files are updated only on release.
 
 If you want to use a particular revision of the code, make sure to run
-`grunt transpile update-index`, so `moment.js` and `locales/*.js` are synced
+`grunt transpile update-index`, so `moment.min.js` and `locales/*.js` are synced
 with `src/*`. We might place that in a commit hook in the future.
 
 ## Upgrading to 2.0.0

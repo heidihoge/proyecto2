@@ -8,7 +8,7 @@ from django.core.validators import MinLengthValidator
 
 class CustomModelChoiceField(forms.ModelChoiceField):
     def to_python(self, value):
-        return forms.ChoiceField.to_python(self, value)
+        return super(CustomModelChoiceField, self).to_python(forms.ChoiceField.to_python(self, value))
 
 
 #Formulario Persona

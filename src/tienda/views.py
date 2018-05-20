@@ -1,12 +1,152 @@
+import datetime
+from dal import autocomplete
 from django.contrib import messages
+from django.db.models import Q, Max
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
-from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle
+
+from proyecto2 import settings
+from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
+    FormularioCliente
 
 from .forms import FomularioCategoriaProducto, FomularioProducto
-from .models import Producto, CategoriaProducto, CompraCabecera, CompraDetalle
+from .models import Producto, CategoriaProducto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente
+
 
 # Create your views here.
+
+class FacturaAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Factura.objects.none()
+
+        hoy = datetime.datetime.today()
+
+        # Trae solo lo vigente y activo
+        qs = Factura.objects.filter(Q(vigencia_desde__lte=hoy) & Q(vigencia_hasta__gte=hoy) & Q(estado='A'))
+
+        if self.q:
+            qs = qs.filter(Q(ruc__istartswith=self.q) | Q(numero_timbrado__istartswith=self.q))
+
+        return qs
+
+    def _get_fields_as_json(self, result):
+        # return json.loads(serializers.serialize('json', [result]))[0]['fields']
+        result = result.__dict__
+        del result['_state']
+        if isinstance(result['vigencia_desde'], datetime.date):
+            result['vigencia_desde'] = result['vigencia_desde'].strftime(settings.DATE_INPUT_FORMATS[0])
+        if isinstance(result['vigencia_hasta'], datetime.date):
+            result['vigencia_hasta'] = result['vigencia_hasta'].strftime(settings.DATE_INPUT_FORMATS[0])
+
+        result['nro_factura'] = self._numero_factura(result)
+        return result
+
+    def _numero_factura(self, factura):
+        """
+        Funcion para obtener numero de la factura
+        :param factura: objeto de tipo Factura
+        :return: Siguiente numero de factura
+        """
+        # Completa con 0s
+
+        maximo = VentaCabecera.objects.aggregate(maximo=Max('nro_factura_numero', filter=Q(talonario_factura_id=factura['id'])))
+
+        siguiente = maximo['maximo'] + 1 if maximo['maximo'] else factura['nro_inicial']
+
+        # el siguiente esta fuera del rango permitido, retorna None
+        if factura['nro_inicial'] > siguiente or factura['nro_final'] < siguiente:
+            return None
+
+        return "{:07d}".format(siguiente)
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return list(filter(lambda x: x['fields']['nro_factura'] is not None,[
+            {
+                'id': result.pk,
+                'text': self.get_result_label(result),
+                'pk': result.pk,
+                'fields': self._get_fields_as_json(result)
+            } for result in context['object_list']
+        ]))
+
+class ProductoAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Producto.objects.none()
+
+        # busca producto
+        qs = Producto.objects.filter(estado='A')
+
+
+        if self.q:
+            qs = qs.filter(Q(nombre__icontains=self.q) | Q(codigo__startswith=self.q))
+
+        return qs
+
+
+    def _get_fields_as_json(self, result):
+        # return json.loads(serializers.serialize('json', [result]))[0]['fields']
+        result = result.__dict__
+        del result['_state']
+
+        def iva_str(iva):
+            print("iva", iva)
+            if str(iva) == '0.05':
+                return "5%"
+            elif str(iva) == '0.10':
+                return "10%"
+            else:
+                return "exentas"
+
+        result['iva'] = iva_str(result['iva'])
+
+        return result
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return [
+            {
+                'id': result.pk,
+                'text': self.get_result_label(result),
+                'pk': result.pk,
+                'fields': self._get_fields_as_json(result)
+            } for result in context['object_list']
+        ]
+
+
+class ClienteAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Cliente.objects.none()
+
+        qs = Cliente.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(ruc_cliente__istartswith=self.q) | Q(nombre_razon__istartswith=self.q))
+
+        return qs
+
+    def _get_fields_as_json(self, result):
+        # return json.loads(serializers.serialize('json', [result]))[0]['fields']
+        result = result.__dict__
+        del result['_state']
+        return result
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return [
+            {
+                'id': result.pk,
+                'text': self.get_result_label(result),
+                'pk': result.pk,
+                'fields': self._get_fields_as_json(result)
+            } for result in context['object_list']
+        ]
 
 # ---------------------VISTA FACTURA --------------------------------
 
@@ -184,7 +324,45 @@ def delete_producto(request, codigo):
 
     return redirect('list_productos')
 
+# ---------------------VISTA VENTA CABECERA --------------------------------
 
+def vender(request):
+    venta = VentaCabecera()
+
+    FormularioDetalleSet = inlineformset_factory(VentaCabecera, VentaDetalle, extra=0, can_delete=True, form=FormularioVentaDetalle)
+
+    if request.method == 'POST':
+
+        form = FormularioVenta(request.POST, request.FILES,instance=venta)
+        formularioDetalleSet = FormularioDetalleSet(request.POST, request.FILES, instance=venta)
+
+        ruc_cliente = request.POST['cliente']
+
+        try:
+            cliente = Cliente.objects.get(ruc_cliente=ruc_cliente)
+        except:
+            cliente = Cliente()
+
+        formularioCliente = FormularioCliente(request.POST, request.FILES, prefix='cliente', instance=cliente)
+
+        if form.is_valid() and formularioDetalleSet.is_valid() and formularioCliente.is_valid():
+            form.save()
+            formularioDetalleSet.save()
+            formularioCliente.save()
+            messages.success(request, 'Venta registrada correctamente')
+            return redirect('list_ventas')
+
+        messages.error(request, 'Error al crear venta.')
+    else:
+        cliente = Cliente()
+        form = FormularioVenta(instance=venta)
+        formularioDetalleSet = FormularioDetalleSet(instance=venta)
+        formularioCliente = FormularioCliente(instance=cliente, prefix='cliente')
+
+
+
+    return render(request, 'ventas-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet,
+                                                'formularioCliente': formularioCliente})
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 
