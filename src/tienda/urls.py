@@ -6,8 +6,9 @@ from tienda import views
 from main import views
 from tienda.views import list_productos, create_producto, update_producto, delete_producto, list_categoria_productos, \
     create_categoria_producto, update_categoria_producto, delete_categoria_producto, comprar, list_compras, vender, \
-    ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete
-from tienda.views import list_facturas,create_factura, delete_factura, update_factura
+    export_productos_csv, ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete, list_clientes, create_cliente, \
+    delete_cliente, update_cliente
+from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
 
 urlpatterns = [
 
@@ -42,10 +43,19 @@ urlpatterns = [
     path('facturas/<int:id>/update', update_factura, name='update_factura'),
     path('facturas/<int:id>/delete', delete_factura, name='delete_factura'),
 
+
+    path('clientes', list_clientes, name='list_clientes'),
+    path('clientes/new', create_cliente, name='create_cliente'),
+    path('clientes/<str:ruc_cliente>/update', update_cliente, name='update_cliente'),
+    path('clientes/<str:ruc_cliente>/delete', delete_cliente, name='delete_cliente'),
+
     path('ventas/new', vender, name='vender'),
 
     path('compras', list_compras, name='list_compras'),
     path('compras/new', comprar, name='comprar'),
+    path('compras/<int:id>/update', update_compra, name='update_compra'),
+
+    path('export/csv', export_productos_csv, name='export_productos_csv'),
 
 
 ]

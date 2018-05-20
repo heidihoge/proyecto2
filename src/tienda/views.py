@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
-    FormularioCliente
+    FormularioCliente, FomularioCliente
 
 from .forms import FomularioCategoriaProducto, FomularioProducto
 from .models import Producto, CategoriaProducto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente
@@ -485,6 +485,87 @@ def update_factura(request, id):
 
     return render(request, 'facturas-form.html', {'form': form, 'factura': factura})
 
-# ---------------------VISTA VENTA DETALLE --------------------------------
+# probando reporte
 
-# ---------------------VISTA PAGOS --------------------------------
+import csv
+
+from django.http import HttpResponse
+from .models import Producto
+
+
+def export_productos_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="productos.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['codigo', 'nombre', 'foto_producto', 'descripcion', 'categoria','precio_venta','costo','iva','estado'])
+    productos = Producto.objects.all().values_list('codigo', 'nombre','foto_producto','descripcion','categoria','precio_venta','costo','iva','estado')
+    for producto in productos:
+        writer.writerow(producto)
+
+    return response
+
+
+
+
+
+# ---------------------VISTA CLIENTES--------------------------------
+
+from tienda.models import Cliente
+
+
+def list_clientes(request):
+    clientes = Cliente.objects.all()
+
+    return render(request, 'clientes.html', {'clientes': clientes})
+
+
+def create_cliente(request):
+    print(request.method)
+    if request.method == 'POST':
+
+        form = FomularioCliente(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cliente creado correctamente.')
+            return redirect('list_clientes')
+
+        messages.error(request, 'Error al crear cliente.')
+    else:
+        form = FomularioCliente()
+
+    return render(request, 'clientes-form.html', {'form': form})
+
+
+def update_cliente(request, ruc_cliente):
+    try:
+        cliente = Cliente.objects.get(ruc_cliente=ruc_cliente)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FomularioCliente(request.POST, request.FILES, instance=cliente)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cliente actualizado correctamente.')
+            return redirect('list_clientes')
+        messages.error(request, 'Error al modificar Cliente.')
+    else:
+        form = FomularioCliente(instance=cliente)
+
+    return render(request, 'clientes-form.html', {'form': form, 'cliente': cliente})
+
+
+def delete_cliente(request, ruc_cliente):
+    try:
+        cliente = Cliente.objects.get(ruc_cliente=ruc_cliente)
+    except:
+        return redirect('404')
+
+    if request.method == 'POST':
+        cliente.delete()
+        messages.success(request, 'Cliente eliminado correctamente.')
+
+    return redirect('list_clientes')
+

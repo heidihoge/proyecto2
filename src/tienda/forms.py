@@ -28,19 +28,18 @@ class FomularioFactura(forms.ModelForm):
 
 
 # #Formulario CategoriaProducto
-# class FomularioCategoriaProducto(forms.ModelForm):
-#     class Meta:
-#         model = CategoriaProducto
-#         fields = ['', '', '', '', '', '', '', '', '', '']
-#
-# #Formulario CategoriaProducto
 class FomularioCategoriaProducto(forms.ModelForm):
     class Meta:
         model = CategoriaProducto
         fields = ['nombre', 'descripcion']
 
 
-#
+
+class FomularioCliente(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nombre_razon', 'ruc_cliente','direccion','telefono']
+
 # #Formulario Producto
 class FomularioProducto(forms.ModelForm):
     existencia = forms.IntegerField(disabled=True, initial=0)
