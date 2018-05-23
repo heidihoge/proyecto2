@@ -34,6 +34,19 @@ class Grupo(models.Model):
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
 
+    def get_dias(self):
+        dias = zip(['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                   [self.lunes, self.martes, self.miercoles, self.jueves, self.viernes, self.sabado, self.domingo])
+        dias = filter(lambda x: x[1], dias)
+        dias = map(lambda x: x[0], dias)
+        return ",".join(list(dias))
+
+
+    def __str__(self):
+        return "{0} ({1}) Dias: ({2}) - Horario: ({3} - {4})" \
+            .format(self.id_clase.nombre, str(self.id_profesor), self.get_dias(),
+                    format(self.hora_inicio, '%H:%M'), format(self.hora_fin, '%H:%M'))
+
 
 # dia_hora
 
@@ -71,9 +84,9 @@ class EtiquetaGrupo(models.Model):
 
 class Inscripcion(models.Model):
     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
-    id_alumno = models.ForeignKey(Alumno,on_delete=models.SET_NULL,null=True)
+    alumno = models.ForeignKey(Alumno,on_delete=models.SET_NULL,null=True)
     fecha_inicio = models.DateField(default=datetime.date.today)
-    fecha_fin = models.DateField(default=datetime.date.today)
+    fecha_fin = models.DateField(default=None, null=True)
 
     def __str__(self):
         return self.grupo

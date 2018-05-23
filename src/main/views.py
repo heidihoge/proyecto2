@@ -49,6 +49,38 @@ class ProfesorAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
+class AlumnoAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Alumno.objects.none()
+
+        qs = Alumno.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(cedula__istartswith=self.q) | Q(apellido__istartswith=self.q))
+
+        return qs
+
+    def _get_fields_as_json(self, result):
+        # return json.loads(serializers.serialize('json', [result]))[0]['fields']
+        result = result.__dict__
+        del result['_state']
+        if isinstance(result['fecha_nacimiento'], datetime.date):
+            result['fecha_nacimiento'] = result['fecha_nacimiento'].strftime(settings.DATE_INPUT_FORMATS[0])
+        return result
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return [
+            {
+                'id': result.pk,
+                'text': str(result.cedula) + ' (' + self.get_result_label(result) + ')',
+                'pk': result.pk,
+                'fields': self._get_fields_as_json(result)
+            } for result in context['object_list']
+        ]
+
 class PersonaAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !

@@ -45,7 +45,7 @@
                                     <span class="step_no">4</span>
                                     <span class="step_descr">
                                               Paso 4<br>
-                                              <small>Factura</small>
+                                              <small>Confirmar</small>
                             </span>
                                 </a>
                             </li>
@@ -75,12 +75,16 @@
                                 </div>
                             </div>
                             <div id="step-3" class="content" style="display: none">
-                                <div id="calendario"></div>
+                                <form class="form-horizontal form-label-left" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div id="formulario-inscripcion"></div>
+                                </form>
                             </div>
 
                             </div>
                             <div id="step-4" class="content" style="display: none;">
-
+                                <h3>Resumen</h3>
+                                <div id="resumen"></div>
                             </div>
                         </div>
                     </div>

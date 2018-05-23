@@ -71,7 +71,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 
-from .forms import FomularioClase,FomularioGrupo, FomularioAsistencia, FomularioEtiqueta, FomularioEtiquetaClase, FomularioEtiquetaGrupo, FomularioInscripcion
+from .forms import FormularioClase,FormularioGrupo, FormularioAsistencia, FomularioEtiqueta, FomularioEtiquetaClase, FormularioEtiquetaGrupo, FormularioInscripcion
 from .models import Clase,Grupo,Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia
 
 
@@ -100,7 +100,7 @@ def create_clase(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = FomularioClase(request.POST, request.FILES)
+        form = FormularioClase(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -109,7 +109,7 @@ def create_clase(request):
 
         messages.error(request, 'Error al crear la clase.')
     else:
-        form = FomularioClase()
+        form = FormularioClase()
 
     return render(request, 'clases-form.html', {'form': form})
 
@@ -120,7 +120,7 @@ def update_clase(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioClase(request.POST, request.FILES, instance=clase)
+        form = FormularioClase(request.POST, request.FILES, instance=clase)
 
         if form.is_valid():
             form.save()
@@ -128,7 +128,7 @@ def update_clase(request, id):
             return redirect('list_clases')
         messages.error(request, 'Error al modificar Clase.')
     else:
-        form = FomularioClase(instance=clase)
+        form = FormularioClase(instance=clase)
 
     return render(request, 'clases-form.html', {'form': form, 'clase': clase})
 
@@ -157,7 +157,7 @@ def create_grupo(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = FomularioGrupo(request.POST, request.FILES)
+        form = FormularioGrupo(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -166,7 +166,7 @@ def create_grupo(request):
 
         messages.error(request, 'Error al crear el grupo.')
     else:
-        form = FomularioGrupo()
+        form = FormularioGrupo()
 
     return render(request, 'grupos-form.html', {'form': form})
 
@@ -177,7 +177,7 @@ def update_grupo(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioGrupo(request.POST, request.FILES, instance=grupo)
+        form = FormularioGrupo(request.POST, request.FILES, instance=grupo)
 
         if form.is_valid():
             form.save()
@@ -185,7 +185,7 @@ def update_grupo(request, id):
             return redirect('list_grupos')
         messages.error(request, 'Error al modificar Grupo.')
     else:
-        form = FomularioGrupo(instance=grupo)
+        form = FormularioGrupo(instance=grupo)
 
     return render(request, 'grupos-form.html', {'form': form, 'clase': grupo})
 
@@ -444,7 +444,7 @@ def list_inscripciones(request):
 
 def create_inscripcion(request):
     print(request.method)
-    form_inscripcion = FomularioInscripcion()
+    form_inscripcion = FormularioInscripcion()
     form_titular = TitularForm()
     form_alumno = AlumnoForm()
     # del form_alumno.fields['titular_cuenta']
@@ -462,7 +462,7 @@ def update_inscripcion(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioInscripcion(request.POST, request.FILES, instance=inscripcion)
+        form = FormularioInscripcion(request.POST, request.FILES, instance=inscripcion)
 
         if form.is_valid():
             form.save()
@@ -470,7 +470,7 @@ def update_inscripcion(request, id):
             return redirect('list_inscripciones')
         messages.error(request, 'Error al modificar Incripcion.')
     else:
-        form = FomularioInscripcion(instance=inscripcion)
+        form = FormularioInscripcion(instance=inscripcion)
 
     return render(request, 'inscripciones-form.html', {'form': form, 'inscripciones': inscripcion})
 
@@ -499,7 +499,7 @@ def create_asistencia(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = FomularioAsistencia(request.POST, request.FILES)
+        form = FormularioAsistencia(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -508,7 +508,7 @@ def create_asistencia(request):
 
         messages.error(request, 'Error al crear asistencia.')
     else:
-        form = FomularioAsistencia()
+        form = FormularioAsistencia()
 
     return render(request, 'asistencias-form.html', {'form': form})
 
@@ -519,7 +519,7 @@ def update_asistencia(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioAsistencia(request.POST, request.FILES, instance=asistencia)
+        form = FormularioAsistencia(request.POST, request.FILES, instance=asistencia)
 
         if form.is_valid():
             form.save()
@@ -527,7 +527,7 @@ def update_asistencia(request, id):
             return redirect('list_asistencias')
         messages.error(request, 'Error al modificar Asistencia.')
     else:
-        form = FomularioAsistencia(instance=asistencia)
+        form = FormularioAsistencia(instance=asistencia)
 
     return render(request, 'clases-form.html', {'form': form, 'asistencias': asistencia})
 

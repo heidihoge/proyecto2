@@ -1,3 +1,4 @@
+
 from dal import autocomplete
 from django import forms
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
@@ -6,19 +7,19 @@ from django.forms import DateField
 
 from escuela import admin
 from main.forms import CustomModelChoiceField
-from main.models import Profesor
+from main.models import Profesor, Alumno
 from proyecto2 import settings
 from .models import Clase, Grupo,  Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscripcion,Asistencia
 
 
 #Formulario Clase
-class FomularioClase(forms.ModelForm):
+class FormularioClase(forms.ModelForm):
     class Meta:
         model = Clase
         fields = ['nombre','descripcion','costo']
 
 #Formulario Grupo
-class FomularioGrupo(forms.ModelForm):
+class FormularioGrupo(forms.ModelForm):
 
     class Meta:
         model = Grupo
@@ -76,8 +77,6 @@ class FomularioGrupo(forms.ModelForm):
         initial=False,
         widget=forms.CheckboxInput(attrs={'class': 'flat-only'})
     )
-
-
 
 # # #Formulario DiaHora
 # # class FomularioDiaHora(forms.ModelForm):
@@ -149,19 +148,30 @@ class FomularioEtiquetaClase(forms.ModelForm):
         fields = ['id_clase', 'etiqueta']
 
 #Formulario EtiquetaGrupo
-class FomularioEtiquetaGrupo(forms.ModelForm):
+class FormularioEtiquetaGrupo(forms.ModelForm):
     class Meta:
         model = EtiquetaGrupo
         fields = ["grupo", 'etiqueta']
 
 #Formulario Inscripcion
-class FomularioInscripcion(forms.ModelForm):
+class FormularioInscripcion(forms.ModelForm):
+    grupo = forms.ModelChoiceField(
+        queryset=Grupo.objects.all(),
+        widget=autocomplete.ModelSelect2(url='grupo-autocomplete'),
+        label='Grupo'
+    )
+    alumno = forms.Field(
+        label="",
+        widget=forms.HiddenInput()
+    )
+    fecha_inicio = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+
     class Meta:
         model = Inscripcion
-        fields = ["grupo", 'id_alumno', 'fecha_inicio', 'fecha_fin']
+        fields = ["grupo", 'alumno', 'fecha_inicio']
 
 #Formulario Asistencia
-class FomularioAsistencia(forms.ModelForm):
+class FormularioAsistencia(forms.ModelForm):
     class Meta:
         model = Asistencia
         fields = ['id_alumno', "grupo", 'fecha']

@@ -1,10 +1,12 @@
 {% load field_type  %}
 {% for field in form %}
 {#    {{ field|field_type }}#}
-    <div class="form-group">
-    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="{{ field.id_for_label }}">{{ field.label }}<span
-            class="required"></span>
-    </label>
+    {% if field in form.visible_fields %}
+        <div class="form-group">
+            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="{{ field.id_for_label }}">{{ field.label }}<span
+                    class="required"></span>
+            </label>
+
     <div class="col-md-6 col-sm-6 col-xs-12">
         {% if field|field_type == 'ImageField' or field|field_type == 'FileField'  %}
             {% include "forms/imagefilefield.html" with field=field %}
@@ -39,4 +41,7 @@
             </div>
         </div>
     </div>
+    {% else %}
+        {{ field }}
+    {% endif %}
 {% endfor %}

@@ -61,7 +61,7 @@ class Empleado(Persona):
 class Profesor(Empleado):
     especialidad = models.CharField(max_length=50)
     def __str__(self):
-        return self.nombre + " " + self.apellido + " (" + self.especialidad + " )"
+        return self.nombre + " " + self.apellido
 
 #Cuenta
 class Cuenta(models.Model):

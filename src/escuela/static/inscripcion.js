@@ -45,8 +45,10 @@ function verificarTitular() {
                 clean();
                 var errDesc = '';
                 for (campo in data.errors) {
+                    console.log(data.errors);
                     if (data.errors.hasOwnProperty(campo)) {
                         errDesc = data.errors[campo];
+                        console.log(titularForm.find('[name=' + campo + ']'));
                         titularForm.find('[name=' + campo + ']')
                             .siblings('.feedback-message')
                             .addClass('text-danger')
@@ -90,14 +92,66 @@ window.wizardOnLeaveStep = function (element, context) {
             break;
         case 2: // Alumno
             //verificarAlumno();
+            if(context.toStep === 3) {
+                generarInscripcion();
+            }
             break;
-        case 3: // Inscribir
-            //verificarInscripcion();
+        case 3: // Grupos
+            //verificarGrupos();
+            if(context.toStep === 4) {
+                generarResumen();
+            }
             break;
     }
 
     return true;
 };
+
+
+// Generar Resumen
+function generarResumen() {
+    var resumen = $('#resumen');
+    resumen.addClass('text-center');
+    formTitular.find('input[type!=hidden]')
+        .each(function () {
+            var elemento = $(this);
+            var value = elemento.val();
+            var label = formTitular.find('label[for=' + elemento.attr('id') + ']').text();
+            resumen.append($('<p> ' + label + ': ' + value + '</p>'));
+        })
+}
+
+function generarInscripcion() {
+    var idPanelAlumnoPrefix = "#panel-alumno-";
+    var idGrupoAlumnoPrefix = "#grupo-alumno-";
+    var formularioIncripcion = $('#formulario-inscripcion');
+    var templateFormularioInscripcion = $('#formulario-template-incripcion');
+
+    // limpia el contenido del formulario
+    formularioIncripcion.html("");
+
+    var inscripcion, fieldset, cedula, nombre, apellido, panelAlumno;
+    // El id del contenedor alumno empieza de 1.
+    for (var i=1; i <= alumnosCount; i++) {
+        panelAlumno = $(idPanelAlumnoPrefix + i);
+        cedula = panelAlumno.find('[name=cedula]').val();
+        nombre = panelAlumno.find('[name=nombre]').val();
+        apellido = panelAlumno.find('[name=apellido]').val();
+
+        fieldset = $('<fieldset><legend>' + cedula + " (" + nombre + " " + apellido + ")" + '</legend></fieldset>');
+
+        inscripcion = templateFormularioInscripcion.clone();
+        inscripcion.find('.select2').remove();
+        inscripcion.find('[name=grupo]').trigger('autocompleteLightInitialize');
+        inscripcion.find('[name=alumno]').val(cedula);
+
+
+        configurarCalendario(inscripcion.find('[name^=fecha]'));
+
+        fieldset.append(inscripcion);
+        formularioIncripcion.append(fieldset);
+    }
+}
 
 // #comentario: Se ejecuta cuando se presiona el boton Guardar.
 window.wizardOnFinish = function (element, context) {
@@ -176,10 +230,13 @@ function alumnoExtra() {
     panel.append(tab);
     panel.append(tabContent);
     $('#formulario-alumno').find('#accordion').append(panel);
+
+    // Arregla select de alumno por cedula.
     alumnoForm.find('.select2').remove();
     alumnoForm.find('[name=cedula]').trigger('autocompleteLightInitialize');
     configurarCalendario(alumnoForm.find('[name^=fecha]'));
     configurarICheck(alumnoForm.find('[name=sexo]'));
+    configurarICheck(alumnoForm.find('[name=estado]'));
     alumnoForm.on('select2:select', function (event) {
         nombre.text("");
         apellido.text("");
@@ -233,29 +290,11 @@ $(document).ready(function () {
         formTitular = $('#formulario-titular').find('form');
         configurarCalendario(formTitular.find('[name=fecha_nacimiento]'));
         configurarICheck(formTitular.find('[name=sexo]'));
+        configurarICheck(formTitular.find('[name=estado]'));
     }
 
     formTitular.on('select2:select', function (event) {
         cargar(formTitular, event.params.data);
-    });
-
-    $('#calendario').fullCalendar({
-        locale: 'es',
-        themeSystem: 'jquery-ui',
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        defaultView: 'agendaDay',
-        groupByResource: true,
-        events: [{
-            title: 'test',
-            start: new Date()
-        }],
-        resources: [
-          { id: 'a', title: 'Lunes' },
-          { id: 'b', title: 'Martes' },
-          { id: 'c', title: 'Miércoles' },
-          { id: 'd', title: 'Jueves' },
-          { id: 'e', title: 'Viernes' }
-        ]
     });
 
 });
@@ -311,6 +350,6 @@ var bind = function () {
 
 
 // Borrar esto despues...
-setTimeout(function(){
-    wizard.smartWizard('goToStep', 3);
-}, 500);
+// setTimeout(function(){
+//     wizard.smartWizard('goToStep', 3);
+// }, 500);

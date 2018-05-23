@@ -4,7 +4,7 @@ from .views import list_alumnos, create_alumno, update_alumno, delete_alumno, li
     update_persona, delete_persona, list_empleados, update_empleado, create_empleado, delete_empleado, list_profesores, \
     create_profesor, update_profesor, delete_profesor, list_titulares, create_titular, update_titular, delete_titular, \
     list_cuentas, create_cuenta, update_cuenta, delete_cuenta, ProfesorAutocomplete, verificar_titular, \
-    PersonaAutocomplete
+    PersonaAutocomplete, AlumnoAutocomplete
 
 from main import views
 
@@ -12,6 +12,7 @@ urlpatterns = [
     # Autocomplete
     path('profesor-autocomplete/', ProfesorAutocomplete.as_view(), name='profesor-autocomplete'),
     path('persona-autocomplete/', PersonaAutocomplete.as_view(), name='persona-autocomplete'),
+    path('alumno-autocomplete/', AlumnoAutocomplete.as_view(), name='alumno-autocomplete'),
 
     # Cruds
     path('', views.index),
