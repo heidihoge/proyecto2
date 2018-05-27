@@ -1,11 +1,18 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from dal import autocomplete
 from django import forms
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.db import connection
 
+from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm
+from main.models import Alumno
+from proyecto2 import settings
 
 menus = {
     "ajustes": {
@@ -558,3 +565,78 @@ class GrupoAutocomplete(autocomplete.Select2QuerySetView):
                            | Q(id_profesor__apellido__istartswith=self.q))
 
         return qs
+
+class GrupoAutocompleteAsistencia(GrupoAutocomplete):
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        results = [{
+                'id': result.pk,
+                'text': self.get_result_label(result),
+                'pk': result.pk,
+            } for result in context['object_list']]
+        return [
+            {
+                'id': '-1',
+                'text': 'Todos los grupos',
+                'pk': '-1'
+            },
+            *results
+        ]
+
+
+def lista_asistencia(request):
+    def alumno_json(alumno):
+
+        grupo = Grupo(lunes=alumno['lunes'], martes=alumno['martes'], miercoles=alumno['miercoles'],
+                      jueves=alumno['jueves'], viernes=alumno['viernes'], sabado=alumno['sabado'],
+                      domingo=alumno['domingo'])
+        nombre_grupo = "{0} ({1}) Dias: ({2}) - Horario: ({3} - {4})".format(alumno["clase_nombre"],
+                                                                             alumno["profesor_nombre"],
+                                                                             grupo.get_dias(),
+                                                                             format(alumno['hora_inicio'], '%H:%M'),
+                                                                             format(alumno['hora_fin'], '%H:%M'))
+        return {
+            "id": alumno["alumno_id"],
+            "nombre": alumno["alumno_nombre"],
+            "grupo": {
+                "id": alumno["id"], # es id de grupo
+                "nombre": nombre_grupo
+            },
+            "asistencia": True if alumno["asistencia"] else False,
+            "asistencia_id": alumno["asistencia"]
+        }
+
+    ret = []
+    if request.method == 'GET':
+        fecha = request.GET.get('fecha')
+        fecha = datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
+        # .strftime(settings.DATE_INPUT_FORMATS[0])
+        grupo = request.GET.get('grupo')
+        # Obtener alumnos
+        query = '''
+            SELECT 
+                p.id as alumno_id,
+                p.nombre::text || ' ' || p.apellido::text || ' (' || p.cedula::text || ')' as alumno_nombre,
+                g.*,
+                prof.nombre::text || ' ' || prof.apellido::text as profesor_nombre,
+                c.nombre as clase_nombre,
+                asis.id as asistencia
+            FROM main_alumno a
+              JOIN main_persona p ON a.persona_ptr_id = p.id
+              JOIN escuela_inscripcion i ON a.persona_ptr_id = i.id_alumno_id AND
+                                          i.fecha_inicio <= %(fecha)s AND
+                                          (i.fecha_fin > %(fecha)s OR i.fecha_fin IS NULL)
+              JOIN escuela_grupo g ON i.grupo_id = g.id
+              JOIN escuela_clase c ON c.id = g.id_clase_id
+              JOIN main_persona prof ON g.id_profesor_id = prof.id
+              LEFT JOIN escuela_asistencia asis
+                ON g.id = asis.grupo_id AND asis.fecha = %(fecha)s
+        '''
+        if grupo:
+            query += " AND escuela_grupo.id = %(grupo)s"
+        cursor = connection.cursor()
+        cursor.execute(query, {"fecha": fecha, "grupo": grupo})
+        ret = dictfetch(cursor, 100, 0)
+        ret = list(map(alumno_json, ret))
+
+    return JsonResponse(ret, safe=False)

@@ -1,12 +1,13 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from .views import list_asistencias, list_clases, list_etiquetas, list_etiquetas_clase, \
-    list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase,  \
+    list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase, \
     update_etiqueta, update_etiquetas_clase, update_etiquetas_grupo, update_grupo, update_inscripcion, \
     create_asistencia, create_clase, \
-   create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
-    delete_asistencia, delete_clase,  delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
-    delete_grupo, delete_inscripcion, ClaseAutocomplete, GrupoAutocomplete
+    create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
+    delete_asistencia, delete_clase, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
+    delete_grupo, delete_inscripcion, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
+    lista_asistencia
 
 from main import views
 
@@ -22,6 +23,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('asistencia', list_asistencias, name='list_asistencias'),
+    path('asistencias', lista_asistencia, name='lista_asistencia'),
     path('asistencia/new', create_asistencia, name='create_asistencia'),
     path('asistencia/<int:id>/update', update_asistencia, name='update_asistencia'),
     path('asistencia/<int:id>/delete', delete_asistencia, name='delete_asistencia'),
@@ -57,6 +59,7 @@ urlpatterns = [
     path('grupos/<int:id>/delete', delete_grupo, name='delete_grupo'),
 
     path('grupo-autocomplete/', GrupoAutocomplete.as_view(), name='grupo-autocomplete'),
+    path('grupo-autocomplete-asistencia/', GrupoAutocompleteAsistencia.as_view(), name='grupo-autocomplete-asistencia'),
 
 
     path('inscripciones', list_inscripciones, name='list_inscripciones'),

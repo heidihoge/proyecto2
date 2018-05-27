@@ -9,24 +9,61 @@
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
-                <div class="x_content">
-                    <br/>
-                    <form id="crearasistencia" method="post" class="form-horizontal form-label-left" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {% include "forms/form.html" with form=form %}
+                <div class="x_content" id="app">
 
-                        <div class="ln_solid"></div>
+                    <form>
                         <div class="form-group">
-                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                <a class="btn btn-primary" type="button" href="/escuela/asistencia">Cancelar</a>
-                                <button class="btn btn-primary" type="reset">Limpiar</button>
-                                <input type="submit" class="btn btn-success" value="Guardar" />
+                            <div class="col-md-offset-2 col-md-4 col-sm-6 col-xs-12">
+                                <label for="fecha">Fecha</label>
+                                <input id="fecha" v-datepicker="dia" data-inputmask="'mask': '99/99/9999'" class="form-control" type="text">
+                            </div>
+
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <label for="grupo">Grupo [[grupo]]</label>
+                                <select v-model="grupo" name="grupo" data-allow-clear="true" data-placeholder="Todos los Grupos" required="" id="id_grupo"
+                                        data-autocomplete-light-url="/escuela/grupo-autocomplete-asistencia/"
+                                        data-autocomplete-light-function="select2" tabindex="-1"
+                                        class="select2-hidden-accessible" aria-hidden="true">
+
+                                </select>
                             </div>
                         </div>
-
                     </form>
+                    <br>
+                    [[alumnos]]
+                    <table>
+                    <tr v-for="alumno in alumnos">
+                            <td>[[alumno.nombre]]</td>
+                            <td>[[alumno.grupo]]</td>
+                            <td><span style="display: none">[[alumno.asistencia]]</span><input v-icheck="alumno.asistencia" v-model="alumno.asistencia" type="checkbox"></td>
+                        </tr>
+                        </table>
+                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap"
+                           cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th >Alumno</th>
+                            <th >Grupo</th>
+                            <th >Asiste</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="alumno in alumnos">
+                            <td>[[alumno.nombre]]</td>
+                            <td>[[alumno.grupo]]</td>
+                            <td><span style="display: none">[[alumno.asistencia]]</span><input v-icheck="alumno.asistencia" v-model="alumno.asistencia" type="checkbox"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ block.super }}
+    <script src="/static/asistencia.js"></script>
 {% endblock %}
