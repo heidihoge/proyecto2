@@ -550,9 +550,15 @@ def lista_asistencia(request):
               LEFT JOIN escuela_asistencia asis
                 ON g.id = asis.grupo_id AND asis.fecha = %(fecha)s
         '''
+
+        dia = fecha.weekday()
+        dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+
+        query += " WHERE g.{0} = true ".format(dias[dia])
+
         if grupo and grupo != '-1':
             grupo = int(grupo)
-            query += " WHERE g.id = %(grupo)s"
+            query += " AND g.id = %(grupo)s"
         cursor = connection.cursor()
         cursor.execute(query, {"fecha": fecha, "grupo": grupo})
         ret = dictfetch(cursor, 100, 0)
