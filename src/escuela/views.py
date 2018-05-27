@@ -1,11 +1,12 @@
 from __future__ import unicode_literals
 
+import json
 from datetime import datetime
 
 from dal import autocomplete
 from django import forms
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.db import connection
 
@@ -497,9 +498,71 @@ def delete_inscripcion(request, id):
 
 # ---------------------VISTA ASISTENCIA --------------------------------
 
-def list_asistencias(request):
-    asistencia = Asistencia.objects.all()
-    return render(request, 'asistencias.html', {'asistencias': asistencia})
+
+def lista_asistencia(request):
+    def alumno_json(alumno):
+
+        grupo = Grupo(lunes=alumno['lunes'], martes=alumno['martes'], miercoles=alumno['miercoles'],
+                      jueves=alumno['jueves'], viernes=alumno['viernes'], sabado=alumno['sabado'],
+                      domingo=alumno['domingo'])
+        nombre_grupo = "{0} ({1}) Dias: ({2}) - Horario: ({3} - {4})".format(alumno["clase_nombre"],
+                                                                             alumno["profesor_nombre"],
+                                                                             grupo.get_dias(),
+                                                                             format(alumno['hora_inicio'], '%H:%M'),
+                                                                             format(alumno['hora_fin'], '%H:%M'))
+        return {
+            "id": alumno["alumno_id"],
+            "nombre": alumno["alumno_nombre"],
+            "grupo": {
+                "id": alumno["id"], # es id de grupo
+                "nombre": nombre_grupo
+            },
+            "asistencia_presente": alumno["asistencia_presente"],
+            "asistencia_id": alumno["asistencia_id"],
+            "asistencia_comentario": alumno["asistencia_comentario"]
+        }
+
+    ret = {}
+    if request.method == 'GET':
+        fecha = request.GET.get('fecha')
+        fecha = datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
+        # .strftime(settings.DATE_INPUT_FORMATS[0])
+        grupo = request.GET.get('grupo')
+        # Obtener alumnos
+        query = '''
+            SELECT
+                p.id as alumno_id,
+                p.nombre::text || ' ' || p.apellido::text || ' (' || p.cedula::text || ')' as alumno_nombre,
+                g.*,
+                prof.nombre::text || ' ' || prof.apellido::text as profesor_nombre,
+                c.nombre as clase_nombre,
+                asis.id as asistencia_id,
+                asis.presente as asistencia_presente,
+                COALESCE(asis.comentario, '') as asistencia_comentario
+            FROM main_alumno a
+              JOIN main_persona p ON a.persona_ptr_id = p.id
+              JOIN escuela_inscripcion i ON a.persona_ptr_id = i.alumno_id AND
+                                          i.fecha_inicio <= %(fecha)s AND
+                                          (i.fecha_fin >= %(fecha)s OR i.fecha_fin IS NULL)
+              JOIN escuela_grupo g ON i.grupo_id = g.id
+              JOIN escuela_clase c ON c.id = g.id_clase_id
+              JOIN main_persona prof ON g.id_profesor_id = prof.id
+              LEFT JOIN escuela_asistencia asis
+                ON g.id = asis.grupo_id AND asis.fecha = %(fecha)s
+        '''
+        if grupo and grupo != '-1':
+            grupo = int(grupo)
+            query += " WHERE g.id = %(grupo)s"
+        cursor = connection.cursor()
+        cursor.execute(query, {"fecha": fecha, "grupo": grupo})
+        ret = dictfetch(cursor, 100, 0)
+        ret = {
+            "dia": fecha,
+            "grupo": grupo,
+            "alumnos": list(map(alumno_json, ret))
+        }
+
+    return JsonResponse(ret, safe=False)
 
 
 def create_asistencia(request):
@@ -511,7 +574,7 @@ def create_asistencia(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Asistencia creada correctamente.')
-            return redirect('list_asistencias')
+            return redirect('lista_asistencia')
 
         messages.error(request, 'Error al crear asistencia.')
     else:
@@ -520,36 +583,25 @@ def create_asistencia(request):
     return render(request, 'asistencias-form.html', {'form': form})
 
 
-def update_asistencia(request, id):
-    try:
-        asistencia = Asistencia.objects.get(id=id)
-    except:
-        return redirect('404')
+def update_asistencia(request):
     if request.method == 'POST':
-        form = FormularioAsistencia(request.POST, request.FILES, instance=asistencia)
 
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Asistencia actualizada correctamente.')
-            return redirect('list_asistencias')
-        messages.error(request, 'Error al modificar Asistencia.')
-    else:
-        form = FormularioAsistencia(instance=asistencia)
+        alumnos = json.loads(request.body)
+        for alumno in alumnos:
+            asistencia, _ = Asistencia.objects.get_or_create(id_alumno_id=alumno['alumno_id'],
+                                                          grupo_id=alumno['grupo_id'],
+                                                          fecha=datetime.strptime(alumno['fecha'],
+                                                                                  settings.DATE_INPUT_FORMATS[0]).date())
+            asistencia.presente = True if alumno['asistencia_presente'] else False
+            asistencia.comentario = alumno['asistencia_comentario']
+            asistencia.save()
 
-    return render(request, 'clases-form.html', {'form': form, 'asistencias': asistencia})
+        return HttpResponse(status=200)
 
 
-def delete_asistencia(request, id):
-    try:
-        asistencia = Asistencia.objects.get(id=id)
-    except:
-        return redirect('404')
+    return HttpResponse(status=400)
 
-    if request.method == 'POST':
-        asistencia.delete()
-        messages.success(request, 'Asistencia eliminada correctamente.')
 
-    return redirect('list_asistencias')
 
 
 class GrupoAutocomplete(autocomplete.Select2QuerySetView):
@@ -582,61 +634,3 @@ class GrupoAutocompleteAsistencia(GrupoAutocomplete):
             },
             *results
         ]
-
-
-def lista_asistencia(request):
-    def alumno_json(alumno):
-
-        grupo = Grupo(lunes=alumno['lunes'], martes=alumno['martes'], miercoles=alumno['miercoles'],
-                      jueves=alumno['jueves'], viernes=alumno['viernes'], sabado=alumno['sabado'],
-                      domingo=alumno['domingo'])
-        nombre_grupo = "{0} ({1}) Dias: ({2}) - Horario: ({3} - {4})".format(alumno["clase_nombre"],
-                                                                             alumno["profesor_nombre"],
-                                                                             grupo.get_dias(),
-                                                                             format(alumno['hora_inicio'], '%H:%M'),
-                                                                             format(alumno['hora_fin'], '%H:%M'))
-        return {
-            "id": alumno["alumno_id"],
-            "nombre": alumno["alumno_nombre"],
-            "grupo": {
-                "id": alumno["id"], # es id de grupo
-                "nombre": nombre_grupo
-            },
-            "asistencia": True if alumno["asistencia"] else False,
-            "asistencia_id": alumno["asistencia"]
-        }
-
-    ret = []
-    if request.method == 'GET':
-        fecha = request.GET.get('fecha')
-        fecha = datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
-        # .strftime(settings.DATE_INPUT_FORMATS[0])
-        grupo = request.GET.get('grupo')
-        # Obtener alumnos
-        query = '''
-            SELECT 
-                p.id as alumno_id,
-                p.nombre::text || ' ' || p.apellido::text || ' (' || p.cedula::text || ')' as alumno_nombre,
-                g.*,
-                prof.nombre::text || ' ' || prof.apellido::text as profesor_nombre,
-                c.nombre as clase_nombre,
-                asis.id as asistencia
-            FROM main_alumno a
-              JOIN main_persona p ON a.persona_ptr_id = p.id
-              JOIN escuela_inscripcion i ON a.persona_ptr_id = i.id_alumno_id AND
-                                          i.fecha_inicio <= %(fecha)s AND
-                                          (i.fecha_fin > %(fecha)s OR i.fecha_fin IS NULL)
-              JOIN escuela_grupo g ON i.grupo_id = g.id
-              JOIN escuela_clase c ON c.id = g.id_clase_id
-              JOIN main_persona prof ON g.id_profesor_id = prof.id
-              LEFT JOIN escuela_asistencia asis
-                ON g.id = asis.grupo_id AND asis.fecha = %(fecha)s
-        '''
-        if grupo:
-            query += " AND escuela_grupo.id = %(grupo)s"
-        cursor = connection.cursor()
-        cursor.execute(query, {"fecha": fecha, "grupo": grupo})
-        ret = dictfetch(cursor, 100, 0)
-        ret = list(map(alumno_json, ret))
-
-    return JsonResponse(ret, safe=False)

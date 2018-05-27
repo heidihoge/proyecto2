@@ -85,8 +85,8 @@ class EtiquetaGrupo(models.Model):
 class Inscripcion(models.Model):
     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
     alumno = models.ForeignKey(Alumno,on_delete=models.SET_NULL,null=True)
-    fecha_inicio = models.DateField(default=datetime.date.today)
-    fecha_fin = models.DateField(default=None, null=True)
+    fecha_inicio = models.DateField(default=datetime.date.today, db_index=True)
+    fecha_fin = models.DateField(default=None, null=True, db_index=True)
 
     def __str__(self):
         return self.grupo
@@ -96,7 +96,10 @@ class Inscripcion(models.Model):
 class Asistencia(models.Model):
     id_alumno = models.ForeignKey(Alumno, on_delete=models.SET_NULL,null=True)
     grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
-    fecha = models.DateField(default=datetime.date.today)
+    fecha = models.DateField(default=datetime.date.today, db_index=True)
+    presente = models.BooleanField(default=False)
+    comentario = models.CharField(max_length=300, default='')
+
     class Meta:
         unique_together=(('id_alumno','grupo','fecha'),)
     def __str__(self):

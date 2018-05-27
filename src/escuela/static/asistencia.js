@@ -1,24 +1,28 @@
 $(document).ready(function () {
+
+    $.ajaxSetup({
+        headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')}
+    });
+
     Vue.directive('datepicker', {
         bind: function (el, binding, vnode) {
             var key = binding.expression; // dentro de data, key es el nombre de la variable
-            $(el).daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                locale: {
-                    format: 'DD/MM/YYYY',
-                    daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre'],
+            setTimeout(function() {
+                $(el).daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    locale: {
+                        format: 'DD/MM/YYYY',
+                        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre'],
 
-                }
+                    }
+                });
+                $(el).on('apply.daterangepicker', function (e, picker) {
+                    window.vm[key] = picker.startDate.format("DD/MM/YYYY");
+                });
+                $(el).inputmask();
             });
-            $(el).on('apply.daterangepicker', function (e, picker) {
-                console.log(picker.startDate.format("DD/MM/YYYY"));
-                window.vm[key] = picker.startDate.format("DD/MM/YYYY");
-            });
-            $(el).inputmask();
-        },
-        update: function (val) {
 
         }
     });
@@ -26,7 +30,6 @@ $(document).ready(function () {
     Vue.directive('icheck', {
         bind: function (el, binding, vnode) {
             var key = binding.expression;
-            console.log(arguments);
             setTimeout(function() {
                 $(el).iCheck({
                     checkboxClass: 'icheckbox_flat-green',
@@ -43,7 +46,10 @@ $(document).ready(function () {
 
             });
         },
-        update: function(el){
+        update: function(el, binding, vnode) {
+            setTimeout(function(){
+                $(el).iCheck('update');
+            })
         }
     });
 
@@ -62,25 +68,63 @@ $(document).ready(function () {
             cargarAlumnos: function () {
                 var vm = this;
                 vm.dia = moment().format("DD/MM/YYYY");
-                // vm.alumnos.push({
-                //     nombre: "Julio Reyes (4145624)",
-                //     grupo: "Natacion 101 - Prof Heidi - 08:00 - 09:00 - Lunes, Martes, Miercoles",
-                //     asistencia: false
-                // },
-                // {
-                //     nombre: "Heidi  (4145624)",
-                //     grupo: "Natacion 101 - Prof Heidi - 08:00 - 09:00 - Lunes, Martes, Miercoles",
-                //     asistencia: true
-                // });
-                $.ajax('/escuela/asistencias?fecha=' + vm.dia)
-                    .then(function (data) {
-                        vm.alumnos = data;
-                        console.log(vm)
-                    });
+                this.actualizarLista(vm.dia, vm.grupo);
 
+            },
+            actualizarLista: function (dia, grupo) {
+                var vm = this;
+                $.ajax('/escuela/asistencias?fecha=' + dia + '&grupo=' + (grupo?grupo:''))
+                    .then(function (data) {
+                        vm.alumnos = data.alumnos;
+                    });
+            },
+            actualizarAsistencia: function () {
+                var vm = this;
+
+                $.ajax('/escuela/asistencia/update', {
+                    data: JSON.stringify(vm.alumnos.map(function(alumno) {
+                        return {
+                            "alumno_id": alumno.id,
+                            "grupo_id": alumno.grupo.id,
+                            "fecha": vm.dia,
+                            "asistencia_id": alumno.asistencia_id,
+                            "asistencia_presente": alumno.asistencia_presente,
+                            "asistencia_comentario": alumno.asistencia_comentario
+                        }
+                    })),
+                    contentType: 'application/json',
+                    type: 'POST'
+                }).done(function () {
+                    PNotify.prototype.options.delay = 3000;
+                    new PNotify({
+                                  title: 'Éxito',
+                                  text: 'Guardado correctamente.',
+                                  type: 'success',
+                                  styling: 'bootstrap3'
+                              });
+                    vm.actualizarLista(vm.dia, vm.grupo);
+                }).fail(function () {
+                    PNotify.prototype.options.delay = 3000;
+                    new PNotify({
+                                  title: 'Error',
+                                  text: 'Ocurrio un error al guardar.',
+                                  type: 'error',
+                                  styling: 'bootstrap3'
+                              });
+                    vm.actualizarLista(vm.dia, vm.grupo);
+                })
             }
         },
-        computed: {}
+        watch: {
+            dia: function (val) {
+                var vm = this;
+                this.actualizarLista(val, vm.grupo);
+            },
+            grupo: function (val) {
+                var vm = this;
+                this.actualizarLista(vm.dia, val);
+            }
+        }
     });
 
     $('.select2').remove();
