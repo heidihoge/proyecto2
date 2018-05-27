@@ -144,6 +144,7 @@ class ProfesorForm(forms.ModelForm):
         widget=forms.RadioSelect(choices=Persona.SEXO)
     )
 
+
 #Formulario Cuenta
 class CuentaForm(forms.ModelForm):
     class Meta:

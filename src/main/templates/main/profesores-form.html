@@ -30,3 +30,21 @@
         </div>
     </div>
 {% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+
+
+        function configurarICheck(element) {
+            element.parents('ul').attr('style', 'list-style-type: none;padding:0');
+            element.iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+        }
+        $(document).ready(function () {
+            configurarICheck($("[name=sexo]"));
+
+        })
+    </script>
+{% endblock %}

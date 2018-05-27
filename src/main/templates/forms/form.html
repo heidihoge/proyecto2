@@ -26,6 +26,8 @@
             {{ field }}
         {% elif field|field_type == 'Field' %}
             {{ field }}
+        {% elif field|field_type == 'BooleanField' %}
+            {{ field }}
         {% else %}
             {% include "forms/charfield.html" with field=field %}
         {% endif %}

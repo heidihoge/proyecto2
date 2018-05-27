@@ -30,13 +30,7 @@ class Factura(models.Model):
 
 
 
-# categoriaProdutos
-class CategoriaProducto(models.Model):
-    nombre = models.CharField(max_length=50)
-    descripcion = models.CharField(max_length=150)
 
-    def __str__(self):
-        return  self.nombre
 # producto
 
 class Producto(models.Model):
@@ -45,7 +39,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=50)
     foto_producto = models.ImageField(upload_to='media_root', verbose_name='Foto producto', null=True,blank=True)
     descripcion = models.CharField(max_length=150)
-    categoria = models.ForeignKey(CategoriaProducto, on_delete=models.SET_NULL,null=True)
+    control_stock = models.BooleanField(default=False)
     precio_venta = models.IntegerField(default=0)
     costo = models.IntegerField(default=0)
     IVA = ((Decimal("0.05"),'5%'),

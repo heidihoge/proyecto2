@@ -9,8 +9,8 @@ from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
     FormularioCliente, FomularioCliente
 
-from .forms import FomularioCategoriaProducto, FomularioProducto
-from .models import Producto, CategoriaProducto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente
+from .forms import  FomularioProducto
+from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente
 
 
 # Create your views here.
@@ -210,62 +210,6 @@ def delete_factura(request, id):
 
 
 
-# ---------------------VISTA CATEGORIA PRODUCTO --------------------------------
-def list_categoria_productos(request):
-    categoria_producto = CategoriaProducto.objects.all()
-    return render(request, 'categoria_producto.html', {'categoria_producto': categoria_producto})
-
-
-
-
-def create_categoria_producto(request):
-    print(request.method)
-    if request.method == 'POST':
-
-        form = FomularioCategoriaProducto(request.POST, request.FILES)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Categoria creada correctamente.')
-            return redirect('list_categoria_productos')
-
-        messages.error(request, 'Error al crear categoria.')
-    else:
-        form = FomularioCategoriaProducto()
-
-    return render(request, 'categoria_producto-form.html', {'form': form})
-
-
-def update_categoria_producto(request, id):
-    try:
-        categoria_producto = CategoriaProducto.objects.get(id=id)
-    except:
-        return redirect('404')
-    if request.method == 'POST':
-        form = FomularioCategoriaProducto(request.POST, request.FILES, instance=categoria_producto)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Categoria actualizada correctamente.')
-            return redirect('list_categoria_productos')
-        messages.error(request, 'Error al modificar Categoria.')
-    else:
-        form = FomularioCategoriaProducto(instance=categoria_producto)
-
-    return render(request, 'categoria_producto-form.html', {'form': form, 'categoria_producto': categoria_producto})
-
-
-def delete_categoria_producto(request, id):
-    try:
-         categoria_producto = CategoriaProducto.objects.get(id=id)
-    except:
-        return redirect('404')
-
-    if request.method == 'POST':
-        categoria_producto.delete()
-        messages.success(request, 'Categoria eliminada correctamente.')
-
-    return redirect('list_categoria_productos')
 
 # ---------------------VISTA PRODUCTO --------------------------------
 def list_productos(request):

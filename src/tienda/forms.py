@@ -6,7 +6,7 @@ from django.forms import DateField
 
 from main.forms import CustomModelChoiceField
 from proyecto2 import settings
-from .models import Factura, Producto, CategoriaProducto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
+from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
     Cliente
 
 
@@ -27,12 +27,6 @@ class FomularioFactura(forms.ModelForm):
                   'nro_inicial', 'nro_final', 'vigencia_desde', 'vigencia_hasta', 'estado']
 
 
-# #Formulario CategoriaProducto
-class FomularioCategoriaProducto(forms.ModelForm):
-    class Meta:
-        model = CategoriaProducto
-        fields = ['nombre', 'descripcion']
-
 
 
 class FomularioCliente(forms.ModelForm):
@@ -42,7 +36,7 @@ class FomularioCliente(forms.ModelForm):
 
 # #Formulario Producto
 class FomularioProducto(forms.ModelForm):
-    existencia = forms.IntegerField(disabled=True, initial=0)
+    existencia = forms.IntegerField( initial=0)
     iva = forms.ChoiceField(
         choices=Producto.IVA,
         widget=forms.RadioSelect(choices=Producto.IVA)
@@ -52,9 +46,12 @@ class FomularioProducto(forms.ModelForm):
         widget=forms.RadioSelect(choices=Producto.ESTADO),
         initial = 'A'
     )
+    control_stock = forms.BooleanField(
+        widget=forms.CheckboxInput()
+    )
     class Meta:
         model = Producto
-        fields = ['codigo', 'nombre', 'foto_producto', 'descripcion', 'categoria', 'precio_venta', 'costo',
+        fields = ['codigo', 'nombre', 'foto_producto', 'descripcion', 'control_stock', 'precio_venta', 'costo',
                   'iva', 'estado', 'existencia']
 
 

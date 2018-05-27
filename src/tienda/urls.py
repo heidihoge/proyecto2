@@ -4,8 +4,8 @@ from django.urls import path, include
 
 from tienda import views
 from main import views
-from tienda.views import list_productos, create_producto, update_producto, delete_producto, list_categoria_productos, \
-    create_categoria_producto, update_categoria_producto, delete_categoria_producto, comprar, list_compras, vender, \
+from tienda.views import list_productos, create_producto, update_producto, delete_producto,\
+    comprar, list_compras, vender, \
     export_productos_csv, ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete, list_clientes, create_cliente, \
     delete_cliente, update_cliente
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
@@ -31,12 +31,6 @@ urlpatterns = [
     path('productos/new', create_producto, name='create_producto'),
     path('productos/<str:codigo>/update', update_producto, name='update_producto'),
     path('productos/<str:codigo>/delete', delete_producto, name='delete_producto'),
-
-    path('categoria_productos', list_categoria_productos, name='list_categoria_productos'),
-    path('categoria_productos/new', create_categoria_producto, name='create_categoria_producto'),
-    path('categoria_productos/<int:id>/update', update_categoria_producto, name='update_categoria_producto'),
-    path('categoria_productos/<int:id>/delete', delete_categoria_producto, name='delete_categoria_producto'),
-
 
     path('facturas', list_facturas, name='list_facturas'),
     path('facturas/new', create_factura, name='create_factura'),
