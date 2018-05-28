@@ -41,9 +41,9 @@ class Titular(Persona):
 #Alumno
 
 class Alumno(Persona):
-    imagen = models.ImageField(upload_to='media_root', verbose_name='Foto')
-    ficha= models.FileField(upload_to='media_root',  verbose_name='Ficha médica')
-    ficha_inscripcion = models.FileField(upload_to='media_root', verbose_name='Ficha de inscripción')
+    imagen = models.ImageField(upload_to='media_root', verbose_name='Foto', null=True, blank=True)
+    ficha = models.FileField(upload_to='media_root',  verbose_name='Ficha médica', null=True, blank=True)
+    ficha_inscripcion = models.FileField(upload_to='media_root', verbose_name='Ficha de inscripción', null=True, blank=True)
     titular_cuenta = models.ForeignKey(Titular, on_delete=models.SET_NULL,
     blank=True,
     null=True)

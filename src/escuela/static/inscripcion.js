@@ -192,9 +192,13 @@ function cargar(form, datos, prefix) {
     form.trigger("reset");
     for (var campo in datos.fields) {
         if (datos.fields.hasOwnProperty(campo)) {
-            form.find('[name=' + prefix + campo + '][type!=file]').val(datos.fields[campo]);
+            form.find('[name=' + prefix + campo + '][type!=file][type!=radio]').val(datos.fields[campo]);
             if (campo === 'sexo') {
                 form.find('[name=' + prefix + 'sexo][value=' + datos.fields[campo] + ']').iCheck('check');
+            }
+            if (campo === 'estado') {
+                console.log(datos.fields[campo]);
+                form.find('[name=' + prefix + 'estado][value=' + datos.fields[campo] + ']').iCheck('check');
             }
         }
     }
