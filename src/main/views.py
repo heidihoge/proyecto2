@@ -202,6 +202,27 @@ def verificar_titular(request):
         return JsonResponse({"valid": form.is_valid(), "errors": form.errors})
     raise Http404()
 
+
+def verificar_alumnos(request):
+    if request.method == 'POST':
+        cantidad_alumnos = int(request.POST['alumnosCount'])
+        alumnos = []
+        for i in range(1, cantidad_alumnos + 1):
+            prefix = 'alumno-' + str(i)
+            alumno = None
+            if prefix + '-cedula' in request.POST:
+                cedula = request.POST[prefix + '-cedula']
+                try:
+                    alumno = Persona.objects.get(cedula=cedula)
+                except:
+                    alumno = None
+
+            form = AlumnoForm(request.POST, request.FILES, instance=alumno, prefix=prefix)
+            alumnos.append({"alumno": i, "valid": form.is_valid(), "errors": form.errors})
+
+        return JsonResponse(alumnos, safe=False)
+    raise Http404()
+
 @permission_required('add_titular', raise_exception=True)
 def create_titular(request):
     print(request.method)

@@ -20,13 +20,71 @@ function notifyError(message) {
     });
 }
 
-function verificarTitular() {
-    var titularForm = $('#formulario-titular').find('form');
+function verificarAlumnos() {
+    var form = $('form');
+    var feedback = $('#alumno-feedback');
 
     function clean() {
-        titularForm.find('.feedback-message').text('');
-        titularForm.find('.text-danger').removeClass('text-danger');
-        titularForm.find('.has-error').removeClass('has-error');
+        feedback.html('');
+        feedback.removeClass('alert alert-danger');
+    }
+
+    var formData = new FormData(form[0]);
+    $.post({
+        url: window.verificarAlumnosUrl,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+    })
+        .done(function (data) {
+            window.dataaa = data;
+            if (data.filter(function(d){ return d.valid === false }).length === 0) {
+                clean();
+                wizard.smartWizard('setError', {stepnum: 2, iserror: false});
+            } else {
+                clean();
+                var errDesc = '';
+                feedback.append($('<h5>Corrige los siguientes errores:</h5>'));
+
+                for (var i = 0; i<data.length; i++) {
+                    if(data[i].valid) {
+                        continue;
+                    }
+                    var lista = $('<ul></ul>');
+                    var listaElemento;
+
+                    for (campo in data[i].errors) {
+
+                        if (data[i].errors.hasOwnProperty(campo)) {
+                            listaElemento = $('<li></li>');
+                            errDesc = data[i].errors[campo];
+                            listaElemento.text(campo + ": " + errDesc);
+                            lista.append(listaElemento)
+                        }
+                    }
+                    feedback.append($('<strong>#' + (i+1) + ':</strong>'))
+                    feedback.append(lista);
+                }
+
+
+                feedback.addClass('text-danger');
+                feedback.addClass('alert alert-danger');
+                feedback.addClass('has-error');
+
+                wizard.smartWizard('setError', {stepnum: 2, iserror: true});
+                notifyError("Complete los campos obligatorios.");
+            }
+        });
+}
+
+function verificarTitular() {
+    var titularForm = $('form');
+    var feedback = $('#titular-feedback');
+
+    function clean() {
+        $('#titular-feedback').html('');
+        feedback.removeClass('alert alert-danger');
     }
 
     var formData = new FormData(titularForm[0]);
@@ -44,20 +102,22 @@ function verificarTitular() {
             } else {
                 clean();
                 var errDesc = '';
+                var lista = $('<ul></ul>');
+                var listaElemento;
                 for (campo in data.errors) {
-                    console.log(data.errors);
+
                     if (data.errors.hasOwnProperty(campo)) {
+                        listaElemento = $('<li></li>');
                         errDesc = data.errors[campo];
-                        console.log(titularForm.find('[name=' + campo + ']'));
-                        titularForm.find('[name=' + campo + ']')
-                            .siblings('.feedback-message')
-                            .addClass('text-danger')
-                            .text(errDesc)
-                            .parent()
-                            .parent()
-                            .addClass('has-error');
+                        listaElemento.text(campo + ": " + errDesc);
+                        lista.append(listaElemento)
                     }
                 }
+                feedback.append($('<h5>Corrige los siguientes errores:</h5>'))
+                feedback.append(lista);
+                feedback.addClass('text-danger');
+                feedback.addClass('alert alert-danger');
+                feedback.addClass('has-error');
 
                 wizard.smartWizard('setError', {stepnum: 1, iserror: true});
                 notifyError("Complete los campos obligatorios.");
@@ -67,19 +127,23 @@ function verificarTitular() {
 }
 
 // #comentario: Carga los datos obtenidos a partir del autocompletado (persona)
-function cargar(form, datos) {
+function cargar(form, datos, prefix) {
 
-    form.find('[name=sexo]').iCheck('uncheck');
+    if (!prefix) {
+        prefix = '';
+    }
+
+    form.find('[name=' + prefix + 'sexo]').iCheck('uncheck');
     form.trigger("reset");
     for (var campo in datos.fields) {
         if (datos.fields.hasOwnProperty(campo)) {
-            form.find('[name=' + campo + '][type!=file]').val(datos.fields[campo]);
+            form.find('[name=' + prefix + campo + '][type!=file]').val(datos.fields[campo]);
             if (campo === 'sexo') {
-                form.find('[name=sexo][value=' + datos.fields[campo] + ']').iCheck('check');
+                form.find('[name=' + prefix + 'sexo][value=' + datos.fields[campo] + ']').iCheck('check');
             }
         }
     }
-    form.find('[name=cedula]').val(datos.id);
+    form.find('[name=' + prefix + 'cedula]').val(datos.id);
 
 }
 
@@ -90,8 +154,8 @@ window.wizardOnLeaveStep = function (element, context) {
         case 1: // Titular
             verificarTitular();
             break;
-        case 2: // Alumno
-            //verificarAlumno();
+        case 2: // Alumnos
+            verificarAlumnos();
             if(context.toStep === 3) {
                 generarInscripcion();
             }
@@ -122,6 +186,7 @@ function generarResumen() {
 }
 
 function generarInscripcion() {
+    var fieldAlumnoPrefix = 'alumno-';
     var idPanelAlumnoPrefix = "#panel-alumno-";
     var idGrupoAlumnoPrefix = "#grupo-alumno-";
     var formularioIncripcion = $('#formulario-inscripcion');
@@ -134,9 +199,9 @@ function generarInscripcion() {
     // El id del contenedor alumno empieza de 1.
     for (var i=1; i <= alumnosCount; i++) {
         panelAlumno = $(idPanelAlumnoPrefix + i);
-        cedula = panelAlumno.find('[name=cedula]').val();
-        nombre = panelAlumno.find('[name=nombre]').val();
-        apellido = panelAlumno.find('[name=apellido]').val();
+        cedula = panelAlumno.find('[name=' + fieldAlumnoPrefix + i + '-cedula]').val();
+        nombre = panelAlumno.find('[name=' + fieldAlumnoPrefix + i + '-nombre]').val();
+        apellido = panelAlumno.find('[name=' + fieldAlumnoPrefix + i + '-apellido]').val();
 
         fieldset = $('<fieldset><legend>' + cedula + " (" + nombre + " " + apellido + ")" + '</legend></fieldset>');
 
@@ -147,6 +212,12 @@ function generarInscripcion() {
 
 
         configurarCalendario(inscripcion.find('[name^=fecha]'));
+
+        var inputs = inscripcion.find('[name]');
+        for (var j = 0; j <= inputs.length; j++) {
+            input = $(inputs[j]);
+            input.attr('name', fieldAlumnoPrefix  + i + '-inscripcion-' + input.attr('name'));
+        }
 
         fieldset.append(inscripcion);
         formularioIncripcion.append(fieldset);
@@ -166,6 +237,7 @@ function quitarAlumno() {
     if (alumnosCount > 1) {
         $('#panel-alumno-' + alumnosCount).remove();
         alumnosCount--;
+        $('[name=alumnosCount]').val(alumnosCount);
     }
 }
 
@@ -173,7 +245,9 @@ function quitarAlumno() {
 // #comentario: incrementa la cantidad de alumnos.
 function alumnoExtra() {
     alumnosCount++;
+    $('[name=alumnosCount]').val(alumnosCount);
     var bindId = "-alumno-" + alumnosCount;
+    var fieldPrefix = 'alumno-' + alumnosCount + '-';
     var panel = $('<div></div>'); //crea elemento
     panel.attr('id', 'panel-alumno-' + alumnosCount);
     panel.addClass('panel');
@@ -219,7 +293,7 @@ function alumnoExtra() {
     var tabContentPanel = $('<div></div>');
     tabContentPanel.addClass('panel-body');
     if (formTemplateAlumno === null) {
-        formTemplateAlumno = $('#formulario-template-alumno').find('form');
+        formTemplateAlumno = $('#formulario-template-alumno');
     }
     var alumnoForm = formTemplateAlumno.clone();
     alumnoForm.addClass('text-left');
@@ -237,10 +311,17 @@ function alumnoExtra() {
     configurarCalendario(alumnoForm.find('[name^=fecha]'));
     configurarICheck(alumnoForm.find('[name=sexo]'));
     configurarICheck(alumnoForm.find('[name=estado]'));
+
+    var inputs = alumnoForm.find('[name]');
+    for (var j = 0; j <= inputs.length; j++) {
+        input = $(inputs[j]);
+        input.attr('name', fieldPrefix + input.attr('name'));
+    }
+
     alumnoForm.on('select2:select', function (event) {
         nombre.text("");
         apellido.text("");
-        cargar(alumnoForm, event.params.data);
+        cargar(alumnoForm, event.params.data, fieldPrefix);
         var fields = event.params.data.fields;
         if (fields) {
             var hasNombre = false;
@@ -287,7 +368,7 @@ $(document).ready(function () {
 
     wizard = $('#wizard');
     if (formTitular === null) {
-        formTitular = $('#formulario-titular').find('form');
+        formTitular = $('#formulario-titular');
         configurarCalendario(formTitular.find('[name=fecha_nacimiento]'));
         configurarICheck(formTitular.find('[name=sexo]'));
         configurarICheck(formTitular.find('[name=estado]'));

@@ -87,7 +87,11 @@ class AlumnoForm(forms.ModelForm):
     telefono1 = forms.CharField(label='Teléfono')
     telefono2 = forms.CharField(label='Otro contacto')
     cedula = CustomModelChoiceField(
-        queryset=Persona.objects.all(),
+        to_field_name='cedula',
+        model=Persona,
+        allow_create=True,
+        # Se ejecuta cuando se quiere guardar el form y verificar que exista en la base de datos.
+        queryset=Persona.objects.all().values_list('cedula', flat=True),
         widget=autocomplete.ModelSelect2(url='persona-autocomplete', attrs={'data-tags': 'true', 'data-language':'es'})
     )
     sexo = forms.ChoiceField(

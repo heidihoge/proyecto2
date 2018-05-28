@@ -51,42 +51,51 @@
                             </li>
                         </ul>
 
+                        <form class="form-horizontal form-label-left" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="alumnosCount" value="0">
+                            <div class="">
+                                <div id="step-1" class="content" style="display: block;">
+                                    <div class="text-center">
+                                        <div id="titular-feedback" class="feedback-message text-left" style="display: inline-block">
 
-                        <div class="">
-                            <div id="step-1" class="content" style="display: block;">
-                                <div id="formulario-titular">
-                                    <form class="form-horizontal form-label-left" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        {% include "forms/form.html" with form=formTitular %}
-                                    </form>
-                                </div>
-                            </div>
-                            <div id="step-2" class="content" style="display: none;">
-                                <div id="formulario-alumno" style="text-align: center">
-                                    <div class="btn-group btn-sm">
-                                        <button class="btn btn-sm btn-default" onclick="quitarAlumno()"><span
-                                                class="glyphicon-minus"></span></button>
-                                        <button class="btn btn-sm btn-default" onclick="alumnoExtra()"><span
-                                                class="glyphicon-plus"></span></button>
+                                        </div>
                                     </div>
-                                    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
-
+                                    <div id="formulario-titular">
+                                            {% include "forms/form.html" with form=formTitular %}
                                     </div>
                                 </div>
-                            </div>
-                            <div id="step-3" class="content" style="display: none">
-                                <form class="form-horizontal form-label-left" enctype="multipart/form-data">
-                                    {% csrf_token %}
+                                <div id="step-2" class="content" style="display: none;">
+                                    <div class="text-center">
+                                        <div id="alumno-feedback" class="feedback-message text-left" style="display: inline-block">
+
+                                        </div>
+                                    </div>
+                                    <div id="formulario-alumno" style="text-align: center">
+                                        <div class="btn-group btn-sm">
+                                            <button class="btn btn-sm btn-default" onclick="quitarAlumno()"><span
+                                                    class="glyphicon-minus"></span></button>
+                                            <button class="btn btn-sm btn-default" onclick="alumnoExtra()"><span
+                                                    class="glyphicon-plus"></span></button>
+                                        </div>
+                                        <form id="alumnos-form" enctype="multipart/form-data">
+                                            <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div id="step-3" class="content" style="display: none">
                                     <div id="formulario-inscripcion"></div>
-                                </form>
-                            </div>
+                                </div>
 
+                                <div id="step-4" class="content" style="display: none;">
+                                    <h3>Resumen</h3>
+                                    <div id="resumen"></div>
+                                </div>
                             </div>
-                            <div id="step-4" class="content" style="display: none;">
-                                <h3>Resumen</h3>
-                                <div id="resumen"></div>
-                            </div>
-                        </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
@@ -95,13 +104,9 @@
     <div id="formularios" style="display:none">
 
         <div id="formulario-template-alumno">
-            <form class="form-horizontal form-label-left">
-                {% csrf_token %}
-                {% include "forms/form.html" with form=formAlumno %}
-            </form>
+            {% include "forms/form.html" with form=formAlumno %}
         </div>
         <div id="formulario-template-incripcion">
-            {% csrf_token %}
             {% include "forms/form.html" with form=formInscripcion %}
         </div>
     </div>
@@ -111,6 +116,7 @@
     {{ block.super }}
     <script>
     window.verificarTitularUrl = '{% url 'verificar_titular' %}';
+    window.verificarAlumnosUrl = '{% url 'verificar_alumnos' %}';
     </script>
     <script src="/static/inscripcion.js"></script>
 {% endblock %}
