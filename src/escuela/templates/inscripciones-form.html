@@ -73,9 +73,9 @@
                                     </div>
                                     <div id="formulario-alumno" style="text-align: center">
                                         <div class="btn-group btn-sm">
-                                            <button class="btn btn-sm btn-default" onclick="quitarAlumno()"><span
+                                            <button type="button" class="btn btn-sm btn-default" onclick="quitarAlumno()"><span
                                                     class="glyphicon-minus"></span></button>
-                                            <button class="btn btn-sm btn-default" onclick="alumnoExtra()"><span
+                                            <button type="button" class="btn btn-sm btn-default" onclick="alumnoExtra()"><span
                                                     class="glyphicon-plus"></span></button>
                                         </div>
                                         <form id="alumnos-form" enctype="multipart/form-data">
@@ -86,6 +86,11 @@
                                     </div>
                                 </div>
                                 <div id="step-3" class="content" style="display: none">
+                                    <div class="text-center">
+                                        <div id="inscripcion-feedback" class="feedback-message text-left" style="display: inline-block">
+
+                                        </div>
+                                    </div>
                                     <div id="formulario-inscripcion"></div>
                                 </div>
 
@@ -117,6 +122,7 @@
     <script>
     window.verificarTitularUrl = '{% url 'verificar_titular' %}';
     window.verificarAlumnosUrl = '{% url 'verificar_alumnos' %}';
+    window.verificarInscripcionUrl = '{% url 'verificar_inscripcion' %}';
     </script>
     <script src="/static/inscripcion.js"></script>
 {% endblock %}

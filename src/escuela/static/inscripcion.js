@@ -38,7 +38,6 @@ function verificarAlumnos() {
         processData: false
     })
         .done(function (data) {
-            window.dataaa = data;
             if (data.filter(function(d){ return d.valid === false }).length === 0) {
                 clean();
                 wizard.smartWizard('setError', {stepnum: 2, iserror: false});
@@ -73,6 +72,62 @@ function verificarAlumnos() {
                 feedback.addClass('has-error');
 
                 wizard.smartWizard('setError', {stepnum: 2, iserror: true});
+                notifyError("Complete los campos obligatorios.");
+            }
+        });
+}
+function verificarInscripcion() {
+    var form = $('form');
+    var feedback = $('#inscripcion-feedback');
+
+    function clean() {
+        feedback.html('');
+        feedback.removeClass('alert alert-danger');
+    }
+
+    var formData = new FormData(form[0]);
+    $.post({
+        url: window.verificarInscripcionUrl,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+    })
+        .done(function (data) {
+            if (data.filter(function(d){ return d.valid === false }).length === 0) {
+                clean();
+                wizard.smartWizard('setError', {stepnum: 3, iserror: false});
+            } else {
+                clean();
+                var errDesc = '';
+                feedback.append($('<h5>Corrige los siguientes errores:</h5>'));
+
+                for (var i = 0; i<data.length; i++) {
+                    if(data[i].valid) {
+                        continue;
+                    }
+                    var lista = $('<ul></ul>');
+                    var listaElemento;
+
+                    for (campo in data[i].errors) {
+
+                        if (data[i].errors.hasOwnProperty(campo)) {
+                            listaElemento = $('<li></li>');
+                            errDesc = data[i].errors[campo];
+                            listaElemento.text(campo + ": " + errDesc);
+                            lista.append(listaElemento)
+                        }
+                    }
+                    feedback.append($('<strong>#' + (i+1) + ':</strong>'))
+                    feedback.append(lista);
+                }
+
+
+                feedback.addClass('text-danger');
+                feedback.addClass('alert alert-danger');
+                feedback.addClass('has-error');
+
+                wizard.smartWizard('setError', {stepnum: 3, iserror: true});
                 notifyError("Complete los campos obligatorios.");
             }
         });
@@ -161,7 +216,7 @@ window.wizardOnLeaveStep = function (element, context) {
             }
             break;
         case 3: // Grupos
-            //verificarGrupos();
+            verificarInscripcion();
             if(context.toStep === 4) {
                 generarResumen();
             }
@@ -205,20 +260,22 @@ function generarInscripcion() {
 
         fieldset = $('<fieldset><legend>' + cedula + " (" + nombre + " " + apellido + ")" + '</legend></fieldset>');
 
-        inscripcion = templateFormularioInscripcion.clone();
+        inscripcion = $(templateFormularioInscripcion.clone().html());
         inscripcion.find('.select2').remove();
         inscripcion.find('[name=grupo]').trigger('autocompleteLightInitialize');
+        var alumnoHiddent = $('<input type="hidden" name="alumno" />');
+        inscripcion.append(alumnoHiddent);
         inscripcion.find('[name=alumno]').val(cedula);
 
-
+        console.log(inscripcion.html());
         configurarCalendario(inscripcion.find('[name^=fecha]'));
 
         var inputs = inscripcion.find('[name]');
         for (var j = 0; j <= inputs.length; j++) {
-            input = $(inputs[j]);
+            var input = $(inputs[j]);
             input.attr('name', fieldAlumnoPrefix  + i + '-inscripcion-' + input.attr('name'));
         }
-
+        // console.log(inscripcion.html());
         fieldset.append(inscripcion);
         formularioIncripcion.append(fieldset);
     }
@@ -295,7 +352,7 @@ function alumnoExtra() {
     if (formTemplateAlumno === null) {
         formTemplateAlumno = $('#formulario-template-alumno');
     }
-    var alumnoForm = formTemplateAlumno.clone();
+    var alumnoForm = $(formTemplateAlumno.clone().html());
     alumnoForm.addClass('text-left');
     alumnoForm.find('input[name=apellido]').attr('data-bind', 'apellido' + bindId);
     alumnoForm.find('input[name=nombre]').attr('data-bind', 'nombre' + bindId);
@@ -314,7 +371,7 @@ function alumnoExtra() {
 
     var inputs = alumnoForm.find('[name]');
     for (var j = 0; j <= inputs.length; j++) {
-        input = $(inputs[j]);
+        var input = $(inputs[j]);
         input.attr('name', fieldPrefix + input.attr('name'));
     }
 

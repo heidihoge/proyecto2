@@ -7,7 +7,7 @@ from django.forms import DateField
 
 from escuela import admin
 from main.forms import CustomModelChoiceField
-from main.models import Profesor, Alumno
+from main.models import Profesor, Alumno, Persona
 from proyecto2 import settings
 from .models import Clase, Grupo,  Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscripcion,Asistencia
 
@@ -160,15 +160,11 @@ class FormularioInscripcion(forms.ModelForm):
         widget=autocomplete.ModelSelect2(url='grupo-autocomplete'),
         label='Grupo'
     )
-    alumno = forms.Field(
-        label="",
-        widget=forms.HiddenInput()
-    )
     fecha_inicio = DateField(input_formats=settings.DATE_INPUT_FORMATS)
 
     class Meta:
         model = Inscripcion
-        fields = ["grupo", 'alumno', 'fecha_inicio']
+        fields = ["grupo", 'fecha_inicio']
 
 #Formulario Asistencia
 class FormularioAsistencia(forms.ModelForm):

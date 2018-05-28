@@ -11,6 +11,7 @@ from django.db.models import Q
 
 
 # Create your views here.
+from escuela.forms import FormularioInscripcion
 from proyecto2 import settings
 
 
@@ -221,6 +222,18 @@ def verificar_alumnos(request):
             alumnos.append({"alumno": i, "valid": form.is_valid(), "errors": form.errors})
 
         return JsonResponse(alumnos, safe=False)
+    raise Http404()
+
+def verificar_inscripcion(request):
+    if request.method == 'POST':
+        cantidad_alumnos = int(request.POST['alumnosCount'])
+        inscripciones = []
+        for i in range(1, cantidad_alumnos + 1):
+            prefix = 'alumno-' + str(i) + '-inscripcion'
+            form = FormularioInscripcion(request.POST, prefix=prefix)
+            inscripciones.append({"alumno": i, "valid": form.is_valid(), "errors": form.errors})
+
+        return JsonResponse(inscripciones, safe=False)
     raise Http404()
 
 @permission_required('add_titular', raise_exception=True)
