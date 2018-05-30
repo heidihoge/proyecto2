@@ -31,8 +31,8 @@
 
                             <thead>
                             <tr>
-                                <th>id_grupo</th>
-                                <th>id_alumno</th>
+                                <th>Alumno</th>
+                                <th>Grupo</th>
                                 <th>fecha_inicio</th>
                                 <th>fecha_fin</th>
                                 <th>Accion</th>
@@ -42,8 +42,8 @@
 
                             {% for inscripcion in inscripciones %}
                                 <tr>
-                                    <td>{{ inscripcion.id_grupo }}</td>
-                                    <td>{{ inscripcion.id_alumno }}</td>
+                                    <td>{{ inscripcion.alumno }}</td>
+                                    <td>{{ inscripcion.grupo }}</td>
                                     <td>{{ inscripcion.fecha_inicio }}</td>
                                     <td>{{ inscripcion.fecha_fin }}</td>
 

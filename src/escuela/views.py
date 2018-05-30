@@ -6,13 +6,13 @@ from datetime import datetime
 from dal import autocomplete
 from django import forms
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render
 from django.db import connection
 
 from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm
-from main.models import Alumno
+from main.models import Alumno, Persona, Titular
 from proyecto2 import settings
 
 menus = {
@@ -570,6 +570,77 @@ def lista_asistencia(request):
 
     return JsonResponse(ret, safe=False)
 
+def guardar_inscripcion(request):
+    if request.method == 'POST':
+        titular = None
+        errores = []
+        if 'cedula' in request.POST:
+            cedula = request.POST['cedula']
+            try:
+                titular = Titular.objects.get(cedula=cedula)
+            except Exception as e1:
+                try:
+                    persona = Persona.objects.get(cedula=cedula)
+                    titular = Titular(persona_ptr_id=persona.pk)
+                    titular.__dict__.update(persona.__dict__)
+                except  Exception as e2:
+                    titular = Titular()
+
+        form = TitularForm(request.POST, request.FILES, instance=titular)
+        if form.is_valid():
+            titular = form.save()
+        else:
+            errores.append(1)
+
+
+        cantidad_alumnos = int(request.POST['alumnosCount'])
+
+        for i in range(1, cantidad_alumnos + 1):
+            prefix = 'alumno-' + str(i)
+            alumno = None
+            if prefix + '-cedula' in request.POST:
+                cedula = request.POST[prefix + '-cedula']
+                try:
+                    alumno = Alumno.objects.get(cedula=cedula)
+                except Exception as e1:
+                    try:
+                        persona = Persona.objects.get(cedula=cedula)
+                        alumno = Alumno(persona_ptr_id=persona.pk)
+                        alumno.__dict__.update(persona.__dict__)
+                    except Exception as e2:
+                        alumno = Alumno()
+
+            alumno.titular_cuenta = titular
+            form = AlumnoForm(request.POST, request.FILES, instance=alumno, prefix=prefix)
+            if form.is_valid():
+                alumno = form.save()
+            else:
+                errores.append(2)
+
+
+            prefix = 'alumno-' + str(i) + '-inscripcion'
+            if prefix + '-grupo' in request.POST:
+                grupo = request.POST[prefix + '-grupo']
+                try:
+                    inscripcion = Inscripcion.objects.get(alumno=alumno, grupo_id=grupo)
+                    inscripcion.fecha_fin = None
+                except Exception as e1:
+                    inscripcion = Inscripcion()
+
+            form = FormularioInscripcion(request.POST, prefix=prefix, instance=inscripcion)
+
+            if form.is_valid() and alumno:
+                inscripcion = form.save(commit=False)
+                inscripcion.alumno = alumno
+                inscripcion.save()
+            else:
+                errores.append(3)
+
+        if len(errores) == 0:
+            messages.success(request, 'Inscripcion guardada correctamente.')
+
+        return JsonResponse({"errores": errores}, safe=False)
+    raise Http404()
 
 def create_asistencia(request):
     print(request.method)

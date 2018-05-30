@@ -9,7 +9,7 @@ from .views import list_clases, list_etiquetas, list_etiquetas_clase, \
     create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
     delete_clase, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
     delete_grupo, delete_inscripcion, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
-    lista_asistencia
+    lista_asistencia, guardar_inscripcion
 
 from main import views
 
@@ -67,6 +67,7 @@ urlpatterns = [
     path('inscripciones/<int:id>/update', update_inscripcion, name='update_inscripcion'),
     path('inscripciones/<int:id>/delete', delete_inscripcion, name='delete_inscripcion'),
     path('inscripciones/verificar', verificar_inscripcion, name='verificar_inscripcion'),
+    path('inscripciones/guardar', guardar_inscripcion, name='guardar_inscripcion'),
 
 
 

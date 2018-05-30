@@ -72,6 +72,7 @@
                                         </div>
                                     </div>
                                     <div id="formulario-alumno" style="text-align: center">
+
                                         <div class="btn-group btn-sm">
                                             <button type="button" class="btn btn-sm btn-default" onclick="quitarAlumno()"><span
                                                     class="glyphicon-minus"></span></button>
@@ -95,8 +96,12 @@
                                 </div>
 
                                 <div id="step-4" class="content" style="display: none;">
-                                    <h3>Resumen</h3>
-                                    <div id="resumen"></div>
+                                    <h3>Resumen Titular</h3>
+                                    <div id="resumen-titular"></div>
+                                    <h3>Resumen Alumnos</h3>
+                                    <div id="resumen-alumno"></div>
+
+
                                 </div>
                             </div>
                         </form>
@@ -123,6 +128,7 @@
     window.verificarTitularUrl = '{% url 'verificar_titular' %}';
     window.verificarAlumnosUrl = '{% url 'verificar_alumnos' %}';
     window.verificarInscripcionUrl = '{% url 'verificar_inscripcion' %}';
+    window.guardarInscripcion = '{% url 'guardar_inscripcion' %}';
     </script>
     <script src="/static/inscripcion.js"></script>
 {% endblock %}
