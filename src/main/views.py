@@ -1,6 +1,8 @@
 import json
 
 import datetime
+from _dummy_thread import error
+
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core import serializers
@@ -8,7 +10,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, Http404
 from django.db.models import Q
-
 
 # Create your views here.
 from escuela.forms import FormularioInscripcion
@@ -19,14 +20,18 @@ from proyecto2 import settings
 def index(request):
     return render(request, 'index.html', context={})
 
+
 def login(request):
     return render(request, 'login.html', context={})
+
 
 def redirect_to_index(request):
     return redirect('/')
 
+
 def error404(request):
     return render(request, 'errors/page_404.html', context={})
+
 
 def error403(request):
     return render(request, 'errors/page_403.html', context={})
@@ -36,6 +41,7 @@ def error403(request):
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
+
 
 class ProfesorAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -49,6 +55,7 @@ class ProfesorAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(nombre__istartswith=self.q) | Q(cedula__isstartwith=self.q))
 
         return qs
+
 
 class AlumnoAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -81,6 +88,7 @@ class AlumnoAutocomplete(autocomplete.Select2QuerySetView):
                 'fields': self._get_fields_as_json(result)
             } for result in context['object_list']
         ]
+
 
 class PersonaAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -179,7 +187,6 @@ def delete_persona(request, id):
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-
 from .forms import TitularForm
 from .models import Titular
 
@@ -224,6 +231,7 @@ def verificar_alumnos(request):
         return JsonResponse(alumnos, safe=False)
     raise Http404()
 
+
 def verificar_inscripcion(request):
     if request.method == 'POST':
         cantidad_alumnos = int(request.POST['alumnosCount'])
@@ -235,6 +243,7 @@ def verificar_inscripcion(request):
 
         return JsonResponse(inscripciones, safe=False)
     raise Http404()
+
 
 @permission_required('add_titular', raise_exception=True)
 def create_titular(request):
@@ -286,10 +295,10 @@ def delete_titular(request, id):
 
     return redirect('list_titulares')
 
+
 # ---------------------VISTA ALUMNOS --------------------------------
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
 
 from .forms import AlumnoForm
 from .models import Alumno
@@ -305,7 +314,6 @@ def create_alumno(request):
     if request.method == 'POST':
 
         form = AlumnoForm(request.POST, request.FILES)
-
 
         if form.is_valid():
             form.save()
@@ -343,21 +351,20 @@ def delete_alumno(request, id):
         alumno = Alumno.objects.get(id=id)
     except:
         return redirect('404')
-
     if request.method == 'POST':
-        alumno.delete()
-        messages.success(request, 'Alumno eliminado correctamente.')
+        try:
+            alumno.delete()
+            messages.success(request, 'Alumno eliminado correctamente.')
+        except:
+            messages.error(request, 'El alumno no puede ser eliminado, está siendo utilizado.')
 
     return redirect('list_alumnos')
-
-
 
 
 
 # ---------------------VISTA EMPLEADOS --------------------------------
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
 
 from .forms import EmpleadoForm
 from .models import Empleado
@@ -418,14 +425,9 @@ def delete_empleado(request, id):
     return redirect('list_empleados')
 
 
-
-
-
-
 # ---------------------VISTA PROFESORES --------------------------------
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
 
 from .forms import ProfesorForm
 from .models import Profesor
@@ -485,10 +487,10 @@ def delete_profesor(request, id):
 
     return redirect('list_profesores')
 
+
 # ---------------------VISTA CUENTAS --------------------------------
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
 
 from .forms import CuentaForm
 from .models import Cuenta

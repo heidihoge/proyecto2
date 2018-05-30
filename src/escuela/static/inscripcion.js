@@ -250,7 +250,7 @@ function generarResumen() {
     var formularioAlumno = $('#formulario-alumno');
     for (var i = 1; i<= alumnosCount; i++){
         var panelalumno = formularioAlumno.find('#panel-alumno-' + i);
-        resumenalumno.append($("<strong>Alumno " + i+"</strong>"));
+        resumenalumno.append($("<strong>Alumno " + i+"</strong>").css( "background-color", "rgba(26, 187, 156, 0.27)" ));
         //todos los inputs que no sean ocultos
         panelalumno.find('input[type=text],select[name$=cedula]')
             .each(function () {
