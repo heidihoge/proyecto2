@@ -4,7 +4,6 @@ import datetime
 from django.db import models
 
 # Create your models here.
-from main.models import  Cuenta
 
 
 
@@ -39,7 +38,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=50)
     foto_producto = models.ImageField(upload_to='media_root', verbose_name='Foto producto', null=True,blank=True)
     descripcion = models.CharField(max_length=150)
-    control_stock = models.BooleanField(default=False)
+    control_stock = models.BooleanField(default=False, blank=True)
     precio_venta = models.IntegerField(default=0)
     costo = models.IntegerField(default=0)
     IVA = ((Decimal("0.05"),'5%'),
@@ -123,11 +122,3 @@ class VentaDetalle(models.Model):
     monto_10 = models.IntegerField(default=0)
     monto_exento = models.IntegerField(default=0)
 
-# pagos
-class Pago(models.Model):
-    id_cab_venta = models.ForeignKey(VentaCabecera, on_delete=models.CASCADE, null=True)
-    id_cuenta=models.ForeignKey(Cuenta, on_delete=models.SET_NULL,null=True)
-    fecha_pago=models.DateField
-    monto_pago = models.IntegerField(default=0)
-    saldo=models.IntegerField(default=0)
-    comentario= models.CharField(max_length=150)

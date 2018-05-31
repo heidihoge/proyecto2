@@ -80,8 +80,7 @@ from django.shortcuts import render, redirect
 
 
 from .forms import FormularioClase,FormularioGrupo, FormularioAsistencia, FomularioEtiqueta, FomularioEtiquetaClase, FormularioEtiquetaGrupo, FormularioInscripcion
-from .models import Clase,Grupo,Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia
-
+from .models import Clase, Grupo, Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia, Cuenta
 
 
 # ---------------------VISTA CLASE --------------------------------
@@ -205,8 +204,11 @@ def delete_grupo(request, id):
         return redirect('404')
 
     if request.method == 'POST':
-        grupo.delete()
-        messages.success(request, 'Grupo eliminado correctamente.')
+        try:
+            grupo.delete()
+            messages.success(request, 'Grupo eliminado correctamente.')
+        except:
+            messages.error(request, 'No puedes borrar el grupo, está siendo utilizado')
 
     return redirect('list_grupos')
 
@@ -399,7 +401,7 @@ def create_etiquetas_grupo(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = FomularioEtiquetaGrupo(request.POST, request.FILES)
+        form = FormularioEtiquetaGrupo(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -408,7 +410,7 @@ def create_etiquetas_grupo(request):
 
         messages.error(request, 'Error al crear la etiqueta_clase.')
     else:
-        form = FomularioEtiquetaGrupo()
+        form = FormularioEtiquetaGrupo()
 
     return render(request, 'etiqueta_grupos.html', {'form': form})
 
@@ -419,7 +421,7 @@ def update_etiquetas_grupo(request, id):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioEtiquetaGrupo(request.POST, request.FILES, instance=etiqueta_grupo)
+        form = FormularioEtiquetaGrupo(request.POST, request.FILES, instance=etiqueta_grupo)
 
         if form.is_valid():
             form.save()
@@ -427,7 +429,7 @@ def update_etiquetas_grupo(request, id):
             return redirect('list_etiquetas_grupo')
         messages.error(request, 'Error al modificar Etiqueta_Grupo.')
     else:
-        form = FomularioEtiquetaGrupo(instance=etiqueta_grupo)
+        form = FormularioEtiquetaGrupo(instance=etiqueta_grupo)
 
     return render(request, 'etiqueta_grupos-form.html', {'form': form, 'etiquetas_grupos': etiqueta_grupo})
 
@@ -635,6 +637,11 @@ def guardar_inscripcion(request):
                 inscripcion.save()
             else:
                 errores.append(3)
+
+            if not errores:
+                cuenta = Cuenta(inscripcion=inscripcion, vencimiento=inscripcion.fecha_inicio,
+                                monto=inscripcion.grupo.costo)
+                cuenta.save()
 
         if len(errores) == 0:
             messages.success(request, 'Inscripcion guardada correctamente.')

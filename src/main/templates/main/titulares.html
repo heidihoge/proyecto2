@@ -41,9 +41,9 @@
                             <th>Dirección</th>
                             <th>Teléfono1</th>
                             <th>Teléfono2</th>
-                            <th>Fotocopia Cedula</th>
                             <th>Estado</th>
                             <th>Tipo responsable</th>
+
                             <th>Accion</th>
                         </tr>
                         </thead>
@@ -61,11 +61,8 @@
                             <td>{{ titular.telefono2 }}</td>
                             <td>{{ titular.estado }}</td>
                             <td>{{ titular.tipo_responsable }}</td>
-                            <td>{% if titular.fotocopia_cedula %}<a href="/media/{{ titular.fotocopia_cedula }}">fotocopia_cedula</a>{%
-                                else %}(sin
-                                fotocopia){% endif %}
-                            </td>
-                            <td><a class="btn btn-info btn-xs" href="/titulares/{{ titular.id }}">Editar </a>
+
+                            <td><a class="btn btn-info btn-xs" href="/titulares/{{ titular.id }}/update">Editar </a>
                                 <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                    data-target="#eliminar-modal" onclick="formEliminar({{ titular.id }})">Eliminar</a>
                             </td>

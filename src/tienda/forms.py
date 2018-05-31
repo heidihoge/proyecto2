@@ -47,7 +47,8 @@ class FomularioProducto(forms.ModelForm):
         initial = 'A'
     )
     control_stock = forms.BooleanField(
-        widget=forms.CheckboxInput()
+        widget=forms.CheckboxInput(),
+        required = False
     )
     class Meta:
         model = Producto
@@ -124,6 +125,13 @@ class FormularioVentaDetalle(forms.ModelForm):
     monto_5 = forms.IntegerField(initial=0)
     monto_10 = forms.IntegerField(initial=0)
     monto_exento = forms.IntegerField(initial=0)
+
+    def clean_producto(self):
+        if isinstance(self.cleaned_data['producto'], str):
+            return Producto.objects.get(codigo='CUENTA')
+
+        return self.cleaned_data['producto']
+
     class Meta:
         model = VentaDetalle
 

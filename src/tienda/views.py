@@ -5,6 +5,7 @@ from django.db.models import Q, Max
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 
+from escuela.models import Cuenta
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
     FormularioCliente, FomularioCliente
@@ -79,7 +80,7 @@ class ProductoAutocomplete(autocomplete.Select2QuerySetView):
             return Producto.objects.none()
 
         # busca producto
-        qs = Producto.objects.filter(estado='A')
+        qs = Producto.objects.filter(estado='A').exclude(codigo='CUENTA')
 
 
         if self.q:
@@ -116,6 +117,47 @@ class ProductoAutocomplete(autocomplete.Select2QuerySetView):
                 'fields': self._get_fields_as_json(result)
             } for result in context['object_list']
         ]
+
+
+class CuentaAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated:
+            return Cuenta.objects.none()
+
+        # busca Cuentas sin pagar
+        qs = Cuenta.objects.filter(pagado=False)
+
+
+        if self.q:
+            qs = qs.filter(Q(inscripcion__alumno__cedula__istartswith=self.q) |
+                           Q(inscripcion__alumno__titular_cuenta__cedula__istartswith=self.q))
+
+        return qs
+
+
+    def _get_fields_as_json(self, result):
+        # return json.loads(serializers.serialize('json', [result]))[0]['fields']
+
+
+        result = result.__dict__
+        del result['_state']
+        if isinstance(result['vencimiento'], datetime.date):
+            result['vencimiento'] = result['vencimiento'].strftime(settings.DATE_INPUT_FORMATS[0])
+        return result
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        return [
+            {
+                'id': result.pk,
+                'text': self.get_result_label(result),
+                'pk': result.pk,
+                'fields': self._get_fields_as_json(result)
+            } for result in context['object_list']
+        ]
+
+
 
 
 class ClienteAutocomplete(autocomplete.Select2QuerySetView):
@@ -213,7 +255,7 @@ def delete_factura(request, id):
 
 # ---------------------VISTA PRODUCTO --------------------------------
 def list_productos(request):
-    productos = Producto.objects.all()
+    productos = Producto.objects.exclude(codigo='CUENTA')
     return render(request, 'producto.html', {'productos': productos})
 
 
@@ -262,17 +304,31 @@ def delete_producto(request, codigo):
     except:
         return redirect('404')
 
-    if request.method == 'POST':
+    if producto.codigo == 'CUOTA':
+        messages.error(request, 'Cuota no puede ser borrado.')
+
+    elif  request.method == 'POST':
         producto.delete()
         messages.success(request, 'Producto eliminado correctamente.')
 
     return redirect('list_productos')
 
+
+
+
 # ---------------------VISTA VENTA CABECERA --------------------------------
+
+def cuentas(formset):
+    productos_cuenta = [] # indices de Productos que son cuenta
+    for idx, form in enumerate(formset.cleaned_data):
+        if form['producto'].codigo == 'CUENTA':
+            productos_cuenta.append(idx)
+
+    return productos_cuenta
 
 def vender(request):
     venta = VentaCabecera()
-
+    cuenta = Producto.objects.get(codigo='CUENTA')
     FormularioDetalleSet = inlineformset_factory(VentaCabecera, VentaDetalle, extra=0, can_delete=True, form=FormularioVentaDetalle)
 
     if request.method == 'POST':
@@ -291,7 +347,27 @@ def vender(request):
 
         if form.is_valid() and formularioDetalleSet.is_valid() and formularioCliente.is_valid():
             form.save()
-            formularioDetalleSet.save()
+            detalles = formularioDetalleSet.save()
+
+            for detalle in detalles:
+                detalle.descripcion = detalle.producto.nombre
+
+                if detalle.producto.control_stock:
+                    detalle.producto.existencia -= detalle.cantidad
+                    detalle.producto.save()
+
+                detalle.save()
+
+            productos_cuenta = cuentas(formularioDetalleSet)
+
+            if productos_cuenta:
+                for idx in productos_cuenta:
+                    cuenta_a_pagar = Cuenta.objects.get(pk=request.POST['ventadetalle_set-' + str(idx) + '-cuenta'])
+                    cuenta_a_pagar.pagado = True
+                    cuenta_a_pagar.monto_pagado = detalles[idx].precio
+                    cuenta_a_pagar.detalle = detalles[idx]
+                    cuenta_a_pagar.save()
+
             formularioCliente.save()
             messages.success(request, 'Venta registrada correctamente')
             return redirect('list_ventas')
@@ -306,7 +382,7 @@ def vender(request):
 
 
     return render(request, 'ventas-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet,
-                                                'formularioCliente': formularioCliente})
+                                                'formularioCliente': formularioCliente, 'cuenta': cuenta})
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 

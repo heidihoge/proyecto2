@@ -3,6 +3,8 @@ from django.db import models
 
 
 #persona
+
+
 class Persona(models.Model):
     SEXO = (
         ('F', 'FEMENINO'),
@@ -22,7 +24,7 @@ class Persona(models.Model):
     estado = models.CharField(max_length=1, choices=ESTADO, default='A')
 
     def __str__(self):
-        return self.nombre + " " + self.apellido
+        return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
 
 #Titular
@@ -38,6 +40,9 @@ class Titular(Persona):
     )
     tipo_responsable = models.CharField(max_length=1, choices = OPCIONES_TIPO_TUTOR)
 
+    def __str__(self):
+        return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
+
 #Alumno
 
 class Alumno(Persona):
@@ -48,27 +53,19 @@ class Alumno(Persona):
     blank=True,
     null=True)
     def __str__(self):
-        return self.cedula + " " + self.nombre
+        return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 #Empleado
 
 class Empleado(Persona):
     rol=  models.CharField(max_length=50, default='Profesor', null=True)
     salario = models.IntegerField(default=0)
     def __str__(self):
-        return self.cedula + " " + self.nombre
+        return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
 #Profesor
 class Profesor(Empleado):
     especialidad = models.CharField(max_length=50)
     def __str__(self):
-        return self.nombre + " " + self.apellido
-
-#Cuenta
-class Cuenta(models.Model):
-    descripcion = models.CharField(max_length=50)
-    monto = models.IntegerField()
-    saldo = models.IntegerField()
-    id_persona = models.ForeignKey(Persona, on_delete=models.SET_NULL,null=True)
-
+        return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
 

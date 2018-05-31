@@ -4,10 +4,10 @@ from django.urls import path, include
 
 from tienda import views
 from main import views
-from tienda.views import list_productos, create_producto, update_producto, delete_producto,\
+from tienda.views import list_productos, create_producto, update_producto, delete_producto, \
     comprar, list_compras, vender, \
     export_productos_csv, ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete, list_clientes, create_cliente, \
-    delete_cliente, update_cliente
+    delete_cliente, update_cliente, CuentaAutocomplete
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     path('cliente-autocomplete/', ClienteAutocomplete.as_view(), name='cliente-autocomplete'),
     path('factura-autocomplete/', FacturaAutocomplete.as_view(), name='factura-autocomplete'),
     path('producto-autocomplete/', ProductoAutocomplete.as_view(), name='producto-autocomplete'),
+    path('cuenta-autocomplete/', CuentaAutocomplete.as_view(), name='cuenta-autocomplete'),
 
 
     path('accounts/profile/', views.redirect_to_index),

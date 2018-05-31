@@ -3,7 +3,7 @@ from django.urls import path, include
 from .views import list_alumnos, create_alumno, update_alumno, delete_alumno, list_personas, create_persona, \
     update_persona, delete_persona, list_empleados, update_empleado, create_empleado, delete_empleado, list_profesores, \
     create_profesor, update_profesor, delete_profesor, list_titulares, create_titular, update_titular, delete_titular, \
-    list_cuentas, create_cuenta, update_cuenta, delete_cuenta, ProfesorAutocomplete, verificar_titular, \
+     ProfesorAutocomplete, verificar_titular, \
     PersonaAutocomplete, AlumnoAutocomplete, verificar_alumnos
 
 from main import views
@@ -52,12 +52,6 @@ urlpatterns = [
     path('titulares/<int:id>/update', update_titular, name='update_titular'),
     path('titulares/<int:id>/delete/', delete_titular, name='delete_titular'),
 
-    path('cuentas', list_cuentas, name='list_cuentas'),
-    path('cuentas/new', create_cuenta, name='create_cuenta'),
-    path('cuentas/<int:id>/update', update_cuenta, name='update_cuenta'),
-    path('cuentas/<int:id>/delete', delete_cuenta, name='delete_cuenta'),
-
-  
 
 ]
 

@@ -3,10 +3,12 @@ import datetime
 from django.db import models
 
 # Create your models here.
-from main.models import Alumno, Cuenta, Profesor, Persona, Empleado
+from main.models import Alumno, Profesor, Persona, Empleado
 
 
 # clase
+from tienda.models import VentaDetalle
+
 
 class Clase(models.Model):
     nombre = models.CharField(max_length=50)
@@ -47,6 +49,11 @@ class Grupo(models.Model):
             .format(self.id_clase.nombre, str(self.id_profesor), self.get_dias(),
                     format(self.hora_inicio, '%H:%M'), format(self.hora_fin, '%H:%M'))
 
+    def short_desc(self):
+        return "Clase: {0} Dias: ({1}) Monto: {2}" \
+            .format(self.id_clase.nombre,  self.get_dias(),
+                    self.costo)
+
 
 # dia_hora
 
@@ -83,10 +90,13 @@ class EtiquetaGrupo(models.Model):
 # inscripcion
 
 class Inscripcion(models.Model):
-    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL,null=True)
+    grupo = models.ForeignKey(Grupo, on_delete=models.PROTECT,null=True)
     alumno = models.ForeignKey(Alumno,on_delete=models.SET_NULL,null=True)
     fecha_inicio = models.DateField(default=datetime.date.today, db_index=True)
     fecha_fin = models.DateField(default=None, null=True, db_index=True)
+    ESTADO = (('A', 'ACTIVO'),
+              ('IN', 'INACTIVO'))
+    estado = models.CharField(max_length=1, choices=ESTADO, default='A')
 
     def __str__(self):
         return self.grupo
@@ -104,3 +114,19 @@ class Asistencia(models.Model):
         unique_together=(('id_alumno','grupo','fecha'),)
     def __str__(self):
         return self.grupo
+
+
+#Cuenta
+class Cuenta(models.Model):
+    inscripcion = models.ForeignKey(Inscripcion,on_delete=models.PROTECT)
+    vencimiento = models.DateField(default=datetime.date.today)
+    monto = models.IntegerField(default=0)
+    monto_pagado = models.IntegerField(default=0)
+    pagado = models.BooleanField(default=False)
+    detalle = models.ForeignKey(VentaDetalle, on_delete=models.PROTECT, null=True)
+
+    def __str__(self):
+        return "Alumno: {1} {0} Vto: {2}".format(str(self.inscripcion.grupo.short_desc()), str(self.inscripcion.alumno), str(self.vencimiento))
+
+
+

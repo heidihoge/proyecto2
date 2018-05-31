@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.forms import DateField
 
 from proyecto2 import settings
-from .models import Persona, Alumno, Empleado, Profesor, Cuenta, Titular
+from .models import Persona, Alumno, Empleado, Profesor, Titular
 from django.core.validators import MinLengthValidator
 
 class CustomModelChoiceField(forms.ModelChoiceField):
@@ -149,9 +149,9 @@ class ProfesorForm(forms.ModelForm):
     )
 
 
-#Formulario Cuenta
-class CuentaForm(forms.ModelForm):
-    class Meta:
-        model = Cuenta
-        fields = ['descripcion','monto','saldo','id_persona']
-
+# #Formulario Cuenta
+# class CuentaForm(forms.ModelForm):
+#     class Meta:
+#         model = Cuenta
+#         fields = ['descripcion','monto','saldo','id_persona']
+#
