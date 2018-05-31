@@ -3,11 +3,13 @@ import datetime
 from django.db import models
 
 # Create your models here.
+from django.shortcuts import render
+
 from main.models import Alumno, Profesor, Persona, Empleado
 
 
 # clase
-from tienda.models import VentaDetalle
+from tienda.models import VentaDetalle, VentaCabecera
 
 
 class Clase(models.Model):
@@ -96,10 +98,8 @@ class Inscripcion(models.Model):
     fecha_fin = models.DateField(default=None, null=True, db_index=True)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
-    estado = models.CharField(max_length=1, choices=ESTADO, default='A')
+    estado = models.CharField(max_length=2, choices=ESTADO, default='A')
 
-    def __str__(self):
-        return self.grupo
 
 # asistencia
 
@@ -127,6 +127,10 @@ class Cuenta(models.Model):
 
     def __str__(self):
         return "Alumno: {1} {0} Vto: {2}".format(str(self.inscripcion.grupo.short_desc()), str(self.inscripcion.alumno), str(self.vencimiento))
+
+    def vencio(self):
+        if self.pagado ==False:
+            return self.vencimiento < datetime.date.today()
 
 
 

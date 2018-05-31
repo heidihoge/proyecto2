@@ -8,7 +8,7 @@
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/escuela/inscripciones/new"><i  class="fa fa-plus-square"></i> NUEVA INSCRIPCION</a>
+
 
                 </div>
             </div>
@@ -33,11 +33,10 @@
                             <tr>
                                 <th>Alumno</th>
                                 <th>Grupo</th>
-                                <th>Estado</th>
-                                <th>Inicio</th>
-                                <th>Fin</th>
-
-
+                                <th>fecha_inicio</th>
+                                <th>fecha_fin</th>
+                                <th>Estad</th>
+                                <th>Accion</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -46,14 +45,13 @@
                                 <tr>
                                     <td>{{ inscripcion.alumno }}</td>
                                     <td>{{ inscripcion.grupo }}</td>
-                                    <td>{{ inscripcion.estado }}</td>
                                     <td>{{ inscripcion.fecha_inicio }}</td>
                                     <td>{{ inscripcion.fecha_fin }}</td>
+                                    <td>{{ inscripcion.estado }}</td>
 
-
-{#                                    <td><a class="btn btn-info btn-xs" href="/escuela/inscripciones/{{ inscripcion.id }}/update">Editar </a>#}
-{#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Eliminar</a></td>#}
+                                    <td>
+                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"
+                                           data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Baja</a></td>
                                 </tr>
                             {% endfor %}
 
@@ -79,7 +77,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar esta Inscripcion?</h4>
+                    <h4>Esta seguro que desea baja esta Inscripcion?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -87,7 +85,7 @@
                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
 
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-danger" value="Eliminar">
+                        <input type="submit" class="btn btn-danger" value="Baja">
                     </form>
                 </div>
 
@@ -96,7 +94,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', 'escuela/inscripciones/' + id + '/delete);
+            $('#eliminar-form').attr('action', '/escuela/inscripciones/' + id + '/baja' );
         }
     </script>
 {% endblock %}>

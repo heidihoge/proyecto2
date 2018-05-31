@@ -2,14 +2,15 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 
 from main.views import verificar_inscripcion
+from tienda.views import list_ventas
 from .views import list_clases, list_etiquetas, list_etiquetas_clase, \
     list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase, \
     update_etiqueta, update_etiquetas_clase, update_etiquetas_grupo, update_grupo, update_inscripcion, \
     create_asistencia, create_clase, \
     create_etiqueta, create_etiquetas_clase, create_etiquetas_grupo, create_grupo, create_inscripcion, \
     delete_clase, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
-    delete_grupo, delete_inscripcion, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
-    lista_asistencia, guardar_inscripcion
+    delete_grupo, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
+    lista_asistencia, guardar_inscripcion, list_cuentas, baja_inscripcion, list_inscripciones_baja
 
 from main import views
 
@@ -63,11 +64,21 @@ urlpatterns = [
 
 
     path('inscripciones', list_inscripciones, name='list_inscripciones'),
+    path('inscripciones/bajas', list_inscripciones_baja, name='list_inscripciones_baja'),
     path('inscripciones/new', create_inscripcion, name='create_inscripcion'),
     path('inscripciones/<int:id>/update', update_inscripcion, name='update_inscripcion'),
-    path('inscripciones/<int:id>/delete', delete_inscripcion, name='delete_inscripcion'),
+    # path('inscripciones/<int:id>/delete', delete_inscripcion, name='delete_inscripcion'),
     path('inscripciones/verificar', verificar_inscripcion, name='verificar_inscripcion'),
     path('inscripciones/guardar', guardar_inscripcion, name='guardar_inscripcion'),
+
+    path('inscripciones/<int:id>/baja', baja_inscripcion, name='baja_inscripcion'),
+
+
+    path('cuentas', list_cuentas, name='list_cuentas'),
+    # path('ventas/<str:nro_factura>', list_ventas ,name='list_ventas'),
+
+
+
 
 
 

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
+
     <div class="page-title">
         <div class="title_left">
-            <h3>Lista de Inscripciones</h3>
+            <h3>Lista de Cuentas</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/escuela/inscripciones/new"><i  class="fa fa-plus-square"></i> NUEVA INSCRIPCION</a>
+
 
                 </div>
             </div>
@@ -31,29 +32,43 @@
 
                             <thead>
                             <tr>
-                                <th>Alumno</th>
-                                <th>Grupo</th>
-                                <th>Estado</th>
-                                <th>Inicio</th>
-                                <th>Fin</th>
 
+                                <th>Alumno</th>
+                                <th>Vencimiento</th>
+                                <th>Monto</th>
+                                <th>Monto Pagado</th>
+                                <th>Pagado</th>
+                                <th>Nro de factura</th>
 
                             </tr>
                             </thead>
                             <tbody>
 
-                            {% for inscripcion in inscripciones %}
-                                <tr>
-                                    <td>{{ inscripcion.alumno }}</td>
-                                    <td>{{ inscripcion.grupo }}</td>
-                                    <td>{{ inscripcion.estado }}</td>
-                                    <td>{{ inscripcion.fecha_inicio }}</td>
-                                    <td>{{ inscripcion.fecha_fin }}</td>
+                            {% for cuenta in cuentas %}
+                            <tr>
+                                <td>{{ cuenta.inscripcion.alumno.cedula }}</td>
+                                <td>{% if cuenta.vencio %}
+                                    <div style="color: red">
+                                    {{ cuenta.vencimiento }}</div>{% else %}{{ cuenta.vencimiento }}{% endif %}</td>
+
+                                <td>{{ cuenta.monto }}</td>
+                                <td>{{ cuenta.monto_pagado }}</td>
+                                <td>{% if cuenta.pagado %}
+                                        SI{% else %}NO{% endif %}</td>
+                                <td>
+                                    {% if cuenta.detalle.venta.nro_factura %}
+                                    <a href="{% url 'consulta_factura' cuenta.detalle.venta.nro_factura %}">{{ cuenta.detalle.venta.nro_factura }} </a>
+                                    {% endif %}
+                                </td>
 
 
-{#                                    <td><a class="btn btn-info btn-xs" href="/escuela/inscripciones/{{ inscripcion.id }}/update">Editar </a>#}
+
+
+{#                                    <td><a class="btn btn-info btn-xs" href="/escuela/cuentas/{{ cuenta.id }}/update">Editar </a>#}
+{##}
 {#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Eliminar</a></td>#}
+{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ cuenta.id }})">Eliminar</a></td>#}
+{#                                </tr>#}
                                 </tr>
                             {% endfor %}
 
@@ -79,7 +94,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar esta Inscripcion?</h4>
+                    <h4>Esta seguro que desea eliminar esta Clase?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -96,7 +111,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', 'escuela/inscripciones/' + id + '/delete);
+            $('#eliminar-form').attr('action', '/escuela/cuentas/' + id + '/delete' );
         }
     </script>
 {% endblock %}>

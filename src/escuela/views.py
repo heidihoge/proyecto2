@@ -7,13 +7,15 @@ from dal import autocomplete
 from django import forms
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.db import connection
+from django.template import context, RequestContext
 
 from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm
 from main.models import Alumno, Persona, Titular
 from proyecto2 import settings
+from tienda.models import VentaCabecera
 
 menus = {
     "ajustes": {
@@ -452,6 +454,7 @@ def list_inscripciones(request):
     return render(request, 'inscripciones.html', {'inscripciones': inscripcion})
 
 
+
 def create_inscripcion(request):
     print(request.method)
     form_inscripcion = FormularioInscripcion()
@@ -485,17 +488,31 @@ def update_inscripcion(request, id):
     return render(request, 'inscripciones-form.html', {'form': form, 'inscripciones': inscripcion})
 
 
-def delete_inscripcion(request, id):
+
+# lista para dar de baja , debe traer solo los activos
+def list_inscripciones_baja(request):
+    inscripcion = Inscripcion.objects.filter(estado='A')
+    return render(request, 'inscripciones-bajas.html', {'inscripciones': inscripcion})
+
+
+
+import datetime
+def baja_inscripcion(request, id):
+
     try:
         inscripcion = Inscripcion.objects.get(id=id)
     except:
         return redirect('404')
 
     if request.method == 'POST':
-        inscripcion.delete()
-        messages.success(request, 'inscripcion eliminada correctamente.')
+        hoy = datetime.now()
+        inscripcion.fecha_fin = hoy
+        inscripcion.estado = 'IN'
+        inscripcion.save()
 
-    return redirect('list_inscripciones')
+        messages.success(request, 'inscripcion dado de baja correctamente.')
+
+    return redirect('list_inscripciones_baja')
 
 
 # ---------------------VISTA ASISTENCIA --------------------------------
@@ -718,3 +735,24 @@ class GrupoAutocompleteAsistencia(GrupoAutocomplete):
             },
             *results
         ]
+
+
+
+# ----------VISTA DE CUENTAS ----------------------------------------
+
+def list_cuentas(request):
+
+    cuenta = Cuenta.objects.all()
+    return render(request, 'cuentas.html', {'cuentas': cuenta})
+
+
+from datetime import datetime
+
+def a_view(request):
+    return render_to_response("cuentas.html", {
+        'hoy':datetime.now(),
+        })
+    # else:
+    #    return False
+
+

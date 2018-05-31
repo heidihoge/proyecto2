@@ -3,12 +3,12 @@
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Lista de Inscripciones</h3>
+            <h3>Ventas</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/escuela/inscripciones/new"><i  class="fa fa-plus-square"></i> NUEVA INSCRIPCION</a>
+                    <a class="btn btn-primary pull-right" href="/tienda/ventas/new"><i  class="fa fa-plus-square"></i> NUEVA VENTA</a>
 
                 </div>
             </div>
@@ -30,30 +30,35 @@
                                width="100%">
 
                             <thead>
+
                             <tr>
-                                <th>Alumno</th>
-                                <th>Grupo</th>
-                                <th>Estado</th>
-                                <th>Inicio</th>
-                                <th>Fin</th>
-
-
+                                    <th>Nro de Factura</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Monto Total</th>
+                                    <th>Gravadas 5</th>
+                                    <th>Gravadas 10</th>
+                                    <th>Gravadas Excentas</th>
+                                    <th>Total IVA</th>
                             </tr>
+
                             </thead>
                             <tbody>
 
-                            {% for inscripcion in inscripciones %}
+                            {% for venta in ventas     %}
                                 <tr>
-                                    <td>{{ inscripcion.alumno }}</td>
-                                    <td>{{ inscripcion.grupo }}</td>
-                                    <td>{{ inscripcion.estado }}</td>
-                                    <td>{{ inscripcion.fecha_inicio }}</td>
-                                    <td>{{ inscripcion.fecha_fin }}</td>
+                                    <td>{{ venta.nro_factura }}</td>
+                                    <td>{{ venta.cliente.nombre_razon }}</td>
+                                    <td>{{ venta.fecha }}</td>
+                                    <td>{{ venta.monto_total }}</td>
+                                    <td>{{ venta.total_iva_5 }}</td>
+                                    <td>{{ venta.total_iva_10 }}</td>
+                                    <td>{{ venta.total_iva_exentas }}</td>
+                                    <td>{{ venta.total_iva }}</td>
 
-
-{#                                    <td><a class="btn btn-info btn-xs" href="/escuela/inscripciones/{{ inscripcion.id }}/update">Editar </a>#}
+{#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ venta.id }}/update">Editar </a>#}
 {#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Eliminar</a></td>#}
+{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Eliminar</a></td>#}
                                 </tr>
                             {% endfor %}
 
@@ -79,7 +84,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar esta Inscripcion?</h4>
+                    <h4>Esta seguro que desea eliminar esta Factura?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -96,7 +101,7 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', 'escuela/inscripciones/' + id + '/delete);
+            $('#eliminar-form').attr('action', '/tienda/compras/' + id + '/delete' );
         }
     </script>
-{% endblock %}>
+{% endblock %}

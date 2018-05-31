@@ -326,6 +326,16 @@ def cuentas(formset):
 
     return productos_cuenta
 
+
+def list_ventas(request):
+    venta = VentaCabecera.objects.all()
+    return render(request, 'ventas.html', {'ventas': venta})
+
+
+
+
+
+
 def vender(request):
     venta = VentaCabecera()
     cuenta = Producto.objects.get(codigo='CUENTA')
@@ -589,3 +599,8 @@ def delete_cliente(request, ruc_cliente):
 
     return redirect('list_clientes')
 
+
+def consulta_factura(request, nro_factura):
+    detalles = VentaDetalle.objects.filter(venta__nro_factura=nro_factura)
+    context = {'detalles': detalles}
+    return render(request, 'venta-detalle.html', context)
