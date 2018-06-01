@@ -16,7 +16,7 @@ from .models import Clase, Grupo,  Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscri
 class FormularioClase(forms.ModelForm):
     class Meta:
         model = Clase
-        fields = ['nombre','descripcion','costo']
+        fields = ['nombre','descripcion']
 
 #Formulario Grupo
 class FormularioGrupo(forms.ModelForm):

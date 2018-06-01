@@ -33,9 +33,9 @@
                             <tr>
                                 <th>Alumno</th>
                                 <th>Grupo</th>
-                                <th>fecha_inicio</th>
-                                <th>fecha_fin</th>
                                 <th>Estado</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
                                 <th>Accion</th>
                             </tr>
                             </thead>
@@ -45,9 +45,11 @@
                                 <tr>
                                     <td>{{ inscripcion.alumno }}</td>
                                     <td>{{ inscripcion.grupo }}</td>
+                                    <td>{{ inscripcion.estado }}</td>
                                     <td>{{ inscripcion.fecha_inicio }}</td>
                                     <td>{{ inscripcion.fecha_fin }}</td>
-                                    <td>{{ inscripcion.estado }}</td>
+
+
 
                                     <td>
                                         {% if perms.escuela.inscripcion_baja %}

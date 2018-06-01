@@ -116,7 +116,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         return [
             {
                 'id': result.cedula,
-                'text': str(result.cedula) + ' (' + self.get_result_label(result) + ')',
+                'text': self.get_result_label(result),
                 'pk': result.pk,
                 'fields': self._get_fields_as_json(result)
             } for result in context['object_list']

@@ -32,11 +32,12 @@
                             <thead>
 
                             <tr>
-                                    <th>descripcion</th>
-                                    <th>proveedor</th>
-                                    <th>fecha</th>
-                                    <th>tipo_pago</th>
-                                    <th>monto_total</th>
+                                    <th>Fecha</th>
+                                    <th>Proveedor</th>
+                                    <th>Descripción</th>
+                                    <th>IVA 10%</th>
+                                    <th>IVA 5%</th>
+                                    <th>Monto Total</th>
                             </tr>
 
                             </thead>
@@ -44,10 +45,12 @@
 
                             {% for compra in compras     %}
                                 <tr>
-                                    <td>{{ compra.descripcion }}</td>
-                                    <td>{{ compra.proveedor }}</td>
                                     <td>{{ compra.fecha }}</td>
-                                    <td>{{ compra.tipo_pago }}</td>
+
+                                    <td>{{ compra.proveedor }}</td>
+                                    <td>{{ compra.descripcion }}</td>
+                                    <td>{{ compra.total_iva_10 }}</td>
+                                    <td>{{ compra.total_iva_5 }}</td>
                                     <td>{{ compra.monto_total }}</td>
 
                                     <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ compra.id }}/update">Editar </a>

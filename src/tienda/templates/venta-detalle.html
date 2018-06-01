@@ -32,10 +32,9 @@
 
                             <tr>
                                     <th>Nro de Factura</th>
-                                    <th>Cliente</th>
                                     <th>Fecha</th>
-                                    <th>Detalle</th>
-                                    <th>Monto Total</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
 
                             </tr>
 
@@ -45,10 +44,12 @@
                             {% for detalles in detalles     %}
                                 <tr>
                                     <td>{{ detalles.venta.nro_factura }}</td>
-                                    <td>{{ detalles.venta.cliente }}</td>
+
                                     <td>{{ detalles.venta.fecha}}</td>
-                                    <td>{{ detalles.detalle }}</td>
-                                    <td>{{ detalles.venta.monto_total }}</td>
+
+                                    <td>{{ detalles.producto.nombre }}</td>
+
+                                    <td>{{ detalles.monto_10 }}</td>
 
 
 
@@ -62,7 +63,7 @@
 
                             </tbody>
                         </table>
-                    <a class="btn btn-primary dropdown-toggle btn-md "    href="/">Salir </a>
+                    <a class="btn btn-primary dropdown-toggle btn-md "    href="/escuela/cuentas">Salir </a>
 
 
                     </div>

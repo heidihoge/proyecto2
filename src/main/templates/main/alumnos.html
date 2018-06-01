@@ -41,7 +41,7 @@
                                 <th>Otro contacto</th>
                                 <th>Imagen</th>
 
-                                <th>titular</th>
+
                                 <th>Acción</th>
                             </tr>
                             </thead>
@@ -61,7 +61,7 @@
                                         <img height="100px" src="/media/{{ alumno.imagen }}">{% else %}sin
                                         foto{% endif %}</td>
 
-                                    <td>{{ alumno.titular_cuenta }}</td>
+
                                     <td><a class="btn btn-info btn-xs" href="/alumnos/{{ alumno.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
                                            data-target="#eliminar-modal" onclick="formEliminar({{ alumno.id }})">Eliminar</a></td>

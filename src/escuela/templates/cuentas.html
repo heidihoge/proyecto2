@@ -46,7 +46,7 @@
 
                             {% for cuenta in cuentas %}
                             <tr>
-                                <td>{{ cuenta.inscripcion.alumno.cedula }}</td>
+                                <td>{{ cuenta.inscripcion.alumno.cedula }} {{ cuenta.inscripcion.alumno.nombre }},{{ cuenta.inscripcion.alumno.apellido }}</td>
                                 <td>{% if cuenta.vencio %}
                                     <div style="color: red">
                                     {{ cuenta.vencimiento }}</div>{% else %}{{ cuenta.vencimiento }}{% endif %}</td>
