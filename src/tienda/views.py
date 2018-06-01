@@ -333,6 +333,20 @@ def list_ventas(request):
     return render(request, 'ventas.html', {'ventas': venta})
 
 
+# se listan las ventas y se tiene accion cancelar, colocar solo disponible para admin
+def cancela_venta(request, id):
+    try:
+        venta = VentaCabecera.objects.get(id=id)
+    except:
+        return redirect('404')
+
+    if request.method == 'POST':
+        venta.estado = 'IN'
+        venta.save()
+        messages.success(request, 'VENTA CANCELADA CORRECTAMENTE.')
+    return redirect('list_ventas')
+
+
 
 
 

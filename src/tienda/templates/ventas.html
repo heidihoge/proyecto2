@@ -40,6 +40,8 @@
                                     <th>Gravadas 10</th>
                                     <th>Gravadas Excentas</th>
                                     <th>Total IVA</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
                             </tr>
 
                             </thead>
@@ -55,6 +57,13 @@
                                     <td>{{ venta.total_iva_10 }}</td>
                                     <td>{{ venta.total_iva_exentas }}</td>
                                     <td>{{ venta.total_iva }}</td>
+                                    <td>{{ venta.estado }}</td>
+                                    <td>
+
+                                            <a button class="btn btn-danger btn-xs" data-toggle="modal"
+                                               data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Cancelar</a>
+
+                                    </td>
 
 {#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ venta.id }}/update">Editar </a>#}
 {#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
@@ -84,15 +93,15 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar esta Factura?</h4>
+                    <h4>Esta seguro que desea cancelar esta Factura?</h4>
 
                 </div>
                 <div class="modal-footer">
                     <form method="post" id="eliminar-form">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-danger" value="Eliminar">
+                        <input type="submit" class="btn btn-danger" value="Cancelar Venta">
                     </form>
                 </div>
 
@@ -101,7 +110,8 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/tienda/compras/' + id + '/delete' );
+            $('#eliminar-form').attr('action', '/tienda/ventas/' + id + '/cancelar' );
+
         }
     </script>
 {% endblock %}
