@@ -75,10 +75,15 @@ class TitularForm(forms.ModelForm):
     tipo_responsable = forms.ChoiceField(choices=Titular.OPCIONES_TIPO_TUTOR)
     tipo_responsable.widget.attrs = {'class': 'form-control'}
     fecha_nacimiento = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+
     class Meta:
         model = Titular
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable','estado']
 
+class TitularFormVerificar(forms.ModelForm):
+    class Meta:
+        model = Titular
+        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable','estado']
 
 #Formulario Alumno
 class AlumnoForm(forms.ModelForm):
@@ -103,6 +108,12 @@ class AlumnoForm(forms.ModelForm):
         widget=forms.RadioSelect(choices=Persona.ESTADO),
         initial='A'
     )
+    class Meta:
+        model = Alumno
+
+        fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','imagen','ficha','ficha_inscripcion','estado']
+
+class AlumnoFormVerificar(forms.ModelForm):
     class Meta:
         model = Alumno
 

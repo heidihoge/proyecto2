@@ -100,6 +100,10 @@ class Inscripcion(models.Model):
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=2, choices=ESTADO, default='A')
 
+    class Meta:
+        permissions = (
+            ("inscripcion_baja", "Dar de baja inscripcion"),
+        )
 
 # asistencia
 

@@ -28,7 +28,7 @@ def login(request):
 def redirect_to_index(request):
     return redirect('/')
 
-
+@login_required
 def error404(request):
     return render(request, 'errors/page_404.html', context={})
 
@@ -123,7 +123,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         ]
 
 
-from .forms import PersonaForm
+from .forms import PersonaForm, TitularFormVerificar, AlumnoFormVerificar
 from .models import Persona
 
 
@@ -202,11 +202,16 @@ def verificar_titular(request):
         if 'cedula' in request.POST:
             cedula = request.POST['cedula']
             try:
-                titular = Persona.objects.get(cedula=cedula)
-            except:
-                titular = None
+                titular = Titular.objects.get(cedula=cedula)
+            except Exception as e1:
+                try:
+                    persona = Persona.objects.get(cedula=cedula)
+                    titular = Titular(persona_ptr_id=persona.pk)
+                    titular.__dict__.update(persona.__dict__)
+                except  Exception as e2:
+                    titular = None
 
-        form = TitularForm(request.POST, request.FILES, instance=titular)
+        form = TitularFormVerificar(request.POST, request.FILES, instance=titular)
         return JsonResponse({"valid": form.is_valid(), "errors": form.errors})
     raise Http404()
 
@@ -225,7 +230,7 @@ def verificar_alumnos(request):
                 except:
                     alumno = None
 
-            form = AlumnoForm(request.POST, request.FILES, instance=alumno, prefix=prefix)
+            form = AlumnoFormVerificar(request.POST, request.FILES, instance=alumno, prefix=prefix)
             alumnos.append({"alumno": i, "valid": form.is_valid(), "errors": form.errors})
 
         return JsonResponse(alumnos, safe=False)
@@ -250,13 +255,14 @@ def create_titular(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = TitularForm(request.POST, request.FILES)
+        form = TitularFormVerificar(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
             messages.success(request, 'Titular creado correctamente.')
             return redirect('list_titulares')
 
+        form = TitularForm(request.POST, request.FILES)
         messages.error(request, 'Error al crear el titular.')
     else:
         form = TitularForm()
@@ -313,13 +319,14 @@ def create_alumno(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = AlumnoForm(request.POST, request.FILES)
+        form = AlumnoFormVerificar(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
             messages.success(request, 'Alumno creado correctamente.')
             return redirect('list_alumnos')
 
+        form = AlumnoForm(request.POST, request.FILES)
         messages.error(request, 'Error al crear el alumno.')
     else:
         form = AlumnoForm()

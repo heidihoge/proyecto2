@@ -47,6 +47,7 @@ urlpatterns = [
     path('ventas/new', vender, name='vender'),
     path('ventas', list_ventas, name='list_ventas'),
     path('ventas/<str:nro_factura>', consulta_factura, name='consulta_factura'),
+    path('ventas/<str:nro_factura>/cancelar', consulta_factura, name='consulta_factura'),
 
 
     path('compras', list_compras, name='list_compras'),

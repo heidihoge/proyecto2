@@ -25,7 +25,13 @@
             });
 
             $('select[name=cliente]').on('select2:select', function (event) {
-                cargarCliente(event.params.data.fields);
+                if (!event.params.data.fields) {
+                    cargarCliente({
+                        "ruc_cliente": event.params.data.id
+                    });
+                } else {
+                    cargarCliente(event.params.data.fields);
+                }
             });
             var buscacuenta = $('#id_busca_cuenta');
             buscacuenta.siblings('.select2').remove();

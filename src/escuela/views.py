@@ -12,7 +12,7 @@ from django.db import connection
 from django.template import context, RequestContext
 
 from escuela.utils import dictfetch
-from main.forms import TitularForm, AlumnoForm
+from main.forms import TitularForm, AlumnoForm, TitularFormVerificar, AlumnoFormVerificar
 from main.models import Alumno, Persona, Titular
 from proyecto2 import settings
 from tienda.models import VentaCabecera
@@ -538,7 +538,8 @@ def lista_asistencia(request):
             },
             "asistencia_presente": alumno["asistencia_presente"],
             "asistencia_id": alumno["asistencia_id"],
-            "asistencia_comentario": alumno["asistencia_comentario"]
+            "asistencia_comentario": alumno["asistencia_comentario"],
+            "inscripcion_vencida": alumno["inscripcion_vencida"]
         }
 
     ret = {}
@@ -549,7 +550,7 @@ def lista_asistencia(request):
         grupo = request.GET.get('grupo')
         # Obtener alumnos
         query = '''
-            SELECT
+            SELECT distinct
                 p.id as alumno_id,
                 p.nombre::text || ' ' || p.apellido::text || ' (' || p.cedula::text || ')' as alumno_nombre,
                 g.*,
@@ -557,17 +558,18 @@ def lista_asistencia(request):
                 c.nombre as clase_nombre,
                 asis.id as asistencia_id,
                 asis.presente as asistencia_presente,
-                COALESCE(asis.comentario, '') as asistencia_comentario
+                COALESCE(asis.comentario, '') as asistencia_comentario,
+                COALESCE(i.fecha_fin <= %(fecha)s, FALSE) as inscripcion_vencida
             FROM main_alumno a
               JOIN main_persona p ON a.persona_ptr_id = p.id
               JOIN escuela_inscripcion i ON a.persona_ptr_id = i.alumno_id AND
-                                          i.fecha_inicio <= %(fecha)s AND
-                                          (i.fecha_fin >= %(fecha)s OR i.fecha_fin IS NULL)
+                                          i.fecha_inicio <= %(fecha)s AND i.estado = 'A'
+                                         -- AND (i.fecha_fin >= %(fecha)s OR i.fecha_fin IS NULL)
               JOIN escuela_grupo g ON i.grupo_id = g.id
               JOIN escuela_clase c ON c.id = g.id_clase_id
               JOIN main_persona prof ON g.id_profesor_id = prof.id
               LEFT JOIN escuela_asistencia asis
-                ON g.id = asis.grupo_id AND asis.fecha = %(fecha)s
+                ON g.id = asis.grupo_id AND asis.fecha = %(fecha)s  AND asis.id_alumno_id = a.persona_ptr_id
         '''
 
         dia = fecha.weekday()
@@ -605,7 +607,7 @@ def guardar_inscripcion(request):
                 except  Exception as e2:
                     titular = Titular()
 
-        form = TitularForm(request.POST, request.FILES, instance=titular)
+        form = TitularFormVerificar(request.POST, request.FILES, instance=titular)
         if form.is_valid():
             titular = form.save()
         else:
@@ -630,7 +632,7 @@ def guardar_inscripcion(request):
                         alumno = Alumno()
 
             alumno.titular_cuenta = titular
-            form = AlumnoForm(request.POST, request.FILES, instance=alumno, prefix=prefix)
+            form = AlumnoFormVerificar(request.POST, request.FILES, instance=alumno, prefix=prefix)
             if form.is_valid():
                 alumno = form.save()
             else:
@@ -675,7 +677,7 @@ def create_asistencia(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Asistencia creada correctamente.')
-            return redirect('lista_asistencia')
+            return redirect('home')
 
         messages.error(request, 'Error al crear asistencia.')
     else:

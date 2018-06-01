@@ -35,7 +35,7 @@
                                 <th>Grupo</th>
                                 <th>fecha_inicio</th>
                                 <th>fecha_fin</th>
-                                <th>Estad</th>
+                                <th>Estado</th>
                                 <th>Accion</th>
                             </tr>
                             </thead>
@@ -50,8 +50,12 @@
                                     <td>{{ inscripcion.estado }}</td>
 
                                     <td>
-                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Baja</a></td>
+                                        {% if perms.escuela.inscripcion_baja %}
+                                            <a button class="btn btn-danger btn-xs" data-toggle="modal"
+                                               data-target="#eliminar-modal" onclick="formEliminar({{ inscripcion.id }})">Baja</a>
+                                        {% endif %}
+                                    </td>
+
                                 </tr>
                             {% endfor %}
 

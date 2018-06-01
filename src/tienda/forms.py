@@ -110,6 +110,16 @@ class FormularioVenta(forms.ModelForm):
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
                   'total_iva_5','total_iva_10', 'total_iva', 'total_exentas']
 
+
+class FormularioVentaVerificar(forms.ModelForm):
+    class Meta:
+        model = VentaCabecera
+
+        fields = ['talonario_factura', 'cliente', 'fecha','tipo_pago', 'monto_total',
+                  'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
+                  'total_iva_5','total_iva_10', 'total_iva']
+        exclude = ["cliente"]
+
 class FormularioCliente(forms.ModelForm):
     class Meta:
         model = Cliente

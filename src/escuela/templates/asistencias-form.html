@@ -42,8 +42,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="alumno in alumnos">
-                            <td>[[alumno.nombre]]</td>
+                        <tr v-for="alumno in alumnos" >
+                            <td>[[alumno.nombre]] <span v-if="alumno.inscripcion_vencida" class="label label-warning">Incripción vencida</span></td>
                             <td>[[alumno.grupo.nombre]]</td>
                             <td class="no-padding"><input class="form-control no-margin" type="text" v-model="alumno.asistencia_comentario"></td>
                             <td><span style="display: none">[[alumno.asistencia]]</span><input v-icheck="alumno.asistencia_presente" v-model="alumno.asistencia_presente" type="checkbox"></td>

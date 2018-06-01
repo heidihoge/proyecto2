@@ -1,5 +1,6 @@
 import datetime
 from dal import autocomplete
+from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.db.models import Q, Max
 from django.forms import inlineformset_factory
@@ -8,7 +9,7 @@ from django.shortcuts import render, redirect
 from escuela.models import Cuenta
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
-    FormularioCliente, FomularioCliente
+    FormularioCliente, FomularioCliente, FormularioVentaVerificar
 
 from .forms import  FomularioProducto
 from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente
@@ -343,10 +344,10 @@ def vender(request):
 
     if request.method == 'POST':
 
-        form = FormularioVenta(request.POST, request.FILES,instance=venta)
+        form = FormularioVentaVerificar(request.POST, request.FILES,instance=venta)
         formularioDetalleSet = FormularioDetalleSet(request.POST, request.FILES, instance=venta)
 
-        ruc_cliente = request.POST['cliente']
+        ruc_cliente = request.POST['cliente-ruc_cliente']
 
         try:
             cliente = Cliente.objects.get(ruc_cliente=ruc_cliente)
@@ -356,7 +357,10 @@ def vender(request):
         formularioCliente = FormularioCliente(request.POST, request.FILES, prefix='cliente', instance=cliente)
 
         if form.is_valid() and formularioDetalleSet.is_valid() and formularioCliente.is_valid():
-            form.save()
+            cliente = formularioCliente.save()
+            venta = form.save(commit=False)
+            venta.cliente = cliente
+            venta.save()
             detalles = formularioDetalleSet.save()
 
             for detalle in detalles:
@@ -377,11 +381,15 @@ def vender(request):
                     cuenta_a_pagar.monto_pagado = detalles[idx].precio
                     cuenta_a_pagar.detalle = detalles[idx]
                     cuenta_a_pagar.save()
+                    cuenta_nueva = Cuenta(inscripcion=cuenta_a_pagar.inscripcion,
+                                          vencimiento=cuenta_a_pagar.vencimiento + relativedelta(months=1),
+                                          monto=cuenta_a_pagar.monto)
+                    cuenta_nueva.save()
 
-            formularioCliente.save()
             messages.success(request, 'Venta registrada correctamente')
             return redirect('list_ventas')
 
+        form = FormularioVenta(request.POST, request.FILES,instance=venta)
         messages.error(request, 'Error al crear venta.')
     else:
         cliente = Cliente()

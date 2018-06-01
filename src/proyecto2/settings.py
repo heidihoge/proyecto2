@@ -53,6 +53,11 @@ INSTALLED_APPS = [
 # LOGIN_REQUIRED_FOR_CRUD = True
 # PERMISSION_REQUIRED_FOR_CRUD = True
 
+LOGIN_URL = '/accounts/login/'
+LOGIN_EXEMPT_URLS = (
+    r'accounts/login/$',
+)
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'proyecto2.middleware.LoginRequiredMiddleware'
 ]
 
 ROOT_URLCONF = 'proyecto2.urls'
