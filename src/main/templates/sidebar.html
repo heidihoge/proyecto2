@@ -33,7 +33,9 @@
                     <ul class="nav child_menu">
                         <li><a href="/escuela/inscripciones/new">Nueva Inscripción</a></li>
                         <li><a href="/escuela/inscripciones">Inscripciones</a></li>
+                        {% if perms.escuela.inscripcion_baja %}
                         <li><a href="/escuela/inscripciones/bajas">Baja de Inscripción</a></li>
+                        {% endif %}
                         <li><a href="/alumnos">Mantenimiento de Alumnos</a></li>
                         <li><a href="/alumnos/new">Nuevo Alumno</a></li>
                         <li><a href="/titulares">Mantenimiento de Titulares</a></li>

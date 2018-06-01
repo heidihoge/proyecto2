@@ -5,6 +5,7 @@ from datetime import datetime
 
 from dal import autocomplete
 from django import forms
+from django.contrib.auth.decorators import permission_required, login_required
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render, render_to_response, get_object_or_404
@@ -487,8 +488,8 @@ def update_inscripcion(request, id):
 
     return render(request, 'inscripciones-form.html', {'form': form, 'inscripciones': inscripcion})
 
-
-
+@login_required()
+@permission_required('escuela.inscripcion_baja', raise_exception=True)
 # lista para dar de baja , debe traer solo los activos
 def list_inscripciones_baja(request):
     inscripcion = Inscripcion.objects.filter(estado='A')
