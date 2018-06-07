@@ -6,8 +6,14 @@
         {% include "forms/field-errors.html" with field=form.fecha %}
     </div>
 
-    <!-- Proveedor -->
+    <!-- RUC -->
     <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.ruc_proveedor %}
+        {% include "forms/charfield.html" with field=form.ruc_proveedor %}
+        {% include "forms/field-errors.html" with field=form.ruc_proveedor %}
+    </div>
+    <!-- Proveedor -->
+    <div class="form-group col-md-5 col-sm-3 col-xs-12">
         {% include "forms/label.html" with field=form.proveedor %}
         {% include "forms/charfield.html" with field=form.proveedor %}
         {% include "forms/field-errors.html" with field=form.proveedor %}

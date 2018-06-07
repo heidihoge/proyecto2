@@ -9,6 +9,7 @@
         $(document).ready(function () {
             window.rowTemplate = $('#row-template');
             configurarICheck($('[name=tipo_pago]'));
+            configurarICheck($('[name=metodo_pago]'));
             window.totalForms = $('#id_ventadetalle_set-TOTAL_FORMS');
 
             $('form input').keydown(function (event) {

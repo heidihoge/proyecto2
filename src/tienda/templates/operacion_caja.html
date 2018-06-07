@@ -3,12 +3,12 @@
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Egresos</h3>
+            <h3>OPERACIONES EN CAJA</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
-                    <a class="btn btn-primary pull-right" href="/tienda/compras/new"><i  class="fa fa-plus-square"></i> NUEVO EGRESO</a>
+                    <a class="btn btn-primary pull-right" href="/tienda/caja/new"><i  class="fa fa-plus-square"></i> NUEVA OPERACIÓN</a>
 
                 </div>
             </div>
@@ -32,32 +32,29 @@
                             <thead>
 
                             <tr>
-                                    <th>Fecha</th>
-                                    <th>Ruc</th>
-                                    <th>Proveedor</th>
-                                    <th>Descripción</th>
-                                    <th>IVA 10%</th>
-                                    <th>IVA 5%</th>
-                                    <th>Monto Total</th>
-                            </tr>
 
+                                <th>Fecha</th>
+                                <th>Tipo transacción</th>
+                                <th>Concepto</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Acción</th>
+
+                            </tr>
                             </thead>
                             <tbody>
 
-                            {% for compra in compras     %}
+                            {% for operacion in operaciones %}
                                 <tr>
-                                    <td>{{ compra.fecha }}</td>
+                                    <td>{{ operacion.fecha }}</td>
+                                    <td>{{ operacion.tipo_transaccion }}</td>
+                                    <td>{{ operacion.concepto }}</td>
+                                    <td>{{ operacion.descripcion }}</td>
+                                    <td>{{ operacion.monto }}</td>
 
-                                    <td>{{ compra.ruc_proveedor }}</td>
-                                    <td>{{ compra.proveedor }}</td>
-                                    <td>{{ compra.descripcion }}</td>
-                                    <td>{{ compra.total_iva_10 }}</td>
-                                    <td>{{ compra.total_iva_5 }}</td>
-                                    <td>{{ compra.monto_total }}</td>
-
-{#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ compra.id }}/update">Editar </a>#}
-{#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ compra.id }})">Eliminar</a></td>#}
+                                    <td><a class="btn btn-info btn-xs" href="/tienda/caja/{{ operacion.id }}/update">Editar </a>
+                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"
+                                           data-target="#eliminar-modal" onclick="formEliminar({{ operacion.id }})">Eliminar</a></td>
                                 </tr>
                             {% endfor %}
 
@@ -83,7 +80,7 @@
                     <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Esta seguro que desea eliminar esta Factura?</h4>
+                    <h4>Está seguro que desea eliminar esta operación?</h4>
 
                 </div>
                 <div class="modal-footer">
@@ -100,7 +97,9 @@
     </div>
     <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/tienda/compras/' + id + '/delete' );
+            $('#eliminar-form').attr('action', '/tienda/caja/' + id + '/delete' );
         }
     </script>
 {% endblock %}
+
+

@@ -9,10 +9,11 @@ from django.shortcuts import render, redirect
 from escuela.models import Cuenta
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
-    FormularioCliente, FomularioCliente, FormularioVentaVerificar
+    FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja
 
 from .forms import  FomularioProducto
-from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente
+from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja
+
 
 
 # Create your views here.
@@ -550,8 +551,8 @@ def export_productos_csv(request):
     response['Content-Disposition'] = 'attachment; filename="productos.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['codigo', 'nombre', 'foto_producto', 'descripcion', 'categoria','precio_venta','costo','iva','estado'])
-    productos = Producto.objects.all().values_list('codigo', 'nombre','foto_producto','descripcion','categoria','precio_venta','costo','iva','estado')
+    writer.writerow(['codigo', 'nombre', 'foto_producto', 'descripcion', 'control_stock','precio_venta','costo','iva','estado'])
+    productos = Producto.objects.all().values_list('codigo', 'nombre','foto_producto','descripcion','precio_venta','costo','iva','estado')
     for producto in productos:
         writer.writerow(producto)
 
@@ -626,3 +627,64 @@ def consulta_factura(request, nro_factura):
     detalles = VentaDetalle.objects.filter(venta__nro_factura=nro_factura)
     context = {'detalles': detalles}
     return render(request, 'venta-detalle.html', context)
+
+
+
+# OPERACIONES EN CAJA
+
+def list_operaciones(request):
+    operacion = OperacionCaja.objects.all()
+
+    return render(request, 'operacion_caja.html', {'operaciones': operacion})
+
+
+
+
+def create_operacion(request):
+    print(request.method)
+    if request.method == 'POST':
+
+        form = FormularioOperacionCaja(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'operacion creada correctamente.')
+            return redirect('list_operaciones')
+
+        messages.error(request, 'Error al crear operacion.')
+    else:
+        form = FormularioOperacionCaja()
+
+    return render(request, 'operacion_caja-form.html', {'form': form})
+
+
+def update_operacion(request, id):
+    try:
+        operacion = OperacionCaja.objects.get(id=id)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FormularioOperacionCaja(request.POST, request.FILES, instance=operacion)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'operacion actualizado correctamente.')
+            return redirect('list_operaciones')
+        messages.error(request, 'Error al modificar operacion.')
+    else:
+        form = FormularioOperacionCaja(instance=operacion)
+
+    return render(request, 'operacion_caja-form.html', {'form': form, 'operacion': operacion})
+
+
+def delete_operacion(request, id):
+    try:
+        operacion = OperacionCaja.objects.get(id=id)
+    except:
+        return redirect('404')
+
+    if request.method == 'POST':
+        operacion.delete()
+        messages.success(request, 'operacion eliminado correctamente.')
+
+    return redirect('list_operaciones')

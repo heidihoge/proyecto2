@@ -3,7 +3,7 @@ from django.contrib import admin, auth
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from main import views
-from tienda import views
+
 from django.conf.urls.static import static
 from django.conf import settings
 

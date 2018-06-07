@@ -2,7 +2,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 
 from main.views import verificar_inscripcion
-from tienda.views import list_ventas
+
 from .views import list_clases, list_etiquetas, list_etiquetas_clase, \
     list_etiquetas_grupo, list_grupos, list_inscripciones, update_asistencia, update_clase, \
     update_etiqueta, update_etiquetas_clase, update_etiquetas_grupo, update_grupo, update_inscripcion, \

@@ -7,7 +7,7 @@ from django.forms import DateField
 from main.forms import CustomModelChoiceField
 from proyecto2 import settings
 from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
-    Cliente
+    Cliente, OperacionCaja
 
 
 # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
@@ -19,24 +19,24 @@ class FomularioFactura(forms.ModelForm):
     estado = forms.ChoiceField(
         choices=Factura.ESTADO,
         widget=forms.RadioSelect(choices=Factura.ESTADO),
-        initial = 'A'
+        initial='A'
     )
+
     class Meta:
         model = Factura
         fields = ['nombre', 'ruc', 'actividad_economica', 'direccion', 'telefono', 'numero_timbrado', 'punto_emision',
                   'nro_inicial', 'nro_final', 'vigencia_desde', 'vigencia_hasta', 'estado']
 
 
-
-
 class FomularioCliente(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ['nombre_razon', 'ruc_cliente','direccion','telefono']
+        fields = ['nombre_razon', 'ruc_cliente', 'direccion', 'telefono']
+
 
 # #Formulario Producto
 class FomularioProducto(forms.ModelForm):
-    existencia = forms.IntegerField( initial=0)
+    existencia = forms.IntegerField(initial=0)
     iva = forms.ChoiceField(
         choices=Producto.IVA,
         widget=forms.RadioSelect(choices=Producto.IVA)
@@ -44,53 +44,58 @@ class FomularioProducto(forms.ModelForm):
     estado = forms.ChoiceField(
         choices=Producto.ESTADO,
         widget=forms.RadioSelect(choices=Producto.ESTADO),
-        initial = 'A'
+        initial='A'
     )
     control_stock = forms.BooleanField(
         widget=forms.CheckboxInput(),
-        required = False
+        required=False
     )
+
     class Meta:
         model = Producto
         fields = ['codigo', 'nombre', 'foto_producto', 'descripcion', 'control_stock', 'precio_venta', 'costo',
                   'iva', 'estado', 'existencia']
 
 
-
-#Formulario CompraCabecera
+# Formulario CompraCabecera
 class FormularioCompra(forms.ModelForm):
-
-    monto_total = forms.IntegerField(disabled=True, initial=0)
-    total_iva = forms.IntegerField(disabled=True, initial=0)
+    monto_total = forms.IntegerField(initial=0)
+    total_iva = forms.IntegerField(initial=0)
     tipo_pago = forms.ChoiceField(
         choices=CompraCabecera.TIPO_PAGO,
         widget=forms.RadioSelect(choices=CompraCabecera.TIPO_PAGO)
     )
+
     class Meta:
         model = CompraCabecera
 
-        fields = ['descripcion', 'proveedor', 'fecha','tipo_pago', 'monto_total',
-                  'nro_factura','total_iva_5','total_iva_10', 'total_iva']
+        fields = ['descripcion', 'ruc_proveedor','proveedor', 'fecha', 'tipo_pago', 'monto_total',
+                  'nro_factura', 'total_iva_5', 'total_iva_10', 'total_iva']
+
 
 class FormularioCompraDetalle(forms.ModelForm):
     cantidad = forms.IntegerField(initial=1)
+
     class Meta:
         model = CompraDetalle
 
         fields = ['producto', 'cantidad', 'precio']
 
 
-#Formulario Venta Cabecera
+# Formulario Venta Cabecera
 class FormularioVenta(forms.ModelForm):
-
     monto_total = forms.IntegerField(initial=0)
     total_iva = forms.IntegerField(initial=0)
     total_iva_5 = forms.IntegerField(initial=0)
     total_iva_10 = forms.IntegerField(initial=0)
     total_exentas = forms.IntegerField(initial=0)
     tipo_pago = forms.ChoiceField(
-        choices=CompraCabecera.TIPO_PAGO,
-        widget=forms.RadioSelect(choices=CompraCabecera.TIPO_PAGO)
+        choices=VentaCabecera.TIPO_PAGO,
+        widget=forms.RadioSelect(choices=VentaCabecera.TIPO_PAGO)
+    )
+    metodo_pago = forms.ChoiceField(
+        choices=VentaCabecera.METODO_PAGO,
+        widget=forms.RadioSelect(choices=VentaCabecera.METODO_PAGO)
     )
     cliente = CustomModelChoiceField(
         label='Ruc Cliente',
@@ -103,27 +108,30 @@ class FormularioVenta(forms.ModelForm):
         widget=autocomplete.ModelSelect2(url='factura-autocomplete',
                                          attrs={'data-language': 'es'})
     )
+
     class Meta:
         model = VentaCabecera
 
-        fields = ['talonario_factura', 'cliente', 'fecha','tipo_pago', 'monto_total',
+        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
-                  'total_iva_5','total_iva_10', 'total_iva', 'total_exentas']
+                  'total_iva_5', 'total_iva_10', 'total_iva', 'total_exentas']
 
 
 class FormularioVentaVerificar(forms.ModelForm):
     class Meta:
         model = VentaCabecera
 
-        fields = ['talonario_factura', 'cliente', 'fecha','tipo_pago', 'monto_total',
+        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
-                  'total_iva_5','total_iva_10', 'total_iva']
+                  'total_iva_5', 'total_iva_10', 'total_iva']
         exclude = ["cliente"]
+
 
 class FormularioCliente(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['nombre_razon', 'ruc_cliente', 'direccion', 'telefono']
+
 
 class FormularioVentaDetalle(forms.ModelForm):
     cantidad = forms.IntegerField(initial=1)
@@ -147,5 +155,13 @@ class FormularioVentaDetalle(forms.ModelForm):
 
         fields = ['producto', 'cantidad', 'precio', 'monto_5', 'monto_10', 'monto_exento']
 
+class FormularioOperacionCaja(forms.ModelForm):
+    class Meta:
+        model = OperacionCaja
+        fields = '__all__'
 
-
+    tipo_transaccion = forms.ChoiceField(
+        choices=OperacionCaja.TIPO_TRANSACCION,
+        widget=forms.RadioSelect(choices=OperacionCaja.TIPO_TRANSACCION),
+        initial='A'
+    )

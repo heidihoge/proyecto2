@@ -24,7 +24,7 @@ class Clase(models.Model):
 
 
 class Grupo(models.Model):
-    id_clase = models.ForeignKey(Clase, on_delete=models.SET_NULL,null=True)
+    id_clase = models.ForeignKey(Clase, on_delete=models.PROTECT,null=True)
     id_profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL,null=True)
     cupo_maximo = models.IntegerField(default=0)
     costo = models.IntegerField(default=0)

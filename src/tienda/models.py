@@ -1,10 +1,12 @@
 import datetime
 import datetime
 
+from django.contrib.auth import admin
+from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
 
+# Create your models here.
 
 
 # Factura
@@ -15,11 +17,11 @@ class Factura(models.Model):
     direccion = models.CharField(max_length=50)
     telefono = models.CharField(max_length=50, null=True, blank=True)
     numero_timbrado = models.IntegerField(default=0)
-    punto_emision= models.CharField(max_length=10)
-    nro_inicial=models.IntegerField(default=0)
-    nro_final=models.IntegerField(default=0)
-    vigencia_desde=models.DateField(default=datetime.date.today)
-    vigencia_hasta= models.DateField(default=datetime.date.today)
+    punto_emision = models.CharField(max_length=10)
+    nro_inicial = models.IntegerField(default=0)
+    nro_final = models.IntegerField(default=0)
+    vigencia_desde = models.DateField(default=datetime.date.today)
+    vigencia_hasta = models.DateField(default=datetime.date.today)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=1, choices=ESTADO, default='A')
@@ -28,53 +30,53 @@ class Factura(models.Model):
         return "{0} ({1}-[{2}-{3}])".format(self.numero_timbrado, self.punto_emision, self.nro_inicial, self.nro_final)
 
 
-
-
 # producto
 
 class Producto(models.Model):
     from decimal import Decimal
     codigo = models.CharField(max_length=8, unique=True)
     nombre = models.CharField(max_length=50)
-    foto_producto = models.ImageField(upload_to='media_root', verbose_name='Foto producto', null=True,blank=True)
+    foto_producto = models.ImageField(upload_to='media_root', verbose_name='Foto producto', null=True, blank=True)
     descripcion = models.CharField(max_length=150)
     control_stock = models.BooleanField(default=False, blank=True)
     precio_venta = models.IntegerField(default=0)
     costo = models.IntegerField(default=0)
-    IVA = ((Decimal("0.05"),'5%'),
-           (Decimal("0.10"),'10%'),
-           (Decimal("0.00"),'Exentas'))
-    iva = models.DecimalField(choices=IVA,max_digits=3, decimal_places=2)
+    IVA = ((Decimal("0.05"), '5%'),
+           (Decimal("0.10"), '10%'),
+           (Decimal("0.00"), 'Exentas'))
+    iva = models.DecimalField(choices=IVA, max_digits=3, decimal_places=2)
     ESTADO = (('A', 'ACTIVO'),
-           ('IN', 'INACTIVO'))
+              ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=2, choices=ESTADO)
     existencia = models.IntegerField(default=0)
 
     def __str__(self):
-        return  self.nombre
-
+        return self.nombre
 
 
 # compras
 
 class CompraCabecera(models.Model):
-    descripcion = models.CharField(max_length=150,default='')
-    proveedor= models.CharField(max_length=150, default='')
+    descripcion = models.CharField(max_length=150, default='')
+    ruc_proveedor = models.CharField(max_length=15, default='')
+    proveedor = models.CharField(max_length=150, default='')
     fecha = models.DateField(default=datetime.date.today)
     TIPO_PAGO = (('Contado', 'Contado'),
-              ('Crédito', 'Crédito'))
-    tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO,default='Contado')
+                 ('Crédito', 'Crédito'))
+    tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO, default='Contado')
     monto_total = models.IntegerField(default=0)
     nro_factura = models.CharField(max_length=150, default='')
     total_iva_5 = models.IntegerField(default=0)
     total_iva_10 = models.IntegerField(default=0)
     total_iva = models.IntegerField(default=0)
+
     def __str__(self):
-        return  self.id
+        return self.id
+
 
 class CompraDetalle(models.Model):
-    compra = models.ForeignKey(CompraCabecera, on_delete=models.CASCADE,null=True)
-    producto = models.CharField(max_length=250,null=True)
+    compra = models.ForeignKey(CompraCabecera, on_delete=models.CASCADE, null=True)
+    producto = models.CharField(max_length=250, null=True)
     cantidad = models.IntegerField(default=0)
     precio = models.IntegerField(default=0)
 
@@ -89,6 +91,9 @@ class Cliente(models.Model):
     def __str__(self):
         return self.ruc_cliente + " (" + self.nombre_razon + ")"
 
+
+# metodo de pago = tarjeta, cheque, efectivo
+# Forma de pago = contado , credito
 # ventas
 class VentaCabecera(models.Model):
     talonario_factura = models.ForeignKey(Factura, on_delete=models.SET_NULL, null=True)
@@ -101,7 +106,11 @@ class VentaCabecera(models.Model):
 
     TIPO_PAGO = (('Contado', 'Contado'),
                  ('Crédito', 'Crédito'))
-    tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO,default='Contado')
+    tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO, default='Contado')
+    METODO_PAGO = (('Efectivo', 'Efectivo'),
+                 ('Tarjeta', 'Tarjeta'),
+                  ('Cheque', 'Cheque'))
+    metodo_pago = models.CharField(max_length=8, choices=METODO_PAGO, default='Efectivo')
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField(default=datetime.date.today)
     monto_total = models.IntegerField(default=0)
@@ -112,12 +121,22 @@ class VentaCabecera(models.Model):
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=2, choices=ESTADO, default='A')
+
+    # campo si es efectivo
+
+
+    # campo si es tarjeta
+
+
+    #  campo si es cheque
+
     def __str__(self):
         return str(self.id)
 
+
 class VentaDetalle(models.Model):
-    venta = models.ForeignKey(VentaCabecera, on_delete=models.CASCADE,null=True)
-    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL,null=True)
+    venta = models.ForeignKey(VentaCabecera, on_delete=models.CASCADE, null=True)
+    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
     detalle = models.CharField(max_length=150, default='')
     cantidad = models.IntegerField(default=0)
     precio = models.IntegerField(default=0)
@@ -125,3 +144,16 @@ class VentaDetalle(models.Model):
     monto_10 = models.IntegerField(default=0)
     monto_exento = models.IntegerField(default=0)
 
+
+
+class OperacionCaja(models.Model):
+    fecha = models.DateField(default=datetime.date.today)
+    concepto = models.CharField(max_length=150, default='')
+    descripcion = models.CharField(max_length=150, default='')
+    monto = models.IntegerField(default=0)
+    TIPO_TRANSACCION = (('ENTRADA', 'ENTRADA'),
+                       ('SALIDA', 'SALIDA'))
+    tipo_transaccion = models.CharField(max_length=7, choices=TIPO_TRANSACCION, default='ENT')
+
+    def __str__(self):
+        return str(self.fecha)

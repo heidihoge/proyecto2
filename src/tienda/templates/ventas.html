@@ -35,7 +35,9 @@
                                     <th>Nro de Factura</th>
                                     <th>Cliente</th>
                                     <th>Fecha</th>
+                                    <th>Metodo de pago</th>
                                     <th>Monto Total</th>
+
                                     <th>Gravadas 5%</th>
                                     <th>Gravadas 10%</th>
                                     <th>Gravadas Excentas</th>
@@ -52,6 +54,7 @@
                                     <td>{{ venta.nro_factura }}</td>
                                     <td>{{ venta.cliente.nombre_razon }}</td>
                                     <td>{{ venta.fecha }}</td>
+                                    <td>{{ venta.metodo_pago }}</td>
                                     <td>{{ venta.monto_total }}</td>
                                     <td>{{ venta.total_iva_5 }}</td>
                                     <td>{{ venta.total_iva_10 }}</td>
