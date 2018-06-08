@@ -79,11 +79,32 @@
                             <!-- {{ content }} -->
                         {% endblock content %}
                     </div>
+
                     {% block footer %}
                         <footer>
                             {% include "footer.html" %}
                         </footer>
                     {% endblock footer %}
+                 /*agrega large modal*/
+                    <div class="modal fade " id="ayuda" tabindex="-1" role="dialog"
+                         aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">
+                                        {% block ayuda_titulo %}
+                                            {% endblock %}
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    {% block ayuda_contenido %}
+                                            {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

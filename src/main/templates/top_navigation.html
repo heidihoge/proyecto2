@@ -6,6 +6,7 @@
 
     <ul class="nav navbar-nav navbar-right">
       <li class="">
+
         <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
           <i class=" fa fa-user" style="font-size:20px"></i> {{ user.username }}
           <i class=" fa fa-angle-down"></i>
@@ -22,6 +23,7 @@
           <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out pull-right"></i> Salir</a></li>
         </ul>
       </li>
+        <li> <a data-toggle="modal" data-target="#ayuda"><i class="glyphicon glyphicon-question-sign"></i></a></li>
 
 {#      <li role="presentation" class="dropdown">#}
 {#        <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">#}
