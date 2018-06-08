@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <input type="number" id="{{ field.id_for_label }} " required="required" name="{{ field.html_name }} "
-       value="{{ field.value|default:0}}{{ field.value|intcomma }} " class="form-control col-md-7 col-xs-12" {% if field.field.disabled %}readonly{% endif %}>
+       value="{{ field.value|default:0 | intcomma }} " class="form-control col-md-7 col-xs-12" {% if field.field.disabled %}readonly{% endif %}>
 {% if field.errors %}
     <ul class="parsley-errors-list" id="parsley-id-5">
         {% for error in field.errors %}

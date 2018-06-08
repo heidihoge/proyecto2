@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block content %}
 
     <div class="page-title">
@@ -54,7 +55,7 @@
                                     <td>{{ grupo.id_clase }}</td>
                                     <td>{{ grupo.id_profesor }}</td>
                                     <td>{{ grupo.cupo_maximo }}</td>
-                                    <td>{{ grupo.costo }}</td>
+                                    <td>{{ grupo.costo | intcomma }}</td>
                                     <td>{{ grupo.hora_inicio }}</td>-<td>{{ grupo.hora_fin }}</td>
 {#                                    <td>{{ grupo.lunes }}</td>#}
 {#                                    <td>{{ grupo.martes }}</td>#}
