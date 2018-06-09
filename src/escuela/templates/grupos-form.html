@@ -30,3 +30,26 @@
         </div>
     </div>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+   <p style="text-align: center;"><br /><span style="font-size: 14pt;"><strong>Nuevo Grupo</strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+<p style="text-align: center;">Para agregar un grupo es necesario que se encuentre creada una <strong>Clase</strong>. Siga los siguientes pasos:&nbsp;</p>
+    <p style="text-align: center;">&nbsp;</p>
+        <p><strong>Si desea agregar Grupos , presione el signo&nbsp;<img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></p>
+        <p><span style="color: #003366;"><strong>Opcion 1. Nuevo Grupo :&nbsp;Seleccione la clase luego presione Enter.</strong></span></p>
+        <p><br />&bull; <strong><em>Complete de manera obligatoria los siguientes campos:</em></strong> Clase, Profesor, Cupo Maximo, Costo, Hora Inicio, Hora Fin.</p>
+        <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong> </em>Dias.</p>
+        <p>&bull;<strong> Guardar.</strong></p>
+
+        <p><br /><span style="color: #003366;"><strong>Opcion 2. Editar Grupo :</strong></span></p>
+        <p>&bull; <em><strong>Se muestra el listado y cada campo podr&aacute; ser editado.</strong></em></p>
+
+        <p><br /><span style="color: #003366;"><strong>Opcion 3. : Eliminar Grupo:</strong></span></p>
+        <p>&bull; <strong><em>El registro ser&aacute; eliminado de forma <strong>permanente</strong>.</em></strong></p>
+
+        <p><br /><span style="color: #003366;"><strong>Opcion 4. : Buscar Grupo:</strong></span></p>
+        <p>&bull; <strong><em>Podemos buscar grupos por cualquier campo (Clase, Profesor, Cupo Maximo, Costo).</em></strong></p>
+{% endblock %}

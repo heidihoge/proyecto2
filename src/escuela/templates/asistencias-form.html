@@ -69,3 +69,13 @@
     {{ block.super }}
     <script src="/static/asistencia.js"></script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+   <p style="text-align: center;"><br /><span style="font-size: 14pt;"><strong>Nueva Asistencia</strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+        <p><span style="color: #003366;"><strong>Debe elegir el Grupo para tomar asistencia de los alumnos.</strong></span></p>
+        <p><br />&bull; <strong><em>En el listado solo aparecen los alumnos que pertencen al grupo y el dia especifico</em></strong></p>
+
+{% endblock %}

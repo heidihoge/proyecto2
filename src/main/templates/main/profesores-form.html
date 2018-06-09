@@ -48,3 +48,27 @@
         })
     </script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+   <p style="text-align: center;"><br /><span style="font-size: 14pt;"><strong>Nuevo Profesores</strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+<p style="text-align: center;">Podr&aacute; visualizar a todos los <strong>Profesores</strong> exitentes, ademas de agregar nuevos. Siga los siguientes pasos:&nbsp;</p>
+    <p style="text-align: center;">&nbsp;</p>
+        <p><strong>Si desea agregar m&aacute;s profesores , presione el signo&nbsp;<img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></p>
+        <p><span style="color: #003366;"><strong>Opcion 1. Nuevo Profesor :&nbsp;Ingrese el numero de c&eacute;dula y presione Enter.</strong></span></p>
+        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em>C&eacute;dula, Nombre y Apellido, Fecha de Nacimiento, Sexo,
+            Direcci&oacute;n, Tel&eacute;fono, Otro contacto, Salario, Especialidad</p>
+        <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Fotocopia de C&eacute;dula</p>
+        <p>&bull;<strong> Guardar.</strong></p>
+
+        <p><br /><span style="color: #003366;"><strong>Opcion 2. Editar Profesor :</strong></span></p>
+        <p>&bull; <em><strong>Se muestra el listado y cada campo podr&aacute; ser editado.</strong></em></p>
+
+        <p><br /><span style="color: #003366;"><strong>Opcion 3. : Eliminar Profesor:</strong></span></p>
+        <p>&bull; <strong><em>El registro del profesor sera eliminado de forma <strong>permanente</strong>.</em></strong></p>
+
+        <p><br /><span style="color: #003366;"><strong>Opcion 4. : Buscar Profesor:</strong></span></p>
+        <p>&bull; <strong><em>Podemos buscar el resgistro del alumno sea por nombre, apellido u otro campo.  <img src="/static/img/busqueda.png" alt="busqueda" /></em></strong></p>
+{% endblock %}
