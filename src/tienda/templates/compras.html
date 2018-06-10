@@ -104,3 +104,19 @@
         }
     </script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+   <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Lista de Ingresos</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+        <p style="text-align: center;">Se puede visualizar las operaciones realizadas. Siga los siguientes pasos para realizar una nueva operaci&oacute;n:&nbsp; </p>
+        <p style="text-align: center;">&nbsp;</p>
+
+        p><strong>Presione el signo&nbsp;<img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></p>
+        <p><span style="color: #003366;"><strong>Paso 1. Llenar el formulario de Egresos : </strong></span></p>
+        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em> Fecha, RUC, Proveedor, Descripci&oacute;n,
+            IVA 10%, IVA 5%, Monto Total</p>
+       <!-- <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Tel&eacute;fono, Otro contacto, Fotocopia de C&eacute;dula, Tipo Responsable</p>-->
+        <p><span style="color: #003366;"><strong>Paso 2. Guardar la operacion realizada <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+{% endblock %}

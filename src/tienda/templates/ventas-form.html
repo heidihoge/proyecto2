@@ -113,3 +113,20 @@
     {{ block.super }}
     <script src="/static/venta.js"></script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+   <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Venta</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+        <p style="text-align: center;">Siga los siguientes pasos para realizar una venta:&nbsp;</p>
+        <p style="text-align: center;">&nbsp;</p>
+        <p><span style="color: #003366;"><strong>Paso 1. Llenar el formulario de Venta : </strong></span></p>
+        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em> Fecha, RUC del Cliente, Talonario de Factura,
+            Tipo de Pago, M&eacute;todo de Pago</p>
+       <!-- <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Tel&eacute;fono, Otro contacto, Fotocopia de C&eacute;dula, Tipo Responsable</p>-->
+
+        <p><span style="color: #003366;"><strong>Paso 2. Agregar cobro de cuota o venta de art&iacute;culo <img src="/static/img/agregar.png" alt="agregar" /> </strong></span></p>
+        <p>&bull; <em><strong>El monto total ser&aacute; agregado de forma autom&aacute;tica, seg&uacute;n el monto de la cuota o producto.</strong></em> </p>
+        <p><span style="color: #003366;"><strong>Paso 3. Guardar la venta <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+{% endblock %}

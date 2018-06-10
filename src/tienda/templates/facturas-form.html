@@ -48,3 +48,30 @@
         })
     </script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Ayuda para agregar Talonario de Factura</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+        <p style="text-align: center;">Se listan los talonarios vigentes y vencidos, puede agregar un nuevo <strong>Talonario vigente</strong>. Siga los siguientes pasos:&nbsp;</p>
+            <p style="text-align: center;">&nbsp;</p>
+
+        <p><span style="color: #003366;"><strong> Agregar Nuevo Talonario : <img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></span></p>
+        <p>&bull; <strong><em> Complete de manera obligatoria los siguientes campos:
+        </em></strong>
+        <table><ol><li> Nombre
+        <br></br><li>RUC
+        <br></br><li>Actividad Economica
+        <br></br><li>Direcci&oacute;n
+        <br></br><li>Tel&eacute;fono
+        <br></br><li>Numero de timbrado : debe ser de 13 digitos <strong>001-001-0000001</strong>
+        <br></br><li>Punto de Emisi&oacute;n : si la escuela tiene sucursales este numero variar&aacute; <strong>001-001</strong>
+        <br></br><li>Nro inicial : los primero numeros que van luego de los primeros 6 digitos  <strong>0000001</strong>
+        <br></br><li>Nro final : los ultimos numeros que van luego de los primeros 6 digitos <strong>9999999</strong>
+        <br></br><li>Vigencia desde: esta vigencia es otorgada por el SET.
+        <br></br><li>Vigencia hasta: esta vigencia es otorgada por el SET.
+        <br></br><li>Estado
+        </ol></table></p>
+        <p>&bull;<strong><em> Y podemos guardar el talonario <img src="/static/img/guardar.png" alt="guardar" /></em></strong></p>
+{% endblock %}

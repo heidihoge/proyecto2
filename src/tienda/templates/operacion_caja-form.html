@@ -48,3 +48,18 @@
         })
     </script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+   <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Operaciones de Caja</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+        <p style="text-align: center;">Se puede visualizar las operaciones realizadas o agregar una nueva operaci&oacute;n. Siga los siguientes pasos</p>
+        <p style="text-align: center;">&nbsp;</p>
+
+        <p><span style="color: #003366;"><strong>Paso 1. Llenar el formulario de Operacion de Caja : </strong></span></p>
+        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em> Fecha, Concepto, Descripci&oacute;n,
+            Monto, Tipo de Transacci&oacute;n</p>
+       <!-- <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Tel&eacute;fono, Otro contacto, Fotocopia de C&eacute;dula, Tipo Responsable</p>-->
+        <p><span style="color: #003366;"><strong>Paso 2. Guardar la operacion realizada <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+{% endblock %}
