@@ -7,7 +7,7 @@ from django.forms import DateField
 from main.forms import CustomModelChoiceField
 from proyecto2 import settings
 from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
-    Cliente, OperacionCaja
+    Cliente, OperacionCaja, Pago
 
 
 # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
@@ -93,10 +93,7 @@ class FormularioVenta(forms.ModelForm):
         choices=VentaCabecera.TIPO_PAGO,
         widget=forms.RadioSelect(choices=VentaCabecera.TIPO_PAGO)
     )
-    metodo_pago = forms.ChoiceField(
-        choices=VentaCabecera.METODO_PAGO,
-        widget=forms.RadioSelect(choices=VentaCabecera.METODO_PAGO)
-    )
+
     cliente = CustomModelChoiceField(
         label='Ruc Cliente',
         queryset=Cliente.objects.all(),
@@ -155,13 +152,36 @@ class FormularioVentaDetalle(forms.ModelForm):
 
         fields = ['producto', 'cantidad', 'precio', 'monto_5', 'monto_10', 'monto_exento']
 
+class FormularioPago(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = '__all__'
+
+
+    tarjeta = forms.CharField(required=False)
+    nro_autorizacion = forms.CharField(required=False)
+    ultimos_tarjeta = forms.CharField(required=False)
+    nro_cuenta = forms.CharField(required=False)
+    librador = forms.CharField(required=False)
+    serie_cheque = forms.CharField(required=False)
+    nro_cheque = forms.CharField(required=False)
+    fecha_emision = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
+    fecha_venc = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
+
+
 class FormularioOperacionCaja(forms.ModelForm):
     class Meta:
         model = OperacionCaja
         fields = '__all__'
+
+
+
 
     tipo_transaccion = forms.ChoiceField(
         choices=OperacionCaja.TIPO_TRANSACCION,
         widget=forms.RadioSelect(choices=OperacionCaja.TIPO_TRANSACCION),
         initial='A'
     )
+
+
+

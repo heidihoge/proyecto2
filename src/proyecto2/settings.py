@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     # django autocomplete light
     'dal',
     'dal_select2',
-
+    'django_cron',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -155,8 +155,7 @@ LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
-
-USE_L10N = False
+USE_I18N = True
 
 USE_TZ = True
 
@@ -179,3 +178,9 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_env","media_root")
 
 DATE_INPUT_FORMATS = ['%d/%m/%Y']
 DATE_FORMAT = 'd/m/Y'
+
+
+CRON_CLASSES = [
+    "escuela.views.CuotaJob"
+]
+

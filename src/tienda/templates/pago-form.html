@@ -1,0 +1,113 @@
+{#<div class="row">#}
+{#    <!-- Fecha -->#}
+{#    <div class="form-group col-md-3 col-sm-3 col-xs-12">#}
+{#        {% include "forms/label.html" with field=form.banco %}#}
+{#        {% include "forms/charfield.html" with field=form.banco %}#}
+{#        {% include "forms/field-errors.html" with field=form.banco %}#}
+{#    </div>#}
+{#</div>#}
+
+<div class="row" class="x_content" >
+    <div class="form-group col-md-4 col-sm-4 col-xs-12" >
+
+
+        {% include "forms/label.html" with field=form.monto %}
+        {% include "forms/charfield.html" with field=form.monto %}
+        {% include "forms/field-errors.html" with field=form.monto %}
+
+
+    </div>
+</div>
+<div  class="row form-horizontal">
+{{ form.metodo_pago.as_hidden }}
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a onclick="setMetodoPago('Efectivo')" href="#efectivo" aria-controls="efectivo" role="tab"
+                                                  data-toggle="tab">EFECTIVO</a></li>
+        <li role="presentation"><a onclick="setMetodoPago('Tarjeta')" href="#tarjeta" aria-controls="tarjeta" role="tab" data-toggle="tab">TARJETA</a></li>
+        <li role="presentation"><a onclick="setMetodoPago('Cheque')" href="#cheque" aria-controls="cheque" role="tab" data-toggle="tab">CHEQUE</a></li>
+
+    </ul>
+
+
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="efectivo"><br>
+            MONTO ABONADO
+            <input onkeyup="calculaVuelto()" type="number" id="abonado" />
+            VUELTO
+            <input type="number" id="vuelto" readonly/>
+            <span id='vueltonegativo' style="display:none">MONTO ABONADO ES MENOR AL MONTO TOTAL</span>
+
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="tarjeta" >
+             <div class="form-group col-md-4 col-sm-4 col-xs-12" ><br>
+
+                  {% include "forms/label.html" with field=form.tarjeta %}
+                 <select name="pago-tarjeta">
+                     <option value="INFONET-DEBITO">INFONET - DEBITO</option>
+                     <option value="INFONET-CREDITO">INFONET - CREDITO</option>
+
+                 </select>
+                 {% include "forms/field-errors.html" with field=form.tarjeta %}
+
+                 {% include "forms/label.html" with field=form.ultimos_tarjeta %}
+                 {% include "forms/charfield.html" with field=form.ultimos_tarjeta %}
+                 {% include "forms/field-errors.html" with field=form.ultimos_tarjeta %}
+
+
+                 {% include "forms/label.html" with field=form.nro_autorizacion%}
+                 {% include "forms/charfield.html" with field=form.nro_autorizacion %}
+                 {% include "forms/field-errors.html" with field=form.nro_autorizacion %}
+
+
+
+             </div>
+
+        </div>
+        <div role="tabpanel" class="tab-pane" id="cheque">
+             <div class="form-group col-md-4 col-sm-4 col-xs-12"><br>
+                 {% include "forms/label.html" with field=form.banco %}
+                 {% include "forms/charfield.html" with field=form.banco %}
+                 {% include "forms/field-errors.html" with field=form.banco %}
+
+
+
+                 {% include "forms/label.html" with field=form.nro_cuenta %}
+                 {% include "forms/charfield.html" with field=form.nro_cuenta %}
+                 {% include "forms/field-errors.html" with field=form.nro_cuenta %}
+
+                 {% include "forms/label.html" with field=form.librador %}
+                 {% include "forms/charfield.html" with field=form.librador %}
+                 {% include "forms/field-errors.html" with field=form.librador %}
+
+                 {% include "forms/label.html" with field=form.serie_cheque %}
+                 {% include "forms/charfield.html" with field=form.serie_cheque %}
+                 {% include "forms/field-errors.html" with field=form.serie_cheque %}
+
+                 {% include "forms/label.html" with field=form.nro_cheque %}
+                 {% include "forms/charfield.html" with field=form.nro_cheque %}
+                 {% include "forms/field-errors.html" with field=form.nro_cheque %}
+
+                 {% include "forms/label.html" with field=form.fecha_emision %}
+                 {% include "forms/charfield.html" with field=form.fecha_emision %}
+                 {% include "forms/field-errors.html" with field=form.fecha_emision %}
+
+                 {% include "forms/label.html" with field=form.fecha_venc %}
+                 {% include "forms/charfield.html" with field=form.fecha_venc %}
+                 {% include "forms/field-errors.html" with field=form.fecha_venc %}
+
+
+
+
+
+
+             </div>
+
+        </div>
+
+
+    </div>
+</div>

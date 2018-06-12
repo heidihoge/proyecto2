@@ -12,6 +12,18 @@
             configurarICheck($('[name=metodo_pago]'));
             window.totalForms = $('#id_ventadetalle_set-TOTAL_FORMS');
 
+
+            $('#id_pago-monto').attr('readonly', true);
+            $('#id_monto_total').attr('readonly', true);
+            $('#id_total_iva_10').attr('readonly', true);
+            $('#id_total_iva_5').attr('readonly', true);
+            $('#id_total_exentas').attr('readonly', true);
+            $('#id_total_iva').attr('readonly', true);
+            $('#id_monto').attr('readonly', true);
+            setMetodoPago('Efectivo');
+
+
+
             $('form input').keydown(function (event) {
                 if (event.keyCode === 13) {
                     event.preventDefault();
@@ -181,10 +193,15 @@
 
             }
             $('#id_monto_total').val(monto_exento + monto_10 + monto_5);
+            $('#id_pago-monto').val(monto_exento + monto_10 + monto_5);
             $('#id_total_exentas').val(monto_exento);
             $('#id_total_iva_10').val(monto_10);
             $('#id_total_iva_5').val(monto_5);
             $('#id_total_iva').val(monto_10 + monto_5);
+            $('#id_monto').val(monto_exento + monto_10 + monto_5);
+
+
+
         }
 
         function calcularTotalIva() {
@@ -192,3 +209,48 @@
             $('#id_total_iva').val(total);
         }
 
+        function setMetodoPago(metodo) {
+            $('#id_pago-metodo_pago').val(metodo);
+
+            $('[name^=pago-]').removeAttr('required');
+
+        }
+        function calculaVuelto() {
+            var mensaje= $('#vueltonegativo');
+            mensaje.hide();
+            var guardado = $('#guardar_pago');
+            guardado.removeAttr("disabled");
+            var monto_total= $('#id_monto_total').val();
+            var abonado = $('#abonado').val() ;
+
+            var vuelto = abonado-monto_total;
+            // noinspection JSAnnotator
+            if (vuelto < 0   )   {
+
+                mensaje.show();
+                guardado.prop("disabled",true);
+
+            }
+
+            $('#vuelto').val(vuelto) ;
+
+
+        }
+
+        function guardarVenta() {
+            var form = $('form');
+            var formData = new FormData(form[0]);
+            $.post({
+                url: window.guardarVentaUrl,
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+            .done(function (data) {
+                if(data.success){
+                    document.location.href = "/";
+                }
+
+            });
+        }

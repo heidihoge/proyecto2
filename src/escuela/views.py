@@ -1,9 +1,10 @@
 from __future__ import unicode_literals
 
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from dal import autocomplete
+from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib.auth.decorators import permission_required, login_required
 from django.db.models import Q
@@ -11,6 +12,7 @@ from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.db import connection
 from django.template import context, RequestContext
+from django_cron import CronJobBase, Schedule
 
 from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm, TitularFormVerificar, AlumnoFormVerificar
@@ -757,5 +759,64 @@ def a_view(request):
         })
     # else:
     #    return False
+
+
+# generar deuda
+
+def calcular_fecha(dia):
+    '''
+    hoy : 11/junio/2018
+
+    dia: 5
+    retorna: 5/julio/2018
+
+    dia: 10
+    retorna: 10/julio/2018
+
+    dia: 12
+    retorna: 12/junio/2018
+    :param dia:
+    :return:
+    '''
+
+    month = relativedelta(months=1)
+    hoy = date.today()
+    fecha = date(hoy.year, hoy.month, dia)
+    print(fecha)
+    if fecha < hoy:
+        return fecha + month
+    return fecha
+
+
+class CuotaJob(CronJobBase):
+    RUN_EVERY_MINS = 1 #440
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+    code = 'escuela.cuotajob'
+
+    def do(self):
+        # print('corrio job')
+
+        query = '''SELECT EXTRACT(DAY FROM  i.fecha_inicio) as dia_vence , g.costo ,i.id
+                FROM escuela_inscripcion i JOIN escuela_grupo g on g.id = i.grupo_id
+                  LEFT JOIN escuela_cuenta c ON i.id = c.inscripcion_id and c.vencimiento > now()
+                WHERE c.id is null and i.fecha_fin is NULL
+                
+                 ;
+                '''
+
+        cursor = connection.cursor()
+        cursor.execute(query, {})
+        ret = dictfetch(cursor, 100, 0)
+        print(ret)
+
+        for fila in ret:
+            print(fila)
+            cuenta = Cuenta()
+            cuenta.inscripcion_id = fila['id']
+            cuenta.monto = fila['costo']
+
+            cuenta.vencimiento = calcular_fecha(int(fila['dia_vence']))
+            print(cuenta.vencimiento)
+            cuenta.save()
 
 

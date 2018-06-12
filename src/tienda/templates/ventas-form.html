@@ -50,15 +50,37 @@
                         <div class="form-group">
                             <div class="col-md-12 text-center">
                                 <a class="btn btn-primary" type="button" href="/">Cancelar</a>
-                                <input type="submit" class="btn btn-success" value="Guardar"/>
+                                <a type="button" class="btn btn-success" data-toggle="modal" data-target="#pago">Pagar</a>
                             </div>
                         </div>
-
+                        {#    MODAL PAGO                    #}
+                        <div class="modal fade " id="pago" role="dialog" >
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Pago</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% include "pago-form.html" with form=formularioPago %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                            <button type="button" onclick="guardarVenta()" id="guardar_pago" class="btn btn-primary" >Guardar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
+    <!-- Large modal -->
+
+
     <div class="hidden">
         <table>
         <tr id="row-template" >
@@ -107,10 +129,16 @@
             </div>
         </div>
     </div>
+
+
+
     <input type="hidden" id="cuenta_id" value="{{ cuenta.pk }}" />
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
+    <script>
+    window.guardarVentaUrl = '{% url 'vender' %}';
+    </script>
     <script src="/static/venta.js"></script>
 {% endblock %}
 

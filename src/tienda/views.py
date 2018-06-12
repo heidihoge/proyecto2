@@ -9,11 +9,10 @@ from django.shortcuts import render, redirect
 from escuela.models import Cuenta
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
-    FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja
+    FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago
 
 from .forms import  FomularioProducto
-from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja
-
+from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja, Pago
 
 
 # Create your views here.
@@ -348,12 +347,38 @@ def cancela_venta(request, id):
     return redirect('list_ventas')
 
 
+def verificar_pago(pago):
+    if pago.metodo_pago == 'Efectivo':
+        pago.tarjeta = None
+        pago.nro_autorizacion = None
+        pago.ultimos_tarjeta = None
+        pago.banco = None
+        pago.nro_cuenta = None
+        pago.librador = None
+        pago.serie_cheque = None
+        pago.nro_cheque = None
+        pago.fecha_emision = None
+        pago.fecha_venc = None
+    elif pago.metodo_pago == 'Tarjeta':
+        pago.banco = None
+        pago.nro_cuenta = None
+        pago.librador = None
+        pago.serie_cheque = None
+        pago.nro_cheque = None
+        pago.fecha_emision = None
+        pago.fecha_venc = None
+    else:
+        pago.tarjeta = None
+        pago.nro_autorizacion = None
+        pago.ultimos_tarjeta = None
 
 
+    pass
 
 
 def vender(request):
     venta = VentaCabecera()
+    pago= Pago()
     cuenta = Producto.objects.get(codigo='CUENTA')
     FormularioDetalleSet = inlineformset_factory(VentaCabecera, VentaDetalle, extra=0, can_delete=True, form=FormularioVentaDetalle)
 
@@ -361,6 +386,7 @@ def vender(request):
 
         form = FormularioVentaVerificar(request.POST, request.FILES,instance=venta)
         formularioDetalleSet = FormularioDetalleSet(request.POST, request.FILES, instance=venta)
+        formularioPago = FormularioPago(request.POST, request.FILES, instance=pago,prefix='pago')
 
         ruc_cliente = request.POST['cliente-ruc_cliente']
 
@@ -371,12 +397,17 @@ def vender(request):
 
         formularioCliente = FormularioCliente(request.POST, request.FILES, prefix='cliente', instance=cliente)
 
-        if form.is_valid() and formularioDetalleSet.is_valid() and formularioCliente.is_valid():
+        if form.is_valid() and formularioDetalleSet.is_valid() and formularioCliente.is_valid() and formularioPago.is_valid():
             cliente = formularioCliente.save()
             venta = form.save(commit=False)
             venta.cliente = cliente
             venta.save()
             detalles = formularioDetalleSet.save()
+            pago=formularioPago.save(commit=False)
+            pago.venta = venta
+            verificar_pago(pago)
+            pago.save()
+
 
             for detalle in detalles:
                 detalle.descripcion = detalle.producto.nombre
@@ -387,7 +418,9 @@ def vender(request):
 
                 detalle.save()
 
+
             productos_cuenta = cuentas(formularioDetalleSet)
+
 
             if productos_cuenta:
                 for idx in productos_cuenta:
@@ -402,20 +435,20 @@ def vender(request):
                     cuenta_nueva.save()
 
             messages.success(request, 'Venta registrada correctamente')
-            return redirect('list_ventas')
+            return JsonResponse({'success':True}, safe=False)
 
-        form = FormularioVenta(request.POST, request.FILES,instance=venta)
-        messages.error(request, 'Error al crear venta.')
+        return JsonResponse({'success':False, 'formErrors': form.errors,
+                             'detalleErrors': formularioDetalleSet.errors, 'clienteErrors': formularioCliente.errors,
+                             'pagoErrors': formularioPago.errors} , safe=False)
     else:
         cliente = Cliente()
         form = FormularioVenta(instance=venta)
         formularioDetalleSet = FormularioDetalleSet(instance=venta)
         formularioCliente = FormularioCliente(instance=cliente, prefix='cliente')
-
-
+        formularioPago= FormularioPago(instance=pago, prefix='pago')
 
     return render(request, 'ventas-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet,
-                                                'formularioCliente': formularioCliente, 'cuenta': cuenta})
+                                                'formularioCliente': formularioCliente, 'cuenta': cuenta, 'formularioPago':formularioPago})
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 
@@ -542,7 +575,7 @@ def update_factura(request, id):
 
 import csv
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Producto
 
 
@@ -589,6 +622,7 @@ def create_cliente(request):
         form = FomularioCliente()
 
     return render(request, 'clientes-form.html', {'form': form})
+
 
 
 def update_cliente(request, ruc_cliente):

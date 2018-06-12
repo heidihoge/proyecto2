@@ -67,13 +67,7 @@
         {% include "forms/field-errors.html" with field=form.tipo_pago %}
     </div>
 </div>
-    <!-- Metodo de pago -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
-        {% include "forms/label.html" with field=form.metodo_pago %}
-        {{ form.metodo_pago }}
-        {% include "forms/field-errors.html" with field=form.metodo_pago %}
-    </div>
-</div>
+
 <!-- Cliente -->
 <div class="row">
     {{ formularioCliente.ruc_cliente.as_hidden }}

@@ -107,10 +107,7 @@ class VentaCabecera(models.Model):
     TIPO_PAGO = (('Contado', 'Contado'),
                  ('Crédito', 'Crédito'))
     tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO, default='Contado')
-    METODO_PAGO = (('Efectivo', 'Efectivo'),
-                 ('Tarjeta', 'Tarjeta'),
-                  ('Cheque', 'Cheque'))
-    metodo_pago = models.CharField(max_length=8, choices=METODO_PAGO, default='Efectivo')
+
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField(default=datetime.date.today)
     monto_total = models.IntegerField(default=0)
@@ -157,3 +154,38 @@ class OperacionCaja(models.Model):
 
     def __str__(self):
         return str(self.fecha)
+
+
+# PAGOS
+
+class Pago(models.Model):
+    venta = models.ForeignKey(VentaCabecera, on_delete=models.SET_NULL, null=True,blank=True)
+    METODO_PAGO = (('Efectivo', 'Efectivo'),
+                   ('Tarjeta', 'Tarjeta'),
+                   ('Cheque', 'Cheque'))
+    metodo_pago = models.CharField(max_length=8, choices=METODO_PAGO, default='',blank=True)
+    monto =  models.IntegerField(default=0,blank=True)
+
+    # si es tarjeta
+
+    # Tarjetas de Crédito del sistema Bancard; Visa, MasterCard, Credifielco, Diners Club International, American Express y Discover.
+
+    # Visa – MasterCard – Bancard Check – Credifielco – Discover – American Express – Diners Club. Visa Débito – Visa Electrón – Maestro – Infonet.
+
+
+    CLASIFICACION_TARJETA = (('INFONET-DEBITO', 'INFONET-DEBITO'),
+                             ('INFONET-CREDITO', 'INFONET-CREDITO'))
+    tarjeta = models.CharField(max_length=25, choices=CLASIFICACION_TARJETA, default='',blank=True,null=True)
+    nro_autorizacion = models.CharField(max_length=150, default='', null=True,blank=True)
+    ultimos_tarjeta = models.CharField(max_length=150, default='', null=True,blank=True)
+
+
+    # si es cheque >Entidad bancaria, número de cuenta bancaria ,serie cheque,número de cheque, fecha emisión,fecha  vencimiento
+
+    banco = models.CharField(max_length=150, default='', null=True,blank=True)
+    nro_cuenta = models.CharField(max_length=150, default='', null=True,blank=True)
+    librador = models.CharField(max_length=150, default='', null=True,blank=True)
+    serie_cheque = models.CharField(max_length=150, default='', null=True,blank=True)
+    nro_cheque = models.CharField(max_length=150, default='', null=True,blank=True)
+    fecha_emision = models.DateField( null=True,blank=True)
+    fecha_venc = models.DateField( null=True,blank=True)
