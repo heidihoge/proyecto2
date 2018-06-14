@@ -2,10 +2,10 @@
     <div class="col-md-7">
         <div class="panel panel-default">
             <div class="panel-body  no-padding text-center">
-                <h3 class="blokk bloque-factura-nombre">Pececitos_de_Jesús</h3>
-                <h5 class="blokk bloque-factura-actividad-economica">Servicios_Profesionales</h5>
-                <p class="blokk bloque-factura-direccion">Direccion_de_la_casa_y_numero</p>
-                <p>Tel: <span class="blokk bloque-factura-telefono">999888777</span></p>
+                <h3 class="bloque-factura-nombre">{{ talonario.nombre }}</h3>
+                <h5 class=" bloque-factura-actividad-economica">{{ talonario.actividad_economica }}</h5>
+                <p class=" bloque-factura-direccion">{{ talonario.direccion }}</p>
+                <p>Tel: <span class="bloque-factura-telefono">{{ talonario.telefono }}</span></p>
             </div>
         </div>
     </div>
@@ -14,17 +14,17 @@
             <div class="panel-body no-padding">
                 <p style="margin:0">
                     <small><strong>Timbrado Nro <span
-                            class="blokk bloque-factura-numero-timbrado">88888888</span></strong><br>
-                        Inicio de Vigencia: <span class="blokk bloque-factura-vigencia-desde">01-01-2017</span><br>
-                        Fin de Vigencia: <span class="blokk bloque-factura-vigencia-hasta">01-01-2018</span>
+                            class="bloque-factura-numero-timbrado">{{ talonario.numero_timbrado }}</span></strong><br>
+                        Inicio de Vigencia: <span class="bloque-factura-vigencia-desde">{{ talonario.vigencia_desde }}</span><br>
+                        Fin de Vigencia: <span class="bloque-factura-vigencia-hasta">{{ talonario.vigencia_hasta }}</span>
                     </small>
                     <br>
 
-                    <strong>RUC: <span class="blokk bloque-factura-ruc">4444444-5</span></strong>
+                    <strong>RUC: <span class=" bloque-factura-ruc">{{ talonario.ruc }}</span></strong>
                 </p>
                 <h4 class="" style="margin: 0;">Factura</h4>
-                <h3 style="margin:5px">Nro: <span class="blokk bloque-factura-punto-emision">001-001</span>-<span
-                        class="blokk bloque-factura-nro-factura">0000001</span></h3>
+                <h3 style="margin:5px">Nro: <span class=" bloque-factura-punto-emision">{{ talonario.punto_emision }}</span>-<span
+                        class="bloque-factura-nro-factura">{{ nro_factura }}</span></h3>
 
             </div>
         </div>
@@ -40,28 +40,16 @@
         {% include "forms/field-errors.html" with field=form.fecha %}
     </div>
 
-    <!-- Cliente -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
-        {% include "forms/label.html" with field=form.cliente %}
-        {{ form.cliente }}
-        {% include "forms/field-errors.html" with field=form.cliente %}
-
-    </div>
 
     <!-- Timbrado -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
-        {% include "forms/label.html" with field=form.talonario_factura %}
-        {{ form.talonario_factura }}
-        {% include "forms/field-errors.html" with field=form.talonario_factura %}
-    </div>
+    <input type="hidden" id="id_talonario_factura" name="talonario_factura" value="{{ talonario.id }}" />
 
     <!-- Nro Factura -->
-    {{ form.nro_factura.as_hidden }}
-    {{ form.nro_factura_punto_emision.as_hidden }}
-    {{ form.nro_factura_numero.as_hidden }}
-
+    <input type="hidden" name="nro_factura" id="id_nro_factura" value="{{ talonario.punto_emision }}-{{ nro_factura }}">
+    <input type="hidden" name="nro_factura_punto_emision" id="id_nro_factura_punto_emision" value="{{ talonario.punto_emision }}">
+    <input type="hidden" name="nro_factura_numero" value="{{ nro_factura }}" id="id_nro_factura_numero">
     <!-- Tipo de pago -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 pull-right">
         {% include "forms/label.html" with field=form.tipo_pago %}
         {{ form.tipo_pago }}
         {% include "forms/field-errors.html" with field=form.tipo_pago %}
@@ -71,12 +59,21 @@
 <!-- Cliente -->
 <div class="row">
     {{ formularioCliente.ruc_cliente.as_hidden }}
+    <!-- Cliente -->
     <div class="form-group col-md-3 col-sm-3 col-xs-12">
+        {% include "forms/label.html" with field=form.cliente %}
+        {{ form.cliente }}
+        {% include "forms/field-errors.html" with field=form.cliente %}
+
+    </div>
+    <div class="form-group col-md-9 col-sm-9 col-xs-12">
         {% include "forms/label.html" with field=formularioCliente.nombre_razon %}
         {% include "forms/charfield.html" with field=formularioCliente.nombre_razon %}
         {% include "forms/field-errors.html" with field=formularioCliente.nombre_razon %}
     </div>
-    <div class="form-group col-md-6 col-sm-6 col-xs-12">
+</div>
+<div class="row">
+    <div class="form-group col-md-9 col-sm-9 col-xs-12">
         {% include "forms/label.html" with field=formularioCliente.direccion %}
         {% include "forms/charfield.html" with field=formularioCliente.direccion %}
         {% include "forms/field-errors.html" with field=formularioCliente.direccion %}
@@ -89,10 +86,13 @@
 </div>
 <div class="row">
     <!-- Monto total -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+    <div class="form-group col-md-2 col-sm-2 col-xs-12">
         {% include "forms/label.html" with field=form.monto_total %}
         {% include "forms/integerfield.html" with field=form.monto_total %}
         {% include "forms/field-errors.html" with field=form.monto_total %}
+    </div>
+
+    <div class="col-md-4">
     </div>
 
     <!-- IVA 10 total -->
@@ -110,14 +110,14 @@
     </div>
 
     <!-- EXENTAS total -->
-    <div class="form-group col-md-2 col-sm-2 col-xs-12">
-        {% include "forms/label.html" with field=form.total_exentas %}
-        {% include "forms/integerfield.html" with field=form.total_exentas %}
-        {% include "forms/field-errors.html" with field=form.total_exentas %}
-    </div>
+{#    <div class="form-group col-md-2 col-sm-2 col-xs-12">#}
+{#        {% include "forms/label.html" with field=form.total_exentas %}#}
+{#        {% include "forms/integerfield.html" with field=form.total_exentas %}#}
+{#        {% include "forms/field-errors.html" with field=form.total_exentas %}#}
+{#    </div>#}
 
     <!-- Monto total -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12 disabled">
+    <div class="form-group col-md-2 col-sm-2 col-xs-12 ">
         {% include "forms/label.html" with field=form.total_iva %}
         {% include "forms/integerfield.html" with field=form.total_iva %}
         {% include "forms/field-errors.html" with field=form.total_iva %}

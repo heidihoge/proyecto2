@@ -85,13 +85,14 @@ class FormularioCompraDetalle(forms.ModelForm):
 # Formulario Venta Cabecera
 class FormularioVenta(forms.ModelForm):
     monto_total = forms.IntegerField(initial=0)
-    total_iva = forms.IntegerField(initial=0)
-    total_iva_5 = forms.IntegerField(initial=0)
-    total_iva_10 = forms.IntegerField(initial=0)
+    total_iva = forms.IntegerField(initial=0, label="Total IVA")
+    total_iva_5 = forms.IntegerField(initial=0, label="Total IVA 5%")
+    total_iva_10 = forms.IntegerField(initial=0, label="Total IVA 10%")
     total_exentas = forms.IntegerField(initial=0)
     tipo_pago = forms.ChoiceField(
         choices=VentaCabecera.TIPO_PAGO,
-        widget=forms.RadioSelect(choices=VentaCabecera.TIPO_PAGO)
+        widget=forms.RadioSelect(choices=VentaCabecera.TIPO_PAGO),
+        label="Condición de venta"
     )
 
     cliente = CustomModelChoiceField(
@@ -184,4 +185,9 @@ class FormularioOperacionCaja(forms.ModelForm):
     )
 
 
+
+class FormularioReporteCompras(forms.ModelForm):
+    class Meta:
+        model = CompraCabecera
+        fields = ['fecha', 'nro_factura','ruc_proveedor','proveedor','monto_total' ]
 

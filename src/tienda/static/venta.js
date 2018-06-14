@@ -126,6 +126,11 @@
             $('.cantidad input[type=number],.precio input[type=number]').on('change', function(){
                 calcularTotales();
             });
+
+            $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_exento]")).attr("readonly",true);
+            $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_5]")).attr("readonly",true);
+            $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_10]")).attr("readonly", true);
+
             if (cuenta) {
 
                 row.find(".select2").remove();
@@ -136,8 +141,6 @@
                 $(row.find("select")).replaceWith(productoDescripcion);
 
                 $(row.find("input[name=ventadetalle_set-" + formIdx + "-cantidad]")).attr("readonly",true);
-                $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_exento]")).attr("readonly",true);
-                $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_5]")).attr("readonly",true);
                 $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_10]")).val(cuenta.monto);
                 $(row.find("input[name=ventadetalle_set-" + formIdx + "-precio]")).val(cuenta.monto);
                 $(row.find("input#detalle-" + formIdx + "-producto-iva")).val("10%");
@@ -195,9 +198,12 @@
             $('#id_monto_total').val(monto_exento + monto_10 + monto_5);
             $('#id_pago-monto').val(monto_exento + monto_10 + monto_5);
             $('#id_total_exentas').val(monto_exento);
-            $('#id_total_iva_10').val(monto_10);
-            $('#id_total_iva_5').val(monto_5);
-            $('#id_total_iva').val(monto_10 + monto_5);
+            $('#id_total_iva_10').val(Math.round(monto_10 / 11));
+            $('#id_total_iva_5').val(Math.round(monto_5 / 21));
+            $('#id_total_iva').val(Math.round(monto_10 / 11) + Math.round(monto_5 / 21));
+            $('#subtotal-exentas').text(monto_exento);
+            $('#subtotal-iva-5').text(monto_5);
+            $('#subtotal-iva-10').text(monto_10);
             $('#id_monto').val(monto_exento + monto_10 + monto_5);
 
 

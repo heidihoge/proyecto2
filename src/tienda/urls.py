@@ -8,7 +8,7 @@ from tienda.views import list_productos, create_producto, update_producto, delet
     comprar, list_compras, vender, \
     export_productos_csv, ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete, list_clientes, create_cliente, \
     delete_cliente, update_cliente, CuentaAutocomplete, list_ventas, consulta_factura, cancela_venta, list_operaciones, \
-    create_operacion, update_operacion, delete_operacion
+    create_operacion, update_operacion, delete_operacion, reporte_compras
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
 
 urlpatterns = [
@@ -56,6 +56,7 @@ urlpatterns = [
     path('caja/<int:id>/update', update_operacion, name='update_operacion'),
     path('caja/<int:id>/delete', delete_operacion, name='delete_operacion'),
 
+    path('compras/reporte', reporte_compras, name='reporte_compras'),
     path('compras', list_compras, name='list_compras'),
     path('compras/new', comprar, name='comprar'),
     path('compras/<int:id>/update', update_compra, name='update_compra'),

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Reporte de Compras</h1>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="CONSULTAR" class="btn btn-primary btn-block"><i class="fa fa-file-text"></i>
+
+
+                <div class="col-md-6">
+                    <input type="date" name="sd" value="" class="form-control">
+
+                    <input type="date" name="ed" value="" class="form-control">
+
+                </div>
+            </form>
+
+        </div>
+
+
+    </div>
+    </div>
+    <br><!--- -->
+    <div class="row">
+
+        <div class="col-md-12">
+        </div>
+    </div>
+
+    <br><br><br><br>
+
+
+
+
+

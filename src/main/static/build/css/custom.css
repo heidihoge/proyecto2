@@ -4276,3 +4276,9 @@ ul.flat li {
 .fc-unthemed td.fc-widget-content.fc-today {
     background: white;
 }
+
+/* Footer de tabla*/
+.table-row-footer th {
+    background: rgba(52, 73, 94, 0.94);
+    color:#ECF0F1;
+}

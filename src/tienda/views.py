@@ -9,7 +9,8 @@ from django.shortcuts import render, redirect
 from escuela.models import Cuenta
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
-    FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago
+    FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
+    FormularioReporteCompras
 
 from .forms import  FomularioProducto
 from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja, Pago
@@ -376,7 +377,28 @@ def verificar_pago(pago):
     pass
 
 
+def numero_factura(factura):
+    """
+    Funcion para obtener numero de la factura
+    :param factura: objeto de tipo Factura
+    :return: Siguiente numero de factura
+    """
+    # Completa con 0s
+
+    maximo = VentaCabecera.objects.aggregate(maximo=Max('nro_factura_numero', filter=Q(talonario_factura_id=factura.id)))
+
+    siguiente = maximo['maximo'] + 1 if maximo['maximo'] else factura.nro_inicial
+
+    # el siguiente esta fuera del rango permitido, retorna None
+    if factura.nro_inicial > siguiente or factura.nro_final < siguiente:
+        return None
+
+
+    return "{:07d}".format(siguiente)
+
+
 def vender(request):
+
     venta = VentaCabecera()
     pago= Pago()
     cuenta = Producto.objects.get(codigo='CUENTA')
@@ -429,10 +451,6 @@ def vender(request):
                     cuenta_a_pagar.monto_pagado = detalles[idx].precio
                     cuenta_a_pagar.detalle = detalles[idx]
                     cuenta_a_pagar.save()
-                    cuenta_nueva = Cuenta(inscripcion=cuenta_a_pagar.inscripcion,
-                                          vencimiento=cuenta_a_pagar.vencimiento + relativedelta(months=1),
-                                          monto=cuenta_a_pagar.monto)
-                    cuenta_nueva.save()
 
             messages.success(request, 'Venta registrada correctamente')
             return JsonResponse({'success':True}, safe=False)
@@ -441,6 +459,10 @@ def vender(request):
                              'detalleErrors': formularioDetalleSet.errors, 'clienteErrors': formularioCliente.errors,
                              'pagoErrors': formularioPago.errors} , safe=False)
     else:
+        hoy = datetime.datetime.today()
+        # Trae solo lo vigente y activo
+        talonario = Factura.objects.filter(Q(vigencia_desde__lte=hoy) & Q(vigencia_hasta__gte=hoy) & Q(estado='A')).first()
+
         cliente = Cliente()
         form = FormularioVenta(instance=venta)
         formularioDetalleSet = FormularioDetalleSet(instance=venta)
@@ -448,7 +470,9 @@ def vender(request):
         formularioPago= FormularioPago(instance=pago, prefix='pago')
 
     return render(request, 'ventas-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet,
-                                                'formularioCliente': formularioCliente, 'cuenta': cuenta, 'formularioPago':formularioPago})
+                                                'talonario': talonario, 'nro_factura': numero_factura(talonario),
+                                                'formularioCliente': formularioCliente,
+                                                'cuenta': cuenta, 'formularioPago':formularioPago})
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 
@@ -590,6 +614,40 @@ def export_productos_csv(request):
         writer.writerow(producto)
 
     return response
+
+def reporte_compras(request):
+    form = FormularioReporteCompras()
+    if request.method == 'POST':
+        form = FormularioReporteCompras(request.POST)
+        if form.is_valid():
+            # Obtener los objetos que deseas exportar e iterar
+            # filtrado por los campos del formulario
+            # ['fecha', 'nro_factura', 'ruc_proveedor', 'proveedor', 'monto_total']
+            objetos = CompraCabecera.objects.filter(
+                fecha=form.cleaned_data.get('fecha'),
+                nro_factura=form.cleaned_data.get('nro_factura'),
+                ruc_proveedor=form.cleaned_data.get('ruc_proveedor'),
+                monto_total=form.cleaned_data.get('monto_total')
+            )
+
+            # Crear el objeto HttpResponse con sus cabeceras
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="reporte.csv"'
+
+            # Se usa el response como un "archivo" destino
+            writer = csv.writer(response)
+
+            for objeto in objetos:
+                row = [
+                    objeto.fecha,
+                    objeto.nro_factura,
+                    objeto.ruc_proveedor,
+                    objeto.monto_total
+
+                ]
+                writer.writerow(row)
+            return response
+    return render(request, 'compras_reporte-form.html', {'form': form})
 
 
 
