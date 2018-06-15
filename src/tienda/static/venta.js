@@ -140,7 +140,7 @@
                 productoDescripcion.val(cuenta.detalle);
                 $(row.find("select")).replaceWith(productoDescripcion);
 
-                $(row.find("input[name=ventadetalle_set-" + formIdx + "-cantidad]")).attr("readonly",true);
+
                 $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_10]")).val(cuenta.monto);
                 $(row.find("input[name=ventadetalle_set-" + formIdx + "-precio]")).val(cuenta.monto);
                 $(row.find("input#detalle-" + formIdx + "-producto-iva")).val("10%");

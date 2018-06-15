@@ -7,6 +7,7 @@ from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 
 from escuela.models import Cuenta
+from escuela.views import calcular_fecha
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
     FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
@@ -324,7 +325,7 @@ def cuentas(formset):
     productos_cuenta = [] # indices de Productos que son cuenta
     for idx, form in enumerate(formset.cleaned_data):
         if form['producto'].codigo == 'CUENTA':
-            productos_cuenta.append(idx)
+            productos_cuenta.append((idx, form['cantidad']))
 
     return productos_cuenta
 
@@ -445,12 +446,23 @@ def vender(request):
 
 
             if productos_cuenta:
-                for idx in productos_cuenta:
+                for idx, cantidad in productos_cuenta:
                     cuenta_a_pagar = Cuenta.objects.get(pk=request.POST['ventadetalle_set-' + str(idx) + '-cuenta'])
                     cuenta_a_pagar.pagado = True
                     cuenta_a_pagar.monto_pagado = detalles[idx].precio
                     cuenta_a_pagar.detalle = detalles[idx]
                     cuenta_a_pagar.save()
+                    anterior = cuenta_a_pagar
+                    # cuando se paga mas de una cuota
+                    for i in range(1, cantidad):
+                        cuenta_adelantada = Cuenta.objects.get_or_create(inscripcion=anterior.inscripcion,
+                                                                         vencimiento=calcular_fecha(anterior.vencimiento.day, anterior.vencimiento + relativedelta(day=2)))[0]
+                        cuenta_adelantada.monto = anterior.monto
+                        cuenta_adelantada.monto_pagado = anterior.monto_pagado
+                        cuenta_adelantada.pagado = True
+                        cuenta_adelantada.detalle = detalles[idx]
+                        cuenta_adelantada.save()
+                        anterior = cuenta_adelantada
 
             messages.success(request, 'Venta registrada correctamente')
             return JsonResponse({'success':True}, safe=False)

@@ -763,7 +763,7 @@ def a_view(request):
 
 # generar deuda
 
-def calcular_fecha(dia):
+def calcular_fecha(dia, hoy=date.today()):
     '''
     hoy : 11/junio/2018
 
@@ -780,7 +780,7 @@ def calcular_fecha(dia):
     '''
 
     month = relativedelta(months=1)
-    hoy = date.today()
+
     fecha = date(hoy.year, hoy.month, dia)
     print(fecha)
     if fecha < hoy:
