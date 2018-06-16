@@ -50,6 +50,12 @@ class FomularioProducto(forms.ModelForm):
         fields = ['codigo', 'nombre', 'foto_producto', 'descripcion', 'control_stock', 'precio_venta', 'costo',
                   'iva', 'estado', 'existencia']
 
+    def __init__(self, *args, **kwargs):
+        super(FomularioProducto, self).__init__(*args, **kwargs)
+        self.fields['codigo'].widget.attrs['placeholder'] = 'Cédula del titular'
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Cédula del titular'
+        self.fields['descripcion'].widget.attrs['placeholder'] = 'Nombre completo del titular'
+
 
 # Formulario CompraCabecera
 class FormularioCompra(forms.ModelForm):
@@ -126,7 +132,6 @@ class FormularioCliente(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FormularioCliente, self).__init__(*args, **kwargs)
-        super().__init__()
         self.fields['nombre_razon'].widget.attrs['placeholder'] = 'Nombre del cliente'
         self.fields['ruc_cliente'].widget.attrs['placeholder'] = 'RUC del cliente'
         self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del cliente'

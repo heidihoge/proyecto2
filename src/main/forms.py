@@ -80,10 +80,20 @@ class TitularForm(forms.ModelForm):
         model = Titular
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable','estado']
 
+    def __init__(self, *args, **kwargs):
+        super(TitularForm, self).__init__(*args, **kwargs)
+        self.fields['cedula'].widget.attrs['placeholder'] = 'Cédula del titular'
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre completo del titular'
+        self.fields['apellido'].widget.attrs['placeholder'] = 'Apellido completo del titular'
+        self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del titular'
+        self.fields['telefono1'].widget.attrs['placeholder'] = 'Teléfono del titular'
+        self.fields['telefono2'].widget.attrs['placeholder'] = 'Contacto de titular'
+
 class TitularFormVerificar(forms.ModelForm):
     class Meta:
         model = Titular
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','tipo_responsable','estado']
+
 
 #Formulario Alumno
 class AlumnoForm(forms.ModelForm):
@@ -115,8 +125,7 @@ class AlumnoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AlumnoForm, self).__init__(*args, **kwargs)
-        super().__init__()
-        self.fields['cedula'].widget.attrs['placeholder'] = 'Cedula del alumno'
+        self.fields['cedula'].widget.attrs['placeholder'] = 'Cédula del alumno'
         self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre completo del alumno'
         self.fields['apellido'].widget.attrs['placeholder'] = 'Apellido completo del alumno'
         self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del alumno'
@@ -152,6 +161,14 @@ class EmpleadoForm(forms.ModelForm):
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','salario','rol']
 
 
+    def __init__(self, *args, **kwargs):
+        super(EmpleadoForm, self).__init__(*args, **kwargs)
+        self.fields['cedula'].widget.attrs['placeholder'] = 'Cédula del empleado'
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre completo del empleado'
+        self.fields['apellido'].widget.attrs['placeholder'] = 'Apellido completo del empleado'
+        self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del empleado'
+        self.fields['telefono1'].widget.attrs['placeholder'] = 'Teléfono del empleado'
+        self.fields['telefono2'].widget.attrs['placeholder'] = 'Contacto de emergencia del empleado'
 
 
 #Formulario Profesor
@@ -170,7 +187,15 @@ class ProfesorForm(forms.ModelForm):
         widget=forms.RadioSelect(choices=Persona.SEXO)
     )
 
-
+    def __init__(self, *args, **kwargs):
+        super(ProfesorForm, self).__init__(*args, **kwargs)
+        self.fields['cedula'].widget.attrs['placeholder'] = 'Cédula del profesor'
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre completo del profesor'
+        self.fields['apellido'].widget.attrs['placeholder'] = 'Apellido completo del profesor'
+        self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del profesor'
+        self.fields['telefono1'].widget.attrs['placeholder'] = 'Teléfono del profesor'
+        self.fields['telefono2'].widget.attrs['placeholder'] = 'Contacto de emergencia del profesor'
+        self.fields['especialidad'].widget.attrs['placeholder'] = 'Título o conocimientos'
 # #Formulario Cuenta
 # class CuentaForm(forms.ModelForm):
 #     class Meta:

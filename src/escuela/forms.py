@@ -18,6 +18,11 @@ class FormularioClase(forms.ModelForm):
         model = Clase
         fields = ['nombre','descripcion']
 
+    def __init__(self, *args, **kwargs):
+        super(FormularioClase, self).__init__(*args, **kwargs)
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre del grupo. Ej: Natación Adultos'
+        self.fields['descripcion'].widget.attrs['placeholder'] = 'Reseña del curso y a quien va dirigido incluso la edad'
+
 #Formulario Grupo
 class FormularioGrupo(forms.ModelForm):
 
