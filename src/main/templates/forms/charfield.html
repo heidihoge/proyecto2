@@ -1,2 +1,7 @@
 <input type="text" id="{{ field.id_for_label }}" required="required" name="{{ field.html_name }}"
-       {% if field.value %}value="{{ field.value }}"{% endif %} class="form-control {{ field.field.attrs }}">
+       {% if field.value %}value="{{ field.value }}"{% endif %} class="form-control {{ field.field.attrs }}"
+{% for key, val in field.field.widget.attrs.items %}
+    {{ key }}="{{ val }}"
+{% endfor %}
+>
+

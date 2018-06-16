@@ -10,7 +10,7 @@ from escuela.models import Cuenta
 from escuela.views import calcular_fecha
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
-    FormularioCliente, FomularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
+    FormularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
     FormularioReporteCompras
 
 from .forms import  FomularioProducto
@@ -680,7 +680,7 @@ def create_cliente(request):
     print(request.method)
     if request.method == 'POST':
 
-        form = FomularioCliente(request.POST, request.FILES)
+        form = FormularioCliente(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -689,7 +689,7 @@ def create_cliente(request):
 
         messages.error(request, 'Error al crear cliente.')
     else:
-        form = FomularioCliente()
+        form = FormularioCliente()
 
     return render(request, 'clientes-form.html', {'form': form})
 
@@ -701,7 +701,7 @@ def update_cliente(request, ruc_cliente):
     except:
         return redirect('404')
     if request.method == 'POST':
-        form = FomularioCliente(request.POST, request.FILES, instance=cliente)
+        form = FormularioCliente(request.POST, request.FILES, instance=cliente)
 
         if form.is_valid():
             form.save()
@@ -709,7 +709,7 @@ def update_cliente(request, ruc_cliente):
             return redirect('list_clientes')
         messages.error(request, 'Error al modificar Cliente.')
     else:
-        form = FomularioCliente(instance=cliente)
+        form = FormularioCliente(instance=cliente)
 
     return render(request, 'clientes-form.html', {'form': form, 'cliente': cliente})
 

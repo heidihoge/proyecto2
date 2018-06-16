@@ -113,6 +113,17 @@ class AlumnoForm(forms.ModelForm):
 
         fields = ['cedula','nombre','apellido','fecha_nacimiento','sexo','direccion','telefono1','telefono2','fotocopia_cedula','imagen','ficha','ficha_inscripcion','estado']
 
+    def __init__(self, *args, **kwargs):
+        super(AlumnoForm, self).__init__(*args, **kwargs)
+        super().__init__()
+        self.fields['cedula'].widget.attrs['placeholder'] = 'Cedula del alumno'
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre completo del alumno'
+        self.fields['apellido'].widget.attrs['placeholder'] = 'Apellido completo del alumno'
+        self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del alumno'
+        self.fields['telefono1'].widget.attrs['placeholder'] = 'Teléfono del alumno'
+        self.fields['telefono2'].widget.attrs['placeholder'] = 'Contacto de emergencia'
+
+
 class AlumnoFormVerificar(forms.ModelForm):
     class Meta:
         model = Alumno

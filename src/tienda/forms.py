@@ -28,12 +28,6 @@ class FomularioFactura(forms.ModelForm):
                   'nro_inicial', 'nro_final', 'vigencia_desde', 'vigencia_hasta', 'estado']
 
 
-class FomularioCliente(forms.ModelForm):
-    class Meta:
-        model = Cliente
-        fields = ['nombre_razon', 'ruc_cliente', 'direccion', 'telefono']
-
-
 # #Formulario Producto
 class FomularioProducto(forms.ModelForm):
     existencia = forms.IntegerField(initial=0)
@@ -129,6 +123,15 @@ class FormularioCliente(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['nombre_razon', 'ruc_cliente', 'direccion', 'telefono']
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioCliente, self).__init__(*args, **kwargs)
+        super().__init__()
+        self.fields['nombre_razon'].widget.attrs['placeholder'] = 'Nombre del cliente'
+        self.fields['ruc_cliente'].widget.attrs['placeholder'] = 'RUC del cliente'
+        self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del cliente'
+        self.fields['telefono'].widget.attrs['placeholder'] = 'Teléfono del cliente'
+
 
 
 class FormularioVentaDetalle(forms.ModelForm):
