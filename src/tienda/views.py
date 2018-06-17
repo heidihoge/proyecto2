@@ -506,6 +506,14 @@ def vender(request):
         hoy = datetime.datetime.today()
         # Trae solo lo vigente y activo
         talonario = Factura.objects.filter(Q(vigencia_desde__lte=hoy) & Q(vigencia_hasta__gte=hoy) & Q(estado='A')).first()
+        if not talonario:
+            messages.error(request, 'No se puede realizar la venta, no hay talonarios de factura vigentes')
+            return redirect('list_facturas')
+
+        nro_factura = numero_factura(talonario)
+        if not nro_factura:
+            messages.error(request, 'No se puede realizar la venta, debe dar de baja el talonario '+ str(talonario))
+            return redirect('list_facturas')
 
         cliente = Cliente()
         form = FormularioVenta(instance=venta)
@@ -514,7 +522,7 @@ def vender(request):
         formularioPago= FormularioPago(instance=pago, prefix='pago')
 
     return render(request, 'ventas-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet,
-                                                'talonario': talonario, 'nro_factura': numero_factura(talonario),
+                                                'talonario': talonario, 'nro_factura': nro_factura,
                                                 'formularioCliente': formularioCliente,
                                                 'cuenta': cuenta, 'formularioPago':formularioPago})
 

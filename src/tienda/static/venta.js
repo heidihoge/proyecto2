@@ -129,11 +129,14 @@
         function agregaDetalle(cuenta){
             var formIdx = window.totalForms.val();
             var row = $('<tr></tr>');
+            var detalles = $('#detalles');
+            if(cuenta && detalles.find('[cuenta-id=' + cuenta.pk + ']').length > 0) {
+                return;
+            }
             row.attr('id', 'id_ventadetalle_set-' + parseInt(formIdx));
             row.append(window.rowTemplate.html().replace(/__prefix__/g, formIdx));
-            console.log(formIdx);
             row.find('.numero').append(parseInt(formIdx) + 1);
-            $('#detalles').append(row);
+            detalles.append(row);
             $('.cantidad input[type=number],.precio input[type=number]').on('change', function(){
                 calcularTotales();
             });
@@ -143,7 +146,7 @@
             $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_10]")).attr("readonly", true);
 
             if (cuenta) {
-
+                row.attr('cuenta-id', cuenta.pk);
                 row.find(".select2").remove();
                 // Si producto es texto, entonces se trata de una cuota!!!
                 var productoDescripcion = $("<input type='text' name='ventadetalle_set-"  + formIdx + "-producto-descripcion'></input>");

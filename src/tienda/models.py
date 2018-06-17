@@ -24,7 +24,7 @@ class Factura(models.Model):
     vigencia_hasta = models.DateField(default=datetime.date.today)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
-    estado = models.CharField(max_length=1, choices=ESTADO, default='A')
+    estado = models.CharField(max_length=2, choices=ESTADO, default='A')
 
     def __str__(self):
         return "{0} ({1}-[{2}-{3}])".format(self.numero_timbrado, self.punto_emision, self.nro_inicial, self.nro_final)

@@ -130,6 +130,20 @@ function verificarInscripcion() {
                 wizard.smartWizard('setError', {stepnum: 3, iserror: true});
                 notifyError("Complete los campos obligatorios.");
             }
+
+            var error_cupos = data.filter(function(d){ return d.error_cupos !== null && d.error_cupos !== undefined; });
+            console.log(error_cupos);
+            if (error_cupos.length > 0) {
+                new PNotify({
+                    title: 'Atención',
+                    text: "<p>Alumnos inscriptos en grupos con cupos llenos:</p><ul>" +
+                        error_cupos.map(function(alumno){
+                            return "<li>Alumno " + alumno.alumno + "</li>"
+                        }) + "</ul>",
+                    styling: 'bootstrap3',
+                    hide: false
+                });
+            }
         });
 }
 

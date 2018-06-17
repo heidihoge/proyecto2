@@ -13,6 +13,7 @@ from django.db.models import Q
 
 # Create your views here.
 from escuela.forms import FormularioInscripcion
+from escuela.models import Inscripcion
 from proyecto2 import settings
 
 
@@ -236,15 +237,30 @@ def verificar_alumnos(request):
         return JsonResponse(alumnos, safe=False)
     raise Http404()
 
+def cargar_cupo(cupos, grupo):
+    if grupo not in cupos:
+        inscriptos = Inscripcion.objects.filter(Q(grupo=grupo) & Q(fecha_fin__isnull=True)).count()
+        cupos[grupo] = grupo.cupo_maximo - inscriptos
+
 
 def verificar_inscripcion(request):
     if request.method == 'POST':
         cantidad_alumnos = int(request.POST['alumnosCount'])
         inscripciones = []
+        cupos = {}
         for i in range(1, cantidad_alumnos + 1):
             prefix = 'alumno-' + str(i) + '-inscripcion'
             form = FormularioInscripcion(request.POST, prefix=prefix)
-            inscripciones.append({"alumno": i, "valid": form.is_valid(), "errors": form.errors})
+            form.is_valid()
+            error_cupos = None
+            if 'grupo' in form.cleaned_data:
+                grupo = form.cleaned_data['grupo']
+                cargar_cupo(cupos, grupo)
+                cupos[grupo] = cupos[grupo] - 1
+                if cupos[grupo] < 0:
+                    error_cupos = "Grupo lleno."
+            inscripciones.append({"alumno": i, "valid": form.is_valid(),
+                                  "errors": form.errors, "error_cupos": error_cupos})
 
         return JsonResponse(inscripciones, safe=False)
     raise Http404()
