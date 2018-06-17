@@ -59,6 +59,14 @@ class FomularioProducto(forms.ModelForm):
 
 # Formulario CompraCabecera
 class FormularioCompra(forms.ModelForm):
+    def clean_monto_total(self):
+        monto = self.cleaned_data['monto_total']
+        if monto == 0:
+            raise forms.ValidationError("El monto es 0! Verifica los detalles.")
+        if monto < 0:
+            raise forms.ValidationError("El monto es negativo! Verifica los detalles.")
+        return monto
+
     monto_total = forms.IntegerField(initial=0)
     total_iva = forms.IntegerField(initial=0)
     tipo_pago = forms.ChoiceField(
@@ -74,12 +82,11 @@ class FormularioCompra(forms.ModelForm):
 
 
 class FormularioCompraDetalle(forms.ModelForm):
-    cantidad = forms.IntegerField(initial=1)
 
     class Meta:
         model = CompraDetalle
 
-        fields = ['producto', 'cantidad', 'precio']
+        fields = '__all__'
 
 
 # Formulario Venta Cabecera

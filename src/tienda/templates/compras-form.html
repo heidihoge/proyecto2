@@ -29,16 +29,39 @@
                                 <thead>
 
                                 <tr>
-                                    <th class="" class="numero">Nro</th>
-                                    <th class="hidden" class="id">id</th>
-                                    <th class="col-md-10 col-sm-8" class="producto">Descripcion</th>
-                                    <th class="col-md-1 col-sm-2" class="cantidad">Cantidad</th>
-                                    <th class="col-md-1 col-sm-2" class="precio">Precio</th>
+                                    <th class="numero">Nro</th>
+                                    <th class="hidden id">id</th>
+                                    <th class="col-md-8 col-sm-8 detalle">Descripcion</th>
+                                    <th class="exentas">Exentas</th>
+                                    <th class="monto_5">5%</th>
+                                    <th class="monto_10">10%</th>
                                 </tr>
                                 </thead>
                                 <tbody id="detalles">
+                                    {% for formDetalle in formularioDetalleSet %}
+                                        <tr id="id_compradetalle_set-{{ forloop.counter0 }}" >
 
+                                            <td class="numero text-center">{{ forloop.counter }}</td>
+                                            <td class="hidden">{{ formularioDetalleSet.empty_form.id }}</td>
+                                            <td class="detalle"
+                                                style="padding: 0">{% include "forms/charfield.html" with field=formDetalle.detalle %}</td>
+                                            <td class="monto_exento"
+                                                style="padding: 0">{% include "forms/integerfield.html" with field=formDetalle.monto_exento %}</td>
+                                            <td class="monto_5"
+                                                style="padding: 0">{% include "forms/integerfield.html" with field=formDetalle.monto_5 %}</td>
+                                            <td class="monto_10"
+                                                style="padding: 0">{% include "forms/integerfield.html" with field=formDetalle.monto_10 %}</td>
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
+                                <tfoot>
+                                    <tr class="table-row-footer">
+                                        <th></th>
+                                        <th class="text-right">Subtotal</th>
+                                        <th ><span  id="subtotal-monto-exentas">0</span></th>
+                                        <th ><span id="subtotal-monto-5">0</span></th>
+                                        <th ><span id="subtotal-monto-10">0</span></th>
+                                    </tr>
                             </table>
 
                         </fieldset>
@@ -61,13 +84,14 @@
 
             <td class="numero text-center"></td>
             <td class="hidden">{{ formularioDetalleSet.empty_form.id }}</td>
-            <td class="producto"
-                style="padding: 0">{% include "forms/charfield.html" with field=formularioDetalleSet.empty_form.producto %}</td>
-            <td class="cantidad"
-                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.cantidad %}</td>
-            <td class="precio"
-                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.precio %}</td>
-            <td></td>
+            <td class="detalle"
+                style="padding: 0">{% include "forms/charfield.html" with field=formularioDetalleSet.empty_form.detalle %}</td>
+            <td class="monto_exento"
+                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.monto_exento %}</td>
+            <td class="monto_5"
+                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.monto_5 %}</td>
+            <td class="monto_10"
+                style="padding: 0">{% include "forms/integerfield.html" with field=formularioDetalleSet.empty_form.monto_10 %}</td>
         </tr>
             </table>
     </div>
@@ -86,8 +110,8 @@
         $(document).ready(function () {
             window.rowTemplate = $('#row-template');
             configurarICheck($('[name=tipo_pago]'));
+            $('.readonly-input input').attr('readonly', true);
             window.totalForms = $('#id_compradetalle_set-TOTAL_FORMS');
-            agregaDetalle();
 
             $('form input').keydown(function (event) {
                 if (event.keyCode === 13) {
@@ -95,8 +119,9 @@
                     return false;
                 }
             });
-
-            $('#id_total_iva_10,#id_total_iva_5').on('change', calcularTotalIva);
+            $('.monto_exento input[type=number],.monto_5 input[type=number],.monto_10 input[type=number]').on('change', function(){
+                calcularTotales();
+            });
 
         });
 
@@ -106,9 +131,9 @@
             row.attr('id', 'id_compradetalle_set-' + parseInt(formIdx));
             row.append(window.rowTemplate.html().replace(/__prefix__/g, formIdx));
             console.log(formIdx);
-            row.find('.numero').append(parseInt(formIdx) + 1);
+            row.find('.numero').text(parseInt(formIdx) + 1);
             $('#detalles').append(row);
-            $('.cantidad input[type=number],.precio input[type=number]').on('change', function(){
+            $('.monto_exento input[type=number],.monto_5 input[type=number],.monto_10 input[type=number]').on('change', function(){
                 calcularTotales();
             });
             window.totalForms.val(parseInt(formIdx) + 1);
@@ -121,17 +146,23 @@
 
         function calcularTotales() {
             var formIdx = parseInt(window.totalForms.val());
-            var suma = 0;
+            var detalles = $('#detalles');
+            var suma_exentas = 0;
+            var suma_5 = 0;
+            var suma_10 = 0;
             for(var i = 0; i < formIdx ; i ++ ) {
-                console.log('#id_compradetalle_set-' + (i) + '-cantidad');
-                suma += ($('#id_compradetalle_set-' + i + '-cantidad').val() * $('#id_compradetalle_set-' + i + '-precio').val());
+                suma_exentas += parseInt(detalles.find('[name=compradetalle_set-' + i + '-monto_exento]').val()) || 0;
+                suma_5 += parseInt(detalles.find('[name=compradetalle_set-' + i + '-monto_5]').val()) || 0;
+                suma_10 += parseInt(detalles.find('[name=compradetalle_set-' + i + '-monto_10]').val()) || 0;
             }
-            $('#id_monto_total').val(suma);
+            $('#id_monto_total').val(suma_exentas + suma_5 + suma_10);
+            $('#subtotal-monto-exentas').text(suma_exentas);
+            $('#subtotal-monto-5').text(suma_5);
+            $('#subtotal-monto-10').text(suma_10);
+            $('#id_total_iva_10').val(Math.round(suma_10 / 11));
+            $('#id_total_iva_5').val(Math.round(suma_5 / 21));
+            $('#id_total_iva').val(Math.round(suma_5 / 21) + Math.round(suma_10 / 11));
         }
 
-        function calcularTotalIva() {
-            var total = parseInt($('#id_total_iva_10').val()) + parseInt($('#id_total_iva_5').val());
-            $('#id_total_iva').val(total);
-        }
     </script>
 {% endblock %}

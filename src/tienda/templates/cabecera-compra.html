@@ -3,7 +3,6 @@
     <div class="form-group col-md-3 col-sm-3 col-xs-12">
         {% include "forms/label.html" with field=form.fecha %}
         {% include "forms/datefield.html" with field=form.fecha %}
-        {% include "forms/field-errors.html" with field=form.fecha %}
     </div>
 
     <!-- RUC -->
@@ -43,30 +42,26 @@
 </div>
 <div class="row">
     <!-- Monto total -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 readonly-input">
         {% include "forms/label.html" with field=form.monto_total%}
         {% include "forms/integerfield.html" with field=form.monto_total %}
-        {% include "forms/field-errors.html" with field=form.monto_total %}
     </div>
 
     <!-- IVA 10 total -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 readonly-input">
         {% include "forms/label.html" with field=form.total_iva_10%}
         {% include "forms/integerfield.html" with field=form.total_iva_10 %}
-        {% include "forms/field-errors.html" with field=form.total_iva_10 %}
     </div>
 
     <!-- IVA 5 total -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12">
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 readonly-input">
         {% include "forms/label.html" with field=form.total_iva_5%}
         {% include "forms/integerfield.html" with field=form.total_iva_5 %}
-        {% include "forms/field-errors.html" with field=form.total_iva_5 %}
     </div>
 
     <!-- Monto total -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12 disabled">
+    <div class="form-group col-md-3 col-sm-3 col-xs-12 readonly-input">
         {% include "forms/label.html" with field=form.total_iva%}
         {% include "forms/integerfield.html" with field=form.total_iva %}
-        {% include "forms/field-errors.html" with field=form.total_iva %}
     </div>
 </div>

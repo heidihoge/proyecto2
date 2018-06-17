@@ -12,7 +12,7 @@ from django.db import models
 # Factura
 class Factura(models.Model):
     nombre = models.CharField(max_length=50)
-    ruc = models.CharField(max_length=9, unique=True)
+    ruc = models.CharField(max_length=9)
     actividad_economica = models.CharField(max_length=50, null=True, blank=True)
     direccion = models.CharField(max_length=50)
     telefono = models.CharField(max_length=50, null=True, blank=True)
@@ -75,10 +75,11 @@ class CompraCabecera(models.Model):
 
 
 class CompraDetalle(models.Model):
-    compra = models.ForeignKey(CompraCabecera, on_delete=models.CASCADE, null=True)
-    producto = models.CharField(max_length=250, null=True)
-    cantidad = models.IntegerField(default=0)
-    precio = models.IntegerField(default=0)
+    compra = models.ForeignKey(CompraCabecera, on_delete=models.CASCADE)
+    detalle = models.CharField(max_length=250)
+    monto_5 = models.IntegerField(default=0)
+    monto_10 = models.IntegerField(default=0)
+    monto_exento = models.IntegerField(default=0)
 
 
 # cliente

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.db.models import Q, Max
 from django.db.transaction import rollback
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseFormSet, BaseInlineFormSet
 from django.shortcuts import render, redirect
 
 from escuela.models import Cuenta
@@ -525,12 +525,18 @@ def list_compras(request):
     return render(request, 'compras.html', {'compras': compras})
 
 
-
+class RequiredFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super(RequiredFormSet, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            form.empty_permitted = False
 
 def comprar(request):
     compra = CompraCabecera()
 
-    FormularioDetalleSet = inlineformset_factory(CompraCabecera, CompraDetalle, extra=0, can_delete=True, form=FormularioCompraDetalle)
+    FormularioDetalleSet = inlineformset_factory(CompraCabecera, CompraDetalle, extra=0,
+                                                 can_delete=True, min_num=1, validate_min=True,
+                                                 form=FormularioCompraDetalle, formset=RequiredFormSet)
 
     if request.method == 'POST':
 
@@ -543,7 +549,7 @@ def comprar(request):
             messages.success(request, 'Compra registrada correctamente')
             return redirect('list_compras')
 
-        messages.error(request, 'Error al crear producto.')
+        messages.error(request, 'Error al registrar egreso. Verifique los campos')
     else:
         form = FormularioCompra(instance=compra)
         formularioDetalleSet=FormularioDetalleSet(instance=compra)
