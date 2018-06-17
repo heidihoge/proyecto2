@@ -783,7 +783,7 @@ def calcular_fecha(dia, hoy=date.today()):
 
     fecha = date(hoy.year, hoy.month, dia)
     print(fecha)
-    if fecha < hoy:
+    if fecha <= hoy:
         return fecha + month
     return fecha
 

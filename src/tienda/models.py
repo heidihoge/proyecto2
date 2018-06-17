@@ -85,7 +85,7 @@ class CompraDetalle(models.Model):
 class Cliente(models.Model):
     nombre_razon = models.CharField(max_length=150, default='')
     ruc_cliente = models.CharField(primary_key=True, max_length=15)
-    direccion = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=50, blank=True, null=True)
     telefono = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):

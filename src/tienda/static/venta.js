@@ -1,3 +1,14 @@
+
+
+        function notifyError(message) {
+            PNotify.prototype.options.delay = 3000;
+            new PNotify({
+                title: 'Error',
+                text: message,
+                type: 'error',
+                styling: 'bootstrap3'
+            });
+        }
         function configurarICheck(element) {
             element.parents('ul').attr('style', 'list-style-type: none;padding:0; display: flex');
             element.parents('label').attr('style', 'padding: 6px;margin:0');
@@ -11,7 +22,7 @@
             configurarICheck($('[name=tipo_pago]'));
             configurarICheck($('[name=metodo_pago]'));
             window.totalForms = $('#id_ventadetalle_set-TOTAL_FORMS');
-
+            window.totalForms.val(0);
 
             $('#id_pago-monto').attr('readonly', true);
             $('#id_monto_total').attr('readonly', true);
@@ -61,7 +72,7 @@
                         $('#cuenta').modal('hide');
                     }
                 });
-
+            calcularTotales();
         });
 
         function cargarCliente(datos) {
@@ -182,7 +193,7 @@
             var monto_exento = 0, monto_5 = 0, monto_10 = 0, iva, monto;
             for(var i = 0; i < formIdx ; i ++ ) {
                 iva = $('#detalle-' + i + '-producto-iva').val();
-                monto = ($('#id_ventadetalle_set-' + i + '-cantidad').val() * $('#id_ventadetalle_set-' + i + '-precio').val());
+                monto = ($('#id_ventadetalle_set-' + i + '-cantidad').val() * $('#id_ventadetalle_set-' + i + '-precio').val()) || 0;
                 if(iva === '5%') {
                     monto_5 += monto;
                     $('input[name=ventadetalle_set-' + i + '-monto_5]').val(monto);
@@ -216,6 +227,9 @@
         }
 
         function setMetodoPago(metodo) {
+            var guardado = $('#guardar_pago');
+            guardado.removeAttr("disabled");
+
             $('#id_pago-metodo_pago').val(metodo);
 
             $('[name^=pago-]').removeAttr('required');
@@ -243,20 +257,59 @@
 
         }
 
+        function setErrores(errores, prefix) {
+            Object.keys(errores).forEach(function(field){
+                var feedback = $('[name=' + prefix + field + ']')
+                    .siblings('.feedback-message');
+                feedback.html("");
+                errores[field].forEach(function(message) {
+                    feedback.append($('<p class="text-danger">' + message + '</p>'));
+                })
+            });
+        }
+
         function guardarVenta() {
             var form = $('form');
             var formData = new FormData(form[0]);
-            $.post({
-                url: window.guardarVentaUrl,
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false
-            })
-            .done(function (data) {
-                if(data.success){
-                    document.location.href = "/";
-                }
+            var pagoModal = $("#pago");
+            $('.feedback-message').html('');
+            var feedbackDetalles = $('#feedback-detalles');
+            feedbackDetalles.html('');
+            if(window.totalForms.val() > 0) {
+                $.post({
+                    url: window.guardarVentaUrl,
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                })
+                .done(function (data) {
+                    if(data.success){
+                        document.location.href = "/";
+                    } else {
+                        notifyError("Error al guardar pago, verifique los campos");
+                        if(data.clienteErrors) {
 
-            });
+                            pagoModal.modal('hide');
+                            setErrores(data.clienteErrors, 'cliente-')
+
+                        }
+                        for (var i=0; i< data.detalleErrors.length; i++) {
+                            if(!$.isEmptyObject(data.detalleErrors[i])) {
+                                pagoModal.modal('hide');
+                                feedbackDetalles.append($('<p class="text-danger">Verifica que los detalles esten completos' + '.</p>'));
+                            }
+                        }
+                        if(data.pagoErrorsExtra) {
+                            setErrores(data.pagoErrorsExtra, 'pago-');
+                        }
+                    }
+
+                });
+            } else {
+                pagoModal.modal('hide');
+                notifyError("Error al guardar pago, verifique los campos");
+                feedbackDetalles.append($('<p class="text-danger">Agrega al menos 1 detalle.</p>'));
+            }
+
         }

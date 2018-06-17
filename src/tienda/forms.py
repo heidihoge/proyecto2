@@ -161,6 +161,35 @@ class FormularioVentaDetalle(forms.ModelForm):
 
         fields = ['producto', 'cantidad', 'precio', 'monto_5', 'monto_10', 'monto_exento']
 
+
+class FormularioPagoTarjeta(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = ['tarjeta', 'nro_autorizacion', 'ultimos_tarjeta']
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioPagoTarjeta, self).__init__(*args, **kwargs)
+        self.fields['tarjeta'].required = True
+        self.fields['nro_autorizacion'].required = True
+        self.fields['ultimos_tarjeta'].required = True
+
+class FormularioPagoCheque(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = ['banco', 'nro_cuenta', 'librador', 'serie_cheque',
+                  'nro_cheque', 'fecha_emision', 'fecha_venc']
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioPagoCheque, self).__init__(*args, **kwargs)
+        self.fields['banco'].required = True
+        self.fields['nro_cuenta'].required = True
+        self.fields['librador'].required = True
+        self.fields['serie_cheque'].required = True
+        self.fields['nro_cheque'].required = True
+        self.fields['fecha_emision'].required = True
+        self.fields['fecha_venc'].required = True
+
+
 class FormularioPago(forms.ModelForm):
     class Meta:
         model = Pago

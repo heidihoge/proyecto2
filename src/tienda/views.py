@@ -1,8 +1,12 @@
 import datetime
+
+import logging
 from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
+from django.db import transaction, IntegrityError
 from django.db.models import Q, Max
+from django.db.transaction import rollback
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 
@@ -11,11 +15,13 @@ from escuela.views import calcular_fecha
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
     FormularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
-    FormularioReporteCompras
+    FormularioReporteCompras, FormularioPagoTarjeta, FormularioPagoCheque
 
 from .forms import  FomularioProducto
 from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja, Pago
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -324,7 +330,7 @@ def delete_producto(request, codigo):
 def cuentas(formset):
     productos_cuenta = [] # indices de Productos que son cuenta
     for idx, form in enumerate(formset.cleaned_data):
-        if form['producto'].codigo == 'CUENTA':
+        if 'producto' in form and form['producto'].codigo == 'CUENTA':
             productos_cuenta.append((idx, form['cantidad']))
 
     return productos_cuenta
@@ -349,7 +355,32 @@ def cancela_venta(request, id):
     return redirect('list_ventas')
 
 
-def verificar_pago(pago):
+
+
+
+
+def numero_factura(factura):
+    """
+    Funcion para obtener numero de la factura
+    :param factura: objeto de tipo Factura
+    :return: Siguiente numero de factura
+    """
+    # Completa con 0s
+
+    maximo = VentaCabecera.objects.aggregate(maximo=Max('nro_factura_numero', filter=Q(talonario_factura_id=factura.id)))
+
+    siguiente = maximo['maximo'] + 1 if maximo['maximo'] else factura.nro_inicial
+
+    # el siguiente esta fuera del rango permitido, retorna None
+    if factura.nro_inicial > siguiente or factura.nro_final < siguiente:
+        return None
+
+
+    return "{:07d}".format(siguiente)
+
+
+def limpiar_pago(pago):
+
     if pago.metodo_pago == 'Efectivo':
         pago.tarjeta = None
         pago.nro_autorizacion = None
@@ -374,36 +405,31 @@ def verificar_pago(pago):
         pago.nro_autorizacion = None
         pago.ultimos_tarjeta = None
 
+def validar_pago(request):
+    is_valid = True
+    errors = {}
+    pago = Pago()
+    metodo_pago = request.POST["pago-metodo_pago"]
 
-    pass
+    if metodo_pago == 'Tarjeta':
+        formTarjeta = FormularioPagoTarjeta(request.POST, request.FILES, instance=pago, prefix='pago')
+        is_valid = formTarjeta.is_valid()
+        errors = formTarjeta.errors
+    elif metodo_pago == 'Cheque':
+        formCheque = FormularioPagoCheque(request.POST, request.FILES, instance=pago, prefix='pago')
+        is_valid = formCheque.is_valid()
+        errors = formCheque.errors
 
+    return is_valid, errors
 
-def numero_factura(factura):
-    """
-    Funcion para obtener numero de la factura
-    :param factura: objeto de tipo Factura
-    :return: Siguiente numero de factura
-    """
-    # Completa con 0s
-
-    maximo = VentaCabecera.objects.aggregate(maximo=Max('nro_factura_numero', filter=Q(talonario_factura_id=factura.id)))
-
-    siguiente = maximo['maximo'] + 1 if maximo['maximo'] else factura.nro_inicial
-
-    # el siguiente esta fuera del rango permitido, retorna None
-    if factura.nro_inicial > siguiente or factura.nro_final < siguiente:
-        return None
-
-
-    return "{:07d}".format(siguiente)
-
-
+@transaction.atomic
 def vender(request):
 
     venta = VentaCabecera()
     pago= Pago()
     cuenta = Producto.objects.get(codigo='CUENTA')
-    FormularioDetalleSet = inlineformset_factory(VentaCabecera, VentaDetalle, extra=0, can_delete=True, form=FormularioVentaDetalle)
+    FormularioDetalleSet = inlineformset_factory(VentaCabecera, VentaDetalle, extra=0, can_delete=True,
+                                                 form=FormularioVentaDetalle, min_num=1)
 
     if request.method == 'POST':
 
@@ -419,57 +445,63 @@ def vender(request):
             cliente = Cliente()
 
         formularioCliente = FormularioCliente(request.POST, request.FILES, prefix='cliente', instance=cliente)
-
-        if form.is_valid() and formularioDetalleSet.is_valid() and formularioCliente.is_valid() and formularioPago.is_valid():
-            cliente = formularioCliente.save()
-            venta = form.save(commit=False)
-            venta.cliente = cliente
-            venta.save()
-            detalles = formularioDetalleSet.save()
-            pago=formularioPago.save(commit=False)
-            pago.venta = venta
-            verificar_pago(pago)
-            pago.save()
-
-
-            for detalle in detalles:
-                detalle.descripcion = detalle.producto.nombre
-
-                if detalle.producto.control_stock:
-                    detalle.producto.existencia -= detalle.cantidad
-                    detalle.producto.save()
-
-                detalle.save()
+        pagos_validacion = validar_pago(request)
+        try:
+            if form.is_valid() and len(formularioDetalleSet) > 0 \
+                    and formularioDetalleSet.is_valid() and formularioCliente.is_valid() \
+                    and formularioPago.is_valid() and pagos_validacion[0]:
+                cliente = formularioCliente.save()
+                venta = form.save(commit=False)
+                venta.cliente = cliente
+                venta.save()
+                detalles = formularioDetalleSet.save()
+                pago=formularioPago.save(commit=False)
+                pago.venta = venta
+                limpiar_pago(pago)
+                pago.save()
 
 
-            productos_cuenta = cuentas(formularioDetalleSet)
+                for detalle in detalles:
+                    detalle.descripcion = detalle.producto.nombre
+
+                    if detalle.producto.control_stock:
+                        detalle.producto.existencia -= detalle.cantidad
+                        detalle.producto.save()
+
+                    detalle.save()
 
 
-            if productos_cuenta:
-                for idx, cantidad in productos_cuenta:
-                    cuenta_a_pagar = Cuenta.objects.get(pk=request.POST['ventadetalle_set-' + str(idx) + '-cuenta'])
-                    cuenta_a_pagar.pagado = True
-                    cuenta_a_pagar.monto_pagado = detalles[idx].precio
-                    cuenta_a_pagar.detalle = detalles[idx]
-                    cuenta_a_pagar.save()
-                    anterior = cuenta_a_pagar
-                    # cuando se paga mas de una cuota
-                    for i in range(1, cantidad):
-                        cuenta_adelantada = Cuenta.objects.get_or_create(inscripcion=anterior.inscripcion,
-                                                                         vencimiento=calcular_fecha(anterior.vencimiento.day, anterior.vencimiento + relativedelta(day=2)))[0]
-                        cuenta_adelantada.monto = anterior.monto
-                        cuenta_adelantada.monto_pagado = anterior.monto_pagado
-                        cuenta_adelantada.pagado = True
-                        cuenta_adelantada.detalle = detalles[idx]
-                        cuenta_adelantada.save()
-                        anterior = cuenta_adelantada
+                productos_cuenta = cuentas(formularioDetalleSet)
 
-            messages.success(request, 'Venta registrada correctamente')
-            return JsonResponse({'success':True}, safe=False)
 
+                if productos_cuenta:
+                    for idx, cantidad in productos_cuenta:
+                        cuenta_a_pagar = Cuenta.objects.get(pk=request.POST['ventadetalle_set-' + str(idx) + '-cuenta'])
+                        cuenta_a_pagar.pagado = True
+                        cuenta_a_pagar.monto_pagado = detalles[idx].precio
+                        cuenta_a_pagar.detalle = detalles[idx]
+                        cuenta_a_pagar.save()
+                        anterior = cuenta_a_pagar
+                        # cuando se paga mas de una cuota
+                        for i in range(1, cantidad):
+                            cuenta_adelantada = Cuenta.objects.get_or_create(inscripcion=anterior.inscripcion,
+                                                                             vencimiento=calcular_fecha(anterior.vencimiento.day, anterior.vencimiento))[0]
+                            cuenta_adelantada.monto = anterior.monto
+                            cuenta_adelantada.monto_pagado = anterior.monto_pagado
+                            cuenta_adelantada.pagado = True
+                            cuenta_adelantada.detalle = detalles[idx]
+                            cuenta_adelantada.save()
+                            anterior = cuenta_adelantada
+
+                messages.success(request, 'Venta registrada correctamente')
+                return JsonResponse({'success':True}, safe=False)
+        except IntegrityError as e:
+            logger.exception("No se pudo guardar la venta")
+
+        transaction.set_rollback(True)
         return JsonResponse({'success':False, 'formErrors': form.errors,
                              'detalleErrors': formularioDetalleSet.errors, 'clienteErrors': formularioCliente.errors,
-                             'pagoErrors': formularioPago.errors} , safe=False)
+                             'pagoErrors': formularioPago.errors, 'pagoErrorsExtra': pagos_validacion[1]} , safe=False)
     else:
         hoy = datetime.datetime.today()
         # Trae solo lo vigente y activo
