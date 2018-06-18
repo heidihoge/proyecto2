@@ -9,6 +9,7 @@ from django.db.models import Q, Max
 from django.db.transaction import rollback
 from django.forms import inlineformset_factory, BaseFormSet, BaseInlineFormSet
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from escuela.models import Cuenta
 from escuela.views import calcular_fecha
@@ -494,7 +495,7 @@ def vender(request):
                             anterior = cuenta_adelantada
 
                 messages.success(request, 'Venta registrada correctamente')
-                return JsonResponse({'success':True}, safe=False)
+                return JsonResponse({'success':True, 'redirect': reverse('consulta_factura', kwargs={'nro_factura': venta.nro_factura})}, safe=False)
         except IntegrityError as e:
             logger.exception("No se pudo guardar la venta")
 
@@ -774,8 +775,11 @@ def delete_cliente(request, ruc_cliente):
 
 
 def consulta_factura(request, nro_factura):
+    cabecera = VentaCabecera.objects.get(nro_factura=nro_factura)
+    pago = Pago.objects.get(venta=cabecera)
     detalles = VentaDetalle.objects.filter(venta__nro_factura=nro_factura)
-    context = {'detalles': detalles}
+    talonario = cabecera.talonario_factura
+    context = {'detalles': detalles, 'talonario': talonario, 'cabecera': cabecera, 'pago': pago}
     return render(request, 'venta-detalle.html', context)
 
 

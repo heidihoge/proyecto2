@@ -95,6 +95,8 @@ class FormularioVenta(forms.ModelForm):
     total_iva = forms.IntegerField(initial=0, label="Total IVA")
     total_iva_5 = forms.IntegerField(initial=0, label="Total IVA 5%")
     total_iva_10 = forms.IntegerField(initial=0, label="Total IVA 10%")
+    total_grav_5 = forms.IntegerField(initial=0, label="Total IVA 5%")
+    total_grav_10 = forms.IntegerField(initial=0, label="Total IVA 10%")
     total_exentas = forms.IntegerField(initial=0)
     tipo_pago = forms.ChoiceField(
         choices=VentaCabecera.TIPO_PAGO,
@@ -119,7 +121,7 @@ class FormularioVenta(forms.ModelForm):
 
         fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
-                  'total_iva_5', 'total_iva_10', 'total_iva', 'total_exentas']
+                  'total_iva_5', 'total_iva_10','total_grav_5', 'total_grav_10', 'total_iva', 'total_grav_exentas']
 
 
 class FormularioVentaVerificar(forms.ModelForm):
@@ -128,7 +130,7 @@ class FormularioVentaVerificar(forms.ModelForm):
 
         fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
-                  'total_iva_5', 'total_iva_10', 'total_iva']
+                  'total_iva_5', 'total_iva_10', 'total_grav_5', 'total_grav_10', 'total_grav_exentas', 'total_iva']
         exclude = ["cliente"]
 
 

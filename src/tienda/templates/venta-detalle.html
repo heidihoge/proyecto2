@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load intdot %}
 {% block content %}
 
     <div class="page-title">
@@ -23,7 +24,45 @@
 
 
                     <div class="x_content">
+                        <div class="">
+                            <p style="margin:0">
+                                <strong>Timbrado Nro:</strong> <span
+                                    class="bloque-factura-numero-timbrado">{{ talonario.numero_timbrado }}</span><br>
+                                <strong>Inicio de Vigencia:</strong> <span
+                                    class="bloque-factura-vigencia-desde">{{ talonario.vigencia_desde }}</span>
+                                &nbsp;&nbsp;
+                                <strong>Fin de Vigencia:</strong> <span
+                                    class="bloque-factura-vigencia-hasta">{{ talonario.vigencia_hasta }}</span>
 
+                                <br>
+
+                                <strong>RUC:</strong> <span class=" bloque-factura-ruc">{{ talonario.ruc }}</span><br>
+                                <strong>Fecha:</strong> <span>{{ cabecera.fecha }}</span><br>
+                                <strong>Factura Nro:</strong> <span
+                                    class="bloque-factura-nro-factura">{{ cabecera.nro_factura }}</span>
+                            </p>
+                            <strong>Total:</strong> <span>{{ cabecera.monto_total | intdot }} G</span><br>
+                            <strong>Total gravada 5%:</strong> <span>{{ cabecera.total_grav_5 | intdot }} G</span>
+                            <strong>Total IVA 5%:</strong><span>{{ cabecera.total_iva_5 | intdot }} G</span><br>
+                            <strong>Total gravada 10%:</strong> <span>{{ cabecera.total_grav_10 | intdot }} G</span>
+                            <strong>TOTAL IVA 10%:</strong><span>{{ cabecera.total_iva_10 | intdot }} G</span><br>
+                            <strong>Total exentas:</strong> <span>{{ cabecera.total_grav_exentas | intdot }} G</span><br>
+                            <strong>Fecha:</strong> <span>{{ cabecera.fecha }}</span><br>
+                            <strong>Ruc cliente:</strong> <span>{{ cabecera.cliente.ruc_cliente }}</span><br>
+                            <strong>Cliente:</strong> <span>{{ cabecera.cliente.nombre_razon }}</span><br>
+                            <strong>Metodo de pago:</strong> <span>{{ pago.metodo_pago }}</span><br>
+                            {% if pago.metodo_pago == 'Tarjeta' %}
+                                <strong>Tarjeta:</strong> <span>{{ pago.tarjeta }}</span><br>
+                                <strong>Tarjeta Nro:</strong> <span>{{ pago.ultimos_tarjeta }}</span>
+                                <strong>Cupón Nro:</strong> <span>{{ pago.nro_autorizacion }}</span>
+                            {% endif %}
+                            {% if pago.metodo_pago == 'Cheque' %}
+                                <strong>Banco:</strong> <span>{{ pago.banco }}</span><br>
+                                <strong>Cheque Nro:</strong> <span>{{ pago.nro_cheque }}</span><br>
+                                <strong>Cuenta Nro:</strong> <span>{{ pago.nro_cuenta }}</span><br>
+                                <strong>Librador:</strong> <span>{{ pago.librador }}</span><br>
+                            {% endif %}
+                        </div>
                         <table class="table table-striped table-bordered dt-responsive nowrap"
                                cellspacing="0"
                                width="100%">
@@ -31,39 +70,47 @@
                             <thead>
 
                             <tr>
-                                    <th>Nro de Factura</th>
-                                    <th>Fecha</th>
-                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Descripcion</th>
                                     <th>Precio</th>
+                                    <th>Total</th>
 
                             </tr>
 
                             </thead>
                             <tbody>
 
-                            {% for detalles in detalles     %}
+                            {% for detalle in detalles %}
                                 <tr>
-                                    <td>{{ detalles.venta.nro_factura }}</td>
-
-                                    <td>{{ detalles.venta.fecha}}</td>
-
-                                    <td>{{ detalles.producto.nombre }}</td>
-
-                                    <td>{{ detalles.monto_10 }}</td>
-
-
-
-
-{#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ venta.id }}/update">Editar </a>#}
-{#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Eliminar</a></td>#}
+                                    <td>{{ detalle.cantidad }}</td>
+                                    <td>
+                                        {% if detalle.producto.codigo == 'CUENTA' %}
+                                            CUOTA
+                                        {% else %}
+                                            {{ detalle.producto.nombre }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right">{{ detalle.precio | intdot }} G
+                                        &nbsp;
+                                    </td>
+                                    <td class="text-right">
+                                        {% if detalle.monto_10 > 0 %}
+                                            {{ detalle.monto_10 | intdot }}
+                                        {% elif detalle.monto_5 > 0 %}
+                                            {{ detalle.monto_5 | intdot }}
+                                        {% else %}
+                                            {{ detalle.monto_exento | intdot }}
+                                        {% endif %} G
+                                    </td>
                                 </tr>
                             {% endfor %}
+                        </table>
 
 
                             </tbody>
                         </table>
-                    <a class="btn btn-primary dropdown-toggle btn-md "    href="/escuela/cuentas">Salir </a>
+                    <a class="btn btn-success dropdown-toggle btn-md "  onclick="print()">Imprimir</a>
+                    <a class="btn btn-primary dropdown-toggle btn-md "    href="/tienda/ventas">Salir </a>
 
 
                     </div>
@@ -99,10 +146,130 @@
             </div>
         </div>
     </div>
+
+    <div id="ticket" class="text-center">
+
+        <img class="img-responsive center-block" width="150em" src="/static/img/empresa.png">
+        <h5 class="bloque-factura-nombre">{{ talonario.nombre }}</h5>
+        <h5 class=" bloque-factura-actividad-economica">{{ talonario.actividad_economica }}</h5>
+        <span class=" bloque-factura-direccion">{{ talonario.direccion }}</span>
+        <br>
+        <span>Tel: <span class="bloque-factura-telefono">{{ talonario.telefono }}</span></span>
+        <hr>
+        <p style="margin:0">
+            <small><strong>Timbrado Nro <span
+                    class="bloque-factura-numero-timbrado">{{ talonario.numero_timbrado }}</span></strong><br>
+                Inicio de Vigencia: <span
+                        class="bloque-factura-vigencia-desde">{{ talonario.vigencia_desde }}</span><br>
+                Fin de Vigencia: <span class="bloque-factura-vigencia-hasta">{{ talonario.vigencia_hasta }}</span>
+            </small>
+            <br>
+
+            <strong>RUC: <span class=" bloque-factura-ruc">{{ talonario.ruc }}</span></strong>
+        </p>
+        <h4 class="" style="margin: 0;">Factura</h4>
+        <h4 style="margin:5px">Nro: <span
+                class="bloque-factura-nro-factura">{{ cabecera.nro_factura }}</span></h4>
+        <hr>
+        <div class="text-left">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cant.&nbsp;</th>
+                        <th>Desc.&nbsp;</th>
+                        <th>Precio.&nbsp;&nbsp;</th>
+                        <th>Total.</th>
+                    </tr>
+                </thead>
+                {% for detalle in detalles %}
+                    <tr>
+                        <td>{{ detalle.cantidad }}</td>
+                        <td>
+                            {% if detalle.producto.codigo == 'CUENTA' %}
+                                CUOTA
+                            {% else %}
+                            {{ detalle.producto.nombre | truncatechars:9  }}
+                            {% endif %}
+                        </td>
+                        <td class="text-right">{{ detalle.precio | intdot }} G
+                            &nbsp;</td>
+                        <td class="text-right">
+                            {% if detalle.monto_10 > 0 %}
+                                {{ detalle.monto_10 | intdot }}
+                            {% elif detalle.monto_5 > 0 %}
+                                {{ detalle.monto_5 | intdot}}
+                            {% else %}
+                                {{ detalle.monto_exento | intdot }}
+                            {% endif %} G
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <hr>
+            <span>TOTAL:</span><span class="pull-right">{{ cabecera.monto_total | intdot }} G</span><br>
+            <span>TOTAL GRAV. 5%:</span><span class="pull-right">{{ cabecera.total_grav_5 | intdot }} G</span><br>
+            <span>TOTAL GRAV. 10%:</span><span class="pull-right">{{ cabecera.total_grav_10 | intdot }} G</span><br>
+            <span>TOTAL EXE.:</span><span class="pull-right">{{ cabecera.total_grav_exentas | intdot }} G</span><br>
+            <hr>
+            <span>LIQUIDACIÓN IVA:</span><br>
+            <span>TOTAL IVA 5%:</span><span class="pull-right">{{ cabecera.total_iva_5 | intdot }} G</span><br>
+            <span>TOTAL IVA 10%:</span><span class="pull-right">{{ cabecera.total_iva_10 | intdot }} G</span><br>
+            <hr>
+            <span>Fecha:</span><span class="pull-right">{{ cabecera.fecha }}</span><br>
+            <span>Ruc:</span><span class="pull-right">{{ cabecera.cliente.ruc_cliente }}</span><br>
+            <span>Cliente:</span><span class="pull-right">{{ cabecera.cliente.nombre_razon }}</span><br>
+            <hr>
+            <span>Metodo de pago:</span><span class="pull-right">{{ pago.metodo_pago }}</span><br>
+            {% if pago.metodo_pago == 'Tarjeta' %}
+                <span>Tarjeta:</span><span class="pull-right">{{ pago.tarjeta }}</span><br>
+                <span>Tarjeta Nro:</span><span class="pull-right">{{ pago.ultimos_tarjeta }}</span>
+                <span>Cupón Nro:</span><span class="pull-right">{{ pago.nro_autorizacion }}</span>
+            {% endif %}
+            {% if pago.metodo_pago == 'Cheque' %}
+                <span>Banco:</span><span class="pull-right">{{ pago.banco }}</span><br>
+                <span>Cheque Nro:</span><span class="pull-right">{{ pago.nro_cheque }}</span><br>
+                <span>Cuenta Nro:</span><span class="pull-right">{{ pago.nro_cuenta }}</span><br>
+                <span>Librador:</span><span class="pull-right">{{ pago.librador }}</span><br>
+            {% endif %}
+
+        </div>
+
+
+        <hr>
+        <h5>Gracias por su compra!</h5>
+
+    </div>
+
     <script>
         function formEliminar(id){
             $('#eliminar-form').attr('action', '/tienda/compras/' + id + '/delete' );
         }
     </script>
 {% endblock %}
+{% block stylesheets %}
+    {{ block.super }}
+    <style>
+        @media screen {
+             #ticket, #ticket * {
+                 display: none;
+             }
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            hr {
+                margin: 1px;
+            }
+            #ticket, #ticket * {
+                visibility: visible !important;
+            }
 
+            #ticket {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+    </style>
+{% endblock %}

@@ -211,7 +211,9 @@
             }
             $('#id_monto_total').val(monto_exento + monto_10 + monto_5);
             $('#id_pago-monto').val(monto_exento + monto_10 + monto_5);
-            $('#id_total_exentas').val(monto_exento);
+            $('#id_total_grav_10').val(Math.round(monto_10));
+            $('#id_total_grav_5').val(Math.round(monto_5));
+            $('#id_total_grav_exentas').val(Math.round(monto_exento));
             $('#id_total_iva_10').val(Math.round(monto_10 / 11));
             $('#id_total_iva_5').val(Math.round(monto_5 / 21));
             $('#id_total_iva').val(Math.round(monto_10 / 11) + Math.round(monto_5 / 21));
@@ -288,7 +290,8 @@
                 })
                 .done(function (data) {
                     if(data.success){
-                        document.location.href = "/";
+
+                        document.location.href = data.redirect;
                     } else {
                         notifyError("Error al guardar pago, verifique los campos");
                         if(data.clienteErrors) {

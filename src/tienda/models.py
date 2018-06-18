@@ -114,19 +114,13 @@ class VentaCabecera(models.Model):
     monto_total = models.IntegerField(default=0)
     total_iva_5 = models.IntegerField(default=0)
     total_iva_10 = models.IntegerField(default=0)
-    total_iva_exentas = models.IntegerField(default=0)
+    total_grav_5 = models.IntegerField(default=0)
+    total_grav_10 = models.IntegerField(default=0)
+    total_grav_exentas = models.IntegerField(default=0)
     total_iva = models.IntegerField(default=0)
     ESTADO = (('A', 'ACTIVO'),
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=2, choices=ESTADO, default='A')
-
-    # campo si es efectivo
-
-
-    # campo si es tarjeta
-
-
-    #  campo si es cheque
 
     def __str__(self):
         return str(self.id)

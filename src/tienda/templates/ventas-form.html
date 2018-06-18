@@ -150,11 +150,11 @@
     {{ block.super }}
     <script>
     window.guardarVentaUrl = '{% url 'vender' %}';
+    window.factura = '/tienda/ventas/';
     </script>
     <script src="/static/venta.js"></script>
 {% endblock %}
 
-{#AYUDA#}
 {% block ayuda_titulo %}
    <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Venta</span></strong></span></p>
 {% endblock %}
@@ -169,4 +169,26 @@
         <p><span style="color: #003366;"><strong>Paso 2. Agregar cobro de cuota o venta de art&iacute;culo <img src="/static/img/agregar.png" alt="agregar" /> </strong></span></p>
         <p>&bull; <em><strong>El monto total ser&aacute; agregado de forma autom&aacute;tica, seg&uacute;n el monto de la cuota o producto.</strong></em> </p>
         <p><span style="color: #003366;"><strong>Paso 3. Guardar la venta <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+{% endblock %}
+
+
+{% block stylesheets %}
+    {{ block.super }}
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #ticket, #ticket * {
+                visibility: visible;
+            }
+
+            #ticket {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+    </style>
 {% endblock %}
