@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load intdot %}
+{% block content %}
+
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Finanzas</h3>
+        </div>
+        <div class="title_right">
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+
+
+                    <div class="x_content">
+                        <form method="GET" action="/reportes/finanzas" class="form-inline">
+                            <input name="mes" class="form-control" type="text" required value="{{ mes }}">
+                            <input type="submit" class="btn btn-primary" value="Ver">
+                        </form>
+                        <div class="row tile_count">
+                            <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
+                                <h4 class="count_top"><i class="glyphicon glyphicon-arrow-up"></i> Ingreso</h4>
+                                <div class="count">{{ ingreso | intdot }} G</div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
+                                <h4 class="count_top"><i class="glyphicon glyphicon-arrow-down"></i> Egreso</h4>
+                                <div class="count">{{ egreso | intdot }} G</div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
+                                <h4 class="count_top"><i class="fa fa-line-chart"></i> Ganancia</h4>
+                                <div class="count">{{ ganancia | intdot }} G</div>
+                            </div>
+                        </div>
+                        <div id="chart-container">
+                            <canvas  style="width: 100%; height: 100%" id="chart"></canvas>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Monto</th>
+                                    <th>Tipo transacción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for resultado in resultados %}
+                                <tr>
+                                    <td>{{ resultado.fecha }}</td>
+                                    <td>{{ resultado.monto | intdot }}</td>
+                                    <td>{{ resultado.tipo_transaccion }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        #chart-container{
+            height: 500px;
+            display: block;
+        }
+    </style>
+
+
+
+{% endblock %}>
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Finanzas </span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ block.super }}
+     <script>
+        $(document).ready(function(){
+            var ctx = document.getElementById("chart");
+            function toDate(date){
+                var partes = date.split("/");
+                return new Date(partes[2] + "-" + partes[1] + "-" + partes[0]);
+            }
+            var data = [
+                    {% for resultado in resultados %}
+                        {"x": "{{ resultado.fecha }}", "y": {{resultado.monto}},
+                            "tipo": "{{ resultado.tipo_transaccion }}" },
+                    {% endfor %}
+                ];
+
+            var dates = [
+                {% for date in dates %}
+                        '{{ date.date }}',
+                {% endfor %}
+            ];
+            var ingreso = {};
+            var egreso = {};
+            data.map(function (d) {
+                if(d.tipo === 'SALIDA') {
+                    egreso[d.x] = d.y;
+                } else {
+                    ingreso[d.x] = d.y;
+                }
+            });
+
+            var egresoData = dates.map(function (fecha){
+               if (fecha in egreso) {
+                   return egreso[fecha];
+               }
+               return 0;
+            });
+
+            window.egresoData = egresoData;
+            window.egreso = egreso;
+            var ingresoData = dates.map(function (fecha){
+               if (fecha in ingreso) {
+                   return ingreso[fecha];
+               }
+               return 0;
+            });
+
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates.map(function (d) {
+                        return d;
+                    }),
+                    datasets: [
+
+                        {
+                            label: "INGRESO",
+                            backgroundColor: "#26b99a",
+                            data: ingresoData
+                        },
+                        {
+                            label: "EGRESO",
+                            backgroundColor: "#9B59B7",
+                            data: egresoData
+                        },
+
+                    ],
+                    options: {
+                        responsive: true,
+                    }
+                },
+            });
+
+            $('[name=mes]').datepicker({
+                format: 'mm/yyyy',
+                viewMode: 'years',
+                minViewMode: 'months',
+                language: 'es'
+            });
+        });
+
+    </script>
+{% endblock %}
