@@ -1,8 +1,8 @@
 from django.urls import path
 
-from reportes.views import finanzas
+from reportes.views import balance
 
 urlpatterns = [
-    path('finanzas', finanzas, name='finanzas'),
+    path('balance', balance, name='balance'),
 ]
 

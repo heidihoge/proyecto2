@@ -150,6 +150,11 @@ class OperacionCaja(models.Model):
     def __str__(self):
         return str(self.fecha)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['fecha', 'tipo_transaccion']),
+        ]
+
 
 # PAGOS
 
