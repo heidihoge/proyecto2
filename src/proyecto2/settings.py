@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'easyaudit',
 
     #APPS DE TERCEROS
     #APPS PROPIAS
@@ -68,7 +69,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'proyecto2.middleware.LoginRequiredMiddleware'
+    # 'proyecto2.middleware.LoginRequiredMiddleware',
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 ]
 
 ROOT_URLCONF = 'proyecto2.urls'
@@ -186,4 +188,7 @@ DATE_FORMAT = 'd/m/Y'
 CRON_CLASSES = [
     "escuela.views.CuotaJob"
 ]
+
+DJANGO_EASY_AUDIT_WATCH_REQUEST_EVENTS=False
+DJANGO_EASY_AUDIT_WATCH_AUTH_EVENTS=False
 

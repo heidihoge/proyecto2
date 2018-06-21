@@ -4,7 +4,7 @@
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Finanzas</h3>
+            <h3>Balance {{ mes }}</h3>
         </div>
         <div class="title_right">
 
@@ -17,13 +17,14 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_content">
-
-
-                    <div class="x_content">
-                        <form method="GET" action="/reportes/balance" class="form-inline">
-                            <input name="mes" class="form-control" type="text" required value="{{ mes }}">
-                            <input type="submit" name="action" class="btn btn-primary" value="Ver">
-                            <input type="submit" name="action" class="btn btn-success" value="Excel">
+                        <form method="GET" action="/reportes/balance" class="form form-inline hidden-print">
+                            <label for="fecha">Fecha: </label>
+                            <input id="fecha" style="margin-bottom: 0.37em;margin-right: 0.5em;" name="mes" class="form-control" type="text" required value="{{ mes }}">
+                            <label for="ver" class="btn btn-primary"><i class="fa fa-search"></i> Ver</label>
+                            <input id="ver" type="submit" name="action" class="hidden" value="Ver">
+                            <label for="excel" class="btn btn-success"><i class="fa fa-download"></i> CSV</label>
+                            <input id="excel" type="submit" name="action" class="hidden" value="Excel">
+                            <button class="btn btn-default" onclick="print()"><i class="fa fa-print"></i> Print</button>
                         </form>
                         <div class="row tile_count">
                             <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
@@ -43,33 +44,53 @@
                             <canvas  style="width: 100%; height: 100%" id="chart"></canvas>
                         </div>
                         <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Monto</th>
-                                    <th>Tipo transacción</th>
-                                </tr>
-                            </thead>
                             <tbody>
-                                {% for resultado in resultados %}
-                                <tr>
-                                    <td>{{ resultado.fecha }}</td>
-                                    <td>{{ resultado.monto | intdot }}</td>
-                                    <td>{{ resultado.tipo_transaccion }}</td>
-                                </tr>
-                                {% endfor %}
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Tipo transacción</th>
+                            </tr>
+                            {% for resultado in resultados %}
+                            <tr class="data">
+                                <td>{{ resultado.fecha }}</td>
+                                <td>{{ resultado.monto | intdot }}</td>
+                                <td>{{ resultado.tipo_transaccion }}</td>
+                            </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
     <style>
-        #chart-container{
-            height: 500px;
-            display: block;
+        @media screen {
+            #chart-container{
+                height: 40rem;
+                display: block;
+            }
         }
+        @media print {
+
+            @page {
+                size: auto;
+                margin-bottom: 1cm;
+                margin-top: 1cm;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+            .x_content, .x_content *, .page-title, .page-title * {
+                visibility: visible;
+            }
+
+            tr.data td {
+                page-break-inside: avoid;
+            }
+        }
+
+
     </style>
 
 
@@ -152,7 +173,7 @@
 
                     ],
                     options: {
-                        responsive: true,
+                        responsive: false,
                     }
                 },
             });
@@ -163,6 +184,25 @@
                 minViewMode: 'months',
                 language: 'es'
             });
+
+            function beforePrint () {
+                for (var id in Chart.instances) {
+                    if(Chart.instances.hasOwnProperty(id)) {
+                        Chart.instances[id].resize();
+                    }
+                }
+            }
+
+            if (window.matchMedia) {
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function (mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    }
+                })
+            }
+{##}
+{#            window.onbeforeprint = beforePrint;#}
         });
 
     </script>

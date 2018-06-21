@@ -6,3 +6,4 @@ django-autocomplete-light==3.2.10
 six==1.11.0
 django-cron==0.5.1
 python-dateutil==2.7.3
+django-easy-audit==1.0

@@ -24,11 +24,6 @@ urlpatterns = [
     path('cuenta-autocomplete/', CuentaAutocomplete.as_view(), name='cuenta-autocomplete'),
 
 
-    path('accounts/profile/', views.redirect_to_index),
-    path('accounts/logout/', LogoutView.as_view(next_page='login', template_name='registration/logged_out.html')),
-    path('accounts/', include('django.contrib.auth.urls')),
-
-
     path('productos', list_productos, name='list_productos'),
     path('productos/new', create_producto, name='create_producto'),
     path('productos/<str:codigo>/update', update_producto, name='update_producto'),
