@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% load intdot %}
 
     <div class="page-title">
         <div class="title_left">
@@ -41,7 +42,7 @@
                             <th>Dirección</th>
                             <th>Teléfono</th>
                             <th>Fotocopia Cedula</th>
-                            <th>Salario(Gs):</th>
+                            <th>Salario:</th>
                             <th>Rol:</th>
                                 <th>Otro contacto:</th>
                             <th>Acción</th>
@@ -66,7 +67,7 @@
                                         fotocopia{% endif %}</td>
 
 
-                                    <td>{{ empleado.salario}}</td>
+                                    <td>{{ empleado.salario| intdot }} ₲</td>
                                     <td>{{ empleado.rol}}</td>
                                 <td>{{ empleado.telefono2 }}</td>
 

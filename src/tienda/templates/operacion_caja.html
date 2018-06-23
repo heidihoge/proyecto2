@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+{% load intdot %}
     <div class="page-title">
         <div class="title_left">
             <h3>OPERACIONES EN CAJA</h3>
@@ -50,7 +50,7 @@
                                     <td>{{ operacion.tipo_transaccion }}</td>
                                     <td>{{ operacion.concepto }}</td>
                                     <td>{{ operacion.descripcion }}</td>
-                                    <td>{{ operacion.monto }}</td>
+                                    <td>{{ operacion.monto | intdot }} ₲</td>
 
                                     <td><a class="btn btn-info btn-xs" href="/tienda/caja/{{ operacion.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"

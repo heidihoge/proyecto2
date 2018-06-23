@@ -41,7 +41,6 @@
                             <th>Dirección</th>
                             <th>Teléfono</th>
                             <th>Fotocopia Cedula</th>
-                            <th>Salario(Gs):</th>
                             <th>Especialidad: </th>
                                 <th>Otro contacto: </th>
                             <th>Acción</th>
@@ -61,7 +60,6 @@
                                     <td>{% if profesor.fotocopia_cedula %}
                                         <img height="100px" src="/media/{{ profesor.fotocopia_cedula }}">{% else %}sin
                                         fotocopia{% endif %}</td>
-                                    <td>{{ profesor.salario}}</td>
                                     <td>{{ profesor.especialidad }}</td>
                                 <td>{{ profesor.telefono2 }}</td>
 

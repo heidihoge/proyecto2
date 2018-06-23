@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% load intdot %}
 
 
     <div class="page-title">
@@ -51,8 +52,8 @@
                                     <div style="color: red">
                                     {{ cuenta.vencimiento }}</div>{% else %}{{ cuenta.vencimiento }}{% endif %}</td>
 
-                                <td>{{ cuenta.monto }}</td>
-                                <td>{{ cuenta.monto_pagado }}</td>
+                                <td>{{ cuenta.monto | intdot }} ₲</td>
+                                <td>{{ cuenta.monto_pagado | intdot }} ₲</td>
                                 <td>{% if cuenta.pagado %}
                                         SI{% else %}NO{% endif %}</td>
                                 <td>

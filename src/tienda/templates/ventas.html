@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+{% load intdot %}
     <div class="page-title">
         <div class="title_left">
             <h3>Ventas</h3>
@@ -54,13 +54,13 @@
                                     <td>{{ venta.fecha }}</td>
                                     <td>{{ venta.nro_factura }}</td>
                                     <td>{{ venta.cliente.nombre_razon }}</td>
-                                    <td>{{ venta.total_grav_10 }}</td>
-                                    <td>{{ venta.total_iva_10 }}</td>
-                                    <td>{{ venta.total_grav_5 }}</td>
-                                    <td>{{ venta.total_iva_5 }}</td>
-                                    <td>{{ venta.total_iva_exentas }}</td>
-                                    <td>{{ venta.total_iva }}</td>
-                                    <td>{{ venta.monto_total }}</td>
+                                    <td>{{ venta.total_grav_10| intdot }} ₲</td>
+                                    <td>{{ venta.total_iva_10| intdot }} ₲</td>
+                                    <td>{{ venta.total_grav_5| intdot }} ₲</td>
+                                    <td>{{ venta.total_iva_5| intdot }} ₲</td>
+                                    <td>{{ venta.total_grav_exentas| intdot }} ₲</td>
+                                    <td>{{ venta.total_iva| intdot }} ₲</td>
+                                    <td>{{ venta.monto_total| intdot }} ₲</td>
                                     <td>{{ venta.estado }}</td>
                                     <td>
 

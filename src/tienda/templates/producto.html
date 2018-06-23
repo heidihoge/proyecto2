@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% load intdot %}
 
     <div class="page-title">
         <div class="title_left">
@@ -55,8 +56,8 @@
                                     <td>{{ producto.nombre}}</td>
                                     <td>{{ producto.descripcion}}</td>
 
-                                    <td>{{ producto.precio_venta }}</td>
-                                    <td>{{ producto.costo }}</td>
+                                    <td>{{ producto.precio_venta| intdot }} ₲</td>
+                                    <td>{{ producto.costo| intdot }} ₲</td>
                                     <td>{{ producto.iva }}</td>
                                     <td>{{ producto.estado }}</td>
                                     <td>{{ producto.existencia}}</td>
