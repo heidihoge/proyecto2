@@ -78,7 +78,8 @@ class FormularioCompra(forms.ModelForm):
         model = CompraCabecera
 
         fields = ['descripcion', 'ruc_proveedor','proveedor', 'fecha', 'tipo_pago', 'monto_total',
-                  'nro_factura', 'total_iva_5', 'total_iva_10', 'total_iva']
+                  'nro_factura', 'total_iva_5', 'total_iva_10', 'total_iva','total_grav_5','total_grav_10','total_grav_exentas']
+
 
 
 class FormularioCompraDetalle(forms.ModelForm):
@@ -122,6 +123,8 @@ class FormularioVenta(forms.ModelForm):
         fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
                   'total_iva_5', 'total_iva_10','total_grav_5', 'total_grav_10', 'total_iva', 'total_grav_exentas']
+
+
 
 
 class FormularioVentaVerificar(forms.ModelForm):
@@ -203,6 +206,18 @@ class FormularioPago(forms.ModelForm):
     class Meta:
         model = Pago
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioPago, self).__init__(*args, **kwargs)
+        super().__init__()
+        self.fields['ultimos_tarjeta'].widget.attrs['placeholder'] = '4 últimos dígito de tarjeta'
+        self.fields['nro_autorizacion'].widget.attrs['placeholder'] = 'Nro Autorización Pago'
+        self.fields['banco'].widget.attrs['placeholder'] = 'Nombre del Banco emisor'
+        self.fields['librador'].widget.attrs['placeholder'] = 'Nombre de Cliente'
+        self.fields['nro_cuenta'].widget.attrs['placeholder'] = 'Nro. cuenta bancaria'
+        self.fields['nro_cheque'].widget.attrs['placeholder'] = 'Nro. Cheque'
+
+
 
 
     tarjeta = forms.CharField(required=False)

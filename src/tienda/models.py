@@ -69,9 +69,13 @@ class CompraCabecera(models.Model):
     total_iva_5 = models.IntegerField(default=0)
     total_iva_10 = models.IntegerField(default=0)
     total_iva = models.IntegerField(default=0)
+    total_grav_5 = models.IntegerField(default=0)
+    total_grav_10 = models.IntegerField(default=0)
+    total_grav_exentas = models.IntegerField(default=0)
 
     def __str__(self):
         return self.id
+
 
 
 class CompraDetalle(models.Model):
@@ -80,6 +84,7 @@ class CompraDetalle(models.Model):
     monto_5 = models.IntegerField(default=0)
     monto_10 = models.IntegerField(default=0)
     monto_exento = models.IntegerField(default=0)
+
 
 
 # cliente

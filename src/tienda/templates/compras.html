@@ -33,11 +33,16 @@
 
                             <tr>
                                     <th>Fecha</th>
+                                    <th>Nro de Factura</th>
                                     <th>Ruc</th>
                                     <th>Proveedor</th>
                                     <th>Descripción</th>
+                                    <th>GRAVADAS 10%</th>
                                     <th>IVA 10%</th>
+                                    <th>GRAVADAS 5%</th>
                                     <th>IVA 5%</th>
+                                    <th>Excentas</th>
+                                    <th>Total IVA</th>
                                     <th>Monto Total</th>
                             </tr>
 
@@ -48,11 +53,18 @@
                                 <tr>
                                     <td>{{ compra.fecha }}</td>
 
+                                    <td>{{ compra.nro_factura }}</td>
+
                                     <td>{{ compra.ruc_proveedor }}</td>
                                     <td>{{ compra.proveedor }}</td>
                                     <td>{{ compra.descripcion }}</td>
+
+                                    <td>{{ compra.total_grav_10 }}</td>
                                     <td>{{ compra.total_iva_10 }}</td>
+                                    <td>{{ compra.total_grav_5 }}</td>
                                     <td>{{ compra.total_iva_5 }}</td>
+                                    <td>{{ compra.total_grav_exentas }}</td>
+                                    <td>{{ compra.total_iva }}</td>
                                     <td>{{ compra.monto_total }}</td>
 
 {#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ compra.id }}/update">Editar </a>#}

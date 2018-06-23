@@ -32,18 +32,18 @@
                             <thead>
 
                             <tr>
-                                    <th>Nro de Factura</th>
-                                    <th>Cliente</th>
-                                    <th>Fecha</th>
-                                    <th>Metodo de pago</th>
-                                    <th>Monto Total</th>
-
-                                    <th>Gravadas 5%</th>
-                                    <th>Gravadas 10%</th>
-                                    <th>Gravadas Excentas</th>
-                                    <th>Monto Total</th>
-                                    <th>Estado</th>
-                                    <th>Acción</th>
+                                <th>Fecha</th>
+                                <th>Nro de Factura</th>
+                                <th>Cliente</th>
+                                <th>Gravadas 10%</th>
+                                <th>IVA 10%</th>
+                                <th>Gravadas 5%</th>
+                                <th>IVA 5%</th>
+                                <th>Excentas</th>
+                                <th>Total IVA</th>
+                                <th>Monto Total</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
                             </tr>
 
                             </thead>
@@ -51,15 +51,16 @@
 
                             {% for venta in ventas     %}
                                 <tr>
+                                    <td>{{ venta.fecha }}</td>
                                     <td>{{ venta.nro_factura }}</td>
                                     <td>{{ venta.cliente.nombre_razon }}</td>
-                                    <td>{{ venta.fecha }}</td>
-                                    <td>{{ venta.metodo_pago }}</td>
-                                    <td>{{ venta.monto_total }}</td>
-                                    <td>{{ venta.total_iva_5 }}</td>
+                                    <td>{{ venta.total_grav_10 }}</td>
                                     <td>{{ venta.total_iva_10 }}</td>
+                                    <td>{{ venta.total_grav_5 }}</td>
+                                    <td>{{ venta.total_iva_5 }}</td>
                                     <td>{{ venta.total_iva_exentas }}</td>
                                     <td>{{ venta.total_iva }}</td>
+                                    <td>{{ venta.monto_total }}</td>
                                     <td>{{ venta.estado }}</td>
                                     <td>
 

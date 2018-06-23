@@ -64,4 +64,7 @@
         {% include "forms/label.html" with field=form.total_iva%}
         {% include "forms/integerfield.html" with field=form.total_iva %}
     </div>
+    {{ form.total_grav_5.as_hidden }}
+    {{ form.total_grav_10.as_hidden }}
+    {{ form.total_grav_exentas.as_hidden }}
 </div>
