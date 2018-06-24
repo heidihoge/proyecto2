@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'django_cron',
+    'main',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
 
     #APPS DE TERCEROS
     #APPS PROPIAS
-    'main',
     # 'alumnos.apps.AlumnosConfig',
     'escuela',
     'tienda',
