@@ -24,7 +24,6 @@
             window.totalForms = $('#id_ventadetalle_set-TOTAL_FORMS');
             window.totalForms.val(0);
             
-            useAutonumericCurrency('#id_pago-monto');
             useAutonumericCurrency('#id_monto_total');
             useAutonumericCurrency('#id_total_iva_10');
             useAutonumericCurrency('#id_total_iva_5');
@@ -35,12 +34,25 @@
             useAutonumericCurrency('#subtotal-exentas');
             useAutonumericCurrency('#subtotal-iva-5');
             useAutonumericCurrency('#subtotal-iva-10');
-            useAutonumericCurrency('#abonado');
-            useAutonumericCurrency('#vuelto');
-            setAutonumericCurrency('#abonado', 0);
-            setAutonumericCurrency('#vuelto', 0);
+            // pago
+            useAutonumericCurrency('#monto-restante');
+            useAutonumericCurrency('#id_pago-monto');
+            useAutonumericCurrency('#id_pago-monto_efectivo');
+            useAutonumericCurrency('#id_pago-monto_tarjeta');
+            useAutonumericCurrency('#id_pago-monto_cheque');
+            useAutonumericCurrency('#id_pago-monto_efectivo_abonado');
+            useAutonumericCurrency('#id_pago-monto_efectivo_vuelto');
+            setAutonumericCurrency('#monto-restante', 0);
+            setAutonumericCurrency('#id_pago-monto', 0);
+            setAutonumericCurrency('#id_pago-monto_efectivo', 0);
+            setAutonumericCurrency('#id_pago-monto_tarjeta', 0);
+            setAutonumericCurrency('#id_pago-monto_cheque', 0);
+            setAutonumericCurrency('#id_pago-monto_efectivo_abonado', 0);
+            setAutonumericCurrency('#id_pago-monto_efectivo_vuelto', 0);
 
-
+            $('#pago input').on('change ifChanged keypress', function(){
+                logicaPago();
+            });
 
             $('#id_pago-monto').attr('readonly', true);
             $('#id_monto_total').attr('readonly', true);
@@ -266,30 +278,32 @@
             $('[name^=pago-]').removeAttr('required');
 
         }
+
         function calculaVuelto() {
             var mensaje= $('#vueltonegativo');
             mensaje.hide();
-            var guardado = $('#guardar_pago');
-            guardado.removeAttr("disabled");
-            var monto_total = getAutonumericCurrency('#id_monto_total');
-            var abonado = getAutonumericCurrency('#abonado');
+            var monto_total = getAutonumericCurrency('#id_pago-monto_efectivo');
+            var abonado = getAutonumericCurrency('#id_pago-monto_efectivo_abonado');
 
             var vuelto = abonado-monto_total;
             // noinspection JSAnnotator
             if (vuelto < 0   )   {
 
-                setAutonumericCurrency('#vuelto', 0);
+                setAutonumericCurrency('#id_pago-monto_efectivo_vuelto', 0);
 
                 mensaje.show();
-                guardado.prop("disabled",true);
 
-            } else {
-                setAutonumericCurrency('#vuelto', vuelto);
+                return {
+                    error: true
+                }
 
             }
 
+            setAutonumericCurrency('#id_pago-monto_efectivo_vuelto', vuelto);
 
-
+            return {
+                error: false
+            }
         }
 
         function setErrores(errores, prefix) {
@@ -346,6 +360,105 @@
                 pagoModal.modal('hide');
                 notifyError("Error al guardar pago, verifique los campos");
                 feedbackDetalles.append($('<p class="text-danger">Agrega al menos 1 detalle.</p>'));
+            }
+
+        }
+        function logicaPago() {
+
+            var error = false;
+
+            function mediosDePago() {
+                var efectivo = $('#id_pago-pago_efectivo').prop('checked');
+                var tarjeta = $('#id_pago-pago_tarjeta').prop('checked');
+                var cheque = $('#id_pago-pago_cheque').prop('checked');
+                var cantidad = [tarjeta, efectivo, cheque].filter(function(v){return v}).length;
+                return {
+                    cantidad: cantidad,
+                    efectivo: efectivo,
+                    tarjeta: tarjeta,
+                    cheque: cheque
+                }
+            }
+
+            var pagos = mediosDePago();
+
+            var montoTotal = getAutonumericCurrency('#id_pago-monto');
+
+            var montoEfectivoInput = $('#id_pago-monto_efectivo');
+            var montoTarjetaInput = $('#id_pago-monto_tarjeta');
+            var montoChequeInput = $('#id_pago-monto_cheque');
+            var mensajeMedioPago = $('#no-medio-pago');
+            var mensajeMayorATotal = $('#mayor-a-total-pago');
+            var mensajeMontoCero = $('#monto-cero-pago');
+            var botonGuardar = $('#guardar_pago');
+
+            botonGuardar.attr('disabled', true);
+
+            montoEfectivoInput.attr('readonly', true);
+            montoTarjetaInput.attr('readonly', true);
+            montoChequeInput.attr('readonly', true);
+            mensajeMedioPago.hide();
+            mensajeMayorATotal.hide();
+            mensajeMontoCero.hide();
+
+            setAutonumericCurrency('#monto-restante', 0);
+
+            if (montoTotal === 0) {
+                error = true;
+                mensajeMontoCero.show();
+            }
+
+            if (pagos.cantidad === 0) {
+                mensajeMedioPago.show();
+                error = true;
+            } else if (pagos.cantidad === 1) {
+                setAutonumericCurrency('#monto-restante', 0);
+                if (pagos.efectivo) {
+                    setAutonumericCurrency('#id_pago-monto_efectivo', montoTotal);
+                    setAutonumericCurrency('#id_pago-monto_tarjeta', 0);
+                    setAutonumericCurrency('#id_pago-monto_cheque', 0);
+                }
+                else if (pagos.tarjeta) {
+                    setAutonumericCurrency('#id_pago-monto_efectivo', 0);
+                    setAutonumericCurrency('#id_pago-monto_tarjeta', montoTotal);
+                    setAutonumericCurrency('#id_pago-monto_cheque', 0);
+                }
+                else if (pagos.cheque) {
+                    setAutonumericCurrency('#id_pago-monto_efectivo', 0);
+                    setAutonumericCurrency('#id_pago-monto_tarjeta', 0);
+                    setAutonumericCurrency('#id_pago-monto_cheque', montoTotal);
+                }
+            } else {
+                var montoParcial = 0;
+                if(pagos.efectivo) {
+                    montoParcial += getAutonumericCurrency('#id_pago-monto_efectivo');
+                }
+                if(pagos.tarjeta) {
+                    montoParcial += getAutonumericCurrency('#id_pago-monto_tarjeta');
+                }
+                if(pagos.cheque) {
+                    montoParcial += getAutonumericCurrency('#id_pago-monto_cheque');
+                }
+
+                if (montoTotal < montoParcial) {
+                    mensajeMayorATotal.show();
+                    error = true;
+                } else if (montoTotal > montoParcial) {
+                    error = true;
+                }
+                setAutonumericCurrency('#monto-restante', Math.max(montoTotal - montoParcial, 0));
+
+
+                montoEfectivoInput.removeAttr('readonly');
+                montoTarjetaInput.removeAttr('readonly');
+                montoChequeInput.removeAttr('readonly');
+            }
+
+            error = error || calculaVuelto().error;
+
+
+            if(!error) {
+                botonGuardar.removeAttr('disabled');
             }
 
         }

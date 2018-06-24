@@ -165,11 +165,16 @@ class OperacionCaja(models.Model):
 
 class Pago(models.Model):
     venta = models.ForeignKey(VentaCabecera, on_delete=models.SET_NULL, null=True,blank=True)
-    METODO_PAGO = (('Efectivo', 'Efectivo'),
-                   ('Tarjeta', 'Tarjeta'),
-                   ('Cheque', 'Cheque'))
-    metodo_pago = models.CharField(max_length=8, choices=METODO_PAGO, default='',blank=True)
+
+    pago_efectivo = models.BooleanField(default=False)
+    pago_tarjeta = models.BooleanField(default=False)
+    pago_cheque = models.BooleanField(default=False)
     monto =  models.IntegerField(default=0,blank=True)
+    monto_efectivo = models.IntegerField(default=0,blank=True)
+    monto_efectivo_abonado = models.IntegerField(default=0,blank=True)
+    monto_efectivo_vuelto = models.IntegerField(default=0,blank=True)
+    monto_tarjeta = models.IntegerField(default=0,blank=True)
+    monto_cheque = models.IntegerField(default=0,blank=True)
 
     # si es tarjeta
 

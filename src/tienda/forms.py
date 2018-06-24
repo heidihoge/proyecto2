@@ -230,16 +230,25 @@ class FormularioPago(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FormularioPago, self).__init__(*args, **kwargs)
-        self.fields['ultimos_tarjeta'].widget.attrs['placeholder'] = '4 últimos dígito de tarjeta'
+        self.fields['ultimos_tarjeta'].widget.attrs['placeholder'] = '4 Últimos Dígito de Tarjeta'
         self.fields['nro_autorizacion'].widget.attrs['placeholder'] = 'Nro Autorización Pago'
-        self.fields['banco'].widget.attrs['placeholder'] = 'Nombre del Banco emisor'
+        self.fields['banco'].widget.attrs['placeholder'] = 'Nombre del Banco Emisor'
         self.fields['librador'].widget.attrs['placeholder'] = 'Nombre de Cliente'
-        self.fields['nro_cuenta'].widget.attrs['placeholder'] = 'Nro. cuenta bancaria'
+        self.fields['nro_cuenta'].widget.attrs['placeholder'] = 'Nro. Cuenta Bancaria'
         self.fields['nro_cheque'].widget.attrs['placeholder'] = 'Nro. Cheque'
+        self.fields['serie_cheque'].widget.attrs['placeholder'] = 'Nro. de Serie del Cheque'
 
 
 
-    monto = CurrencyIntegerField(initial=0)
+    monto = CurrencyIntegerField(initial=0, label="Monto Total")
+    monto_efectivo = CurrencyIntegerField(initial=0)
+    monto_efectivo_abonado = CurrencyIntegerField(initial=0)
+    monto_efectivo_vuelto = CurrencyIntegerField(initial=0)
+    monto_tarjeta = CurrencyIntegerField(initial=0)
+    monto_cheque = CurrencyIntegerField(initial=0)
+    pago_efectivo = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'flat'}), required=False)
+    pago_tarjeta = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'flat'}), required=False)
+    pago_cheque = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'flat'}), required=False)
     tarjeta = forms.CharField(required=False)
     nro_autorizacion = forms.CharField(required=False)
     ultimos_tarjeta = forms.CharField(required=False)

@@ -381,45 +381,53 @@ def numero_factura(factura):
 
 
 def limpiar_pago(pago):
-
-    if pago.metodo_pago == 'Efectivo':
-        pago.tarjeta = None
-        pago.nro_autorizacion = None
-        pago.ultimos_tarjeta = None
-        pago.banco = None
-        pago.nro_cuenta = None
-        pago.librador = None
-        pago.serie_cheque = None
-        pago.nro_cheque = None
-        pago.fecha_emision = None
-        pago.fecha_venc = None
-    elif pago.metodo_pago == 'Tarjeta':
-        pago.banco = None
-        pago.nro_cuenta = None
-        pago.librador = None
-        pago.serie_cheque = None
-        pago.nro_cheque = None
-        pago.fecha_emision = None
-        pago.fecha_venc = None
-    else:
-        pago.tarjeta = None
-        pago.nro_autorizacion = None
-        pago.ultimos_tarjeta = None
+    pass
+    # if pago.metodo_pago == 'Efectivo':
+    #     pago.tarjeta = None
+    #     pago.nro_autorizacion = None
+    #     pago.ultimos_tarjeta = None
+    #     pago.banco = None
+    #     pago.nro_cuenta = None
+    #     pago.librador = None
+    #     pago.serie_cheque = None
+    #     pago.nro_cheque = None
+    #     pago.fecha_emision = None
+    #     pago.fecha_venc = None
+    # elif pago.metodo_pago == 'Tarjeta':
+    #     pago.banco = None
+    #     pago.nro_cuenta = None
+    #     pago.librador = None
+    #     pago.serie_cheque = None
+    #     pago.nro_cheque = None
+    #     pago.fecha_emision = None
+    #     pago.fecha_venc = None
+    # else:
+    #     pago.tarjeta = None
+    #     pago.nro_autorizacion = None
+    #     pago.ultimos_tarjeta = None
 
 def validar_pago(request):
     is_valid = True
     errors = {}
     pago = Pago()
-    metodo_pago = request.POST["pago-metodo_pago"]
+    metodo_tarjeta = "pago-pago_tarjeta" in request.POST
+    metodo_cheque = "pago-pago_cheque" in request.POST
 
-    if metodo_pago == 'Tarjeta':
+    if metodo_tarjeta:
         formTarjeta = FormularioPagoTarjeta(request.POST, request.FILES, instance=pago, prefix='pago')
-        is_valid = formTarjeta.is_valid()
-        errors = formTarjeta.errors
-    elif metodo_pago == 'Cheque':
+        is_valid = is_valid and formTarjeta.is_valid()
+        for error in formTarjeta.errors:
+            if error not in errors:
+                errors[error] = []
+            errors[error].append(formTarjeta.errors[error])
+
+    if metodo_cheque:
         formCheque = FormularioPagoCheque(request.POST, request.FILES, instance=pago, prefix='pago')
-        is_valid = formCheque.is_valid()
-        errors = formCheque.errors
+        is_valid = is_valid and formCheque.is_valid()
+        for error in formCheque.errors:
+            if error not in errors:
+                errors[error] = []
+            errors[error].append(formCheque.errors[error])
 
     return is_valid, errors
 
