@@ -113,6 +113,24 @@
             $('.readonly-input input').attr('readonly', true);
             window.totalForms = $('#id_compradetalle_set-TOTAL_FORMS');
 
+            useAutonumericCurrency('#id_compradetalle_set-0-monto_exento');
+            useAutonumericCurrency('#id_compradetalle_set-0-monto_5');
+            useAutonumericCurrency('#id_compradetalle_set-0-monto_10');
+            $('.monto_exento input,.monto_5 input,.monto_10 input').on('change keypress', function(){
+                calcularTotales();
+            });
+
+            useAutonumericCurrency('#id_monto_total');
+            useAutonumericCurrency('#subtotal-monto-exentas');
+            useAutonumericCurrency('#subtotal-monto-5');
+            useAutonumericCurrency('#id_total_grav_5');
+            useAutonumericCurrency('#id_total_grav_10');
+            useAutonumericCurrency('#id_total_grav_exentas');
+            useAutonumericCurrency('#subtotal-monto-10');
+            useAutonumericCurrency('#id_total_iva_10');
+            useAutonumericCurrency('#id_total_iva_5');
+            useAutonumericCurrency('#id_total_iva');
+            
             $('form input').keydown(function (event) {
                 if (event.keyCode === 13) {
                     event.preventDefault();
@@ -133,7 +151,10 @@
             console.log(formIdx);
             row.find('.numero').text(parseInt(formIdx) + 1);
             $('#detalles').append(row);
-            $('.monto_exento input[type=number],.monto_5 input[type=number],.monto_10 input[type=number]').on('change', function(){
+            useAutonumericCurrency('#id_compradetalle_set-' + formIdx + '-monto_exento');
+            useAutonumericCurrency('#id_compradetalle_set-' + formIdx + '-monto_5');
+            useAutonumericCurrency('#id_compradetalle_set-' + formIdx + '-monto_10');
+            $('.monto_exento input,.monto_5 input,.monto_10 input').on('change keypress', function(){
                 calcularTotales();
             });
             window.totalForms.val(parseInt(formIdx) + 1);
@@ -146,28 +167,25 @@
 
         function calcularTotales() {
             var formIdx = parseInt(window.totalForms.val());
-            var detalles = $('#detalles');
             var suma_exentas = 0;
             var suma_5 = 0;
             var suma_10 = 0;
+            console.log("CalcularTotales");
             for(var i = 0; i < formIdx ; i ++ ) {
-                suma_exentas += parseInt(detalles.find('[name=compradetalle_set-' + i + '-monto_exento]').val()) || 0;
-                suma_5 += parseInt(detalles.find('[name=compradetalle_set-' + i + '-monto_5]').val()) || 0;
-                suma_10 += parseInt(detalles.find('[name=compradetalle_set-' + i + '-monto_10]').val()) || 0;
+                suma_exentas += getAutonumericCurrency('#id_compradetalle_set-' + i + '-monto_exento');
+                suma_5 += getAutonumericCurrency('#id_compradetalle_set-' + i + '-monto_5');
+                suma_10 += getAutonumericCurrency('#id_compradetalle_set-' + i + '-monto_10');
             }
-            $('#id_monto_total').val(suma_exentas + suma_5 + suma_10);
-            $('#subtotal-monto-exentas').text(suma_exentas);
-            $('#subtotal-monto-5').text(suma_5);
-
-            $('#id_total_grav_5').val(suma_5);
-            $('#id_total_grav_10').val(suma_10);
-            $('#id_total_grav_exentas').val(suma_exentas);
-
-
-            $('#subtotal-monto-10').text(suma_10);
-            $('#id_total_iva_10').val(Math.round(suma_10 / 11));
-            $('#id_total_iva_5').val(Math.round(suma_5 / 21));
-            $('#id_total_iva').val(Math.round(suma_5 / 21) + Math.round(suma_10 / 11));
+            setAutonumericCurrency('#id_monto_total', suma_exentas + suma_5 + suma_10);
+            setAutonumericCurrency('#subtotal-monto-exentas', suma_exentas);
+            setAutonumericCurrency('#subtotal-monto-5', suma_5);
+            setAutonumericCurrency('#id_total_grav_5', suma_5);
+            setAutonumericCurrency('#id_total_grav_10', suma_10);
+            setAutonumericCurrency('#id_total_grav_exentas', suma_exentas);
+            setAutonumericCurrency('#subtotal-monto-10', suma_10);
+            setAutonumericCurrency('#id_total_iva_10', Math.round(suma_10 / 11));
+            setAutonumericCurrency('#id_total_iva_5', Math.round(suma_5 / 21));
+            setAutonumericCurrency('#id_total_iva', Math.round(suma_5 / 21) + Math.round(suma_10 / 11));
         }
 
     </script>

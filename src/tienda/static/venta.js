@@ -59,7 +59,7 @@
                 }
             });
 
-            $('#id_total_iva_10,#id_total_iva_5').on('change', calcularTotalIva);
+            $('#id_total_iva_10,#id_total_iva_5').on('change keypress', calcularTotalIva);
 
             $('select[name=talonario_factura]').on('select2:select', function (event) {
                 cargarBloqueFactura(event.params.data.fields);
@@ -154,9 +154,10 @@
             row.append(window.rowTemplate.html().replace(/__prefix__/g, formIdx));
             row.find('.numero').append(parseInt(formIdx) + 1);
             detalles.append(row);
-            $('.cantidad input[type=number],.precio input[type=number]').on('change', function(){
-                calcularTotales();
-            });
+            $('#id_ventadetalle_set-' + formIdx + '-cantidad,#id_ventadetalle_set-' + formIdx + '-precio')
+                .on('change keypress', function(){
+                    calcularTotales();
+                });
 
             useAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-monto_exento');
             useAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-monto_5');

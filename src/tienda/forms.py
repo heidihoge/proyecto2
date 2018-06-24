@@ -5,6 +5,7 @@ from django.db.models import ManyToOneRel
 from django.forms import DateField
 
 from main.forms import CustomModelChoiceField
+from main.utils import CurrencyIntegerField
 from proyecto2 import settings
 from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
     Cliente, OperacionCaja, Pago
@@ -12,15 +13,6 @@ from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabec
 
 # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
 # CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
-
-class CurrencyIntegerField(forms.IntegerField):
-    def to_python(self, value):
-        return super(CurrencyIntegerField, self).to_python(clean_stringnumber(value))
-
-def clean_stringnumber(number):
-    if type(number) == str:
-        return int(number.replace('.','').replace('₲', '').strip())
-    return number
 
 # Formulario factura
 class FomularioFactura(forms.ModelForm):
@@ -52,6 +44,8 @@ class FomularioProducto(forms.ModelForm):
         widget=forms.CheckboxInput(),
         required=False
     )
+    precio_venta = CurrencyIntegerField()
+    costo = CurrencyIntegerField()
 
     class Meta:
         model = Producto
@@ -75,8 +69,14 @@ class FormularioCompra(forms.ModelForm):
             raise forms.ValidationError("El monto es negativo! Verifica los detalles.")
         return monto
 
-    monto_total = forms.IntegerField(initial=0)
-    total_iva = forms.IntegerField(initial=0)
+    monto_total = CurrencyIntegerField(initial=0)
+    total_iva = CurrencyIntegerField(initial=0)
+    total_iva_5 = CurrencyIntegerField(initial=0)
+    total_iva_10 = CurrencyIntegerField(initial=0)
+    total_grav_5 = CurrencyIntegerField(initial=0)
+    total_grav_10 = CurrencyIntegerField(initial=0)
+    total_grav_exentas = CurrencyIntegerField(initial=0)
+
     tipo_pago = forms.ChoiceField(
         choices=CompraCabecera.TIPO_PAGO,
         widget=forms.RadioSelect(choices=CompraCabecera.TIPO_PAGO)
@@ -91,6 +91,9 @@ class FormularioCompra(forms.ModelForm):
 
 
 class FormularioCompraDetalle(forms.ModelForm):
+    monto_5 = CurrencyIntegerField(initial=0)
+    monto_10 = CurrencyIntegerField(initial=0)
+    monto_exento = CurrencyIntegerField(initial=0)
 
     class Meta:
         model = CompraDetalle
@@ -249,6 +252,7 @@ class FormularioPago(forms.ModelForm):
 
 
 class FormularioOperacionCaja(forms.ModelForm):
+    monto = CurrencyIntegerField()
     class Meta:
         model = OperacionCaja
         fields = '__all__'

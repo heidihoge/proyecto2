@@ -3,6 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import DateField
 
+from main.utils import CurrencyIntegerField
 from proyecto2 import settings
 from .models import Persona, Alumno, Empleado, Profesor, Titular
 from django.core.validators import MinLengthValidator
@@ -146,6 +147,7 @@ class EmpleadoForm(forms.ModelForm):
     direccion = forms.CharField(label='Dirección')
     telefono1 = forms.CharField(label='Teléfono')
     telefono2 = forms.CharField(label='Otro contacto')
+    salario = CurrencyIntegerField()
     sexo = forms.ChoiceField(
         choices=Persona.SEXO,
         widget=forms.RadioSelect(choices=Persona.SEXO)
@@ -177,6 +179,7 @@ class ProfesorForm(forms.ModelForm):
     direccion = forms.CharField(label='Dirección')
     telefono1 = forms.CharField(label='Teléfono')
     telefono2 = forms.CharField(label='Otro contacto')
+    salario = CurrencyIntegerField()
 
     class Meta:
         model = Profesor

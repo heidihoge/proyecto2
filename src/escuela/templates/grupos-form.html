@@ -31,6 +31,15 @@
     </div>
 {% endblock %}
 
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function () {
+            useAutonumericCurrency('#id_costo');
+        })
+    </script>
+{% endblock %}
+
 {#AYUDA#}
 {% block ayuda_titulo %}
    <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nuevo Grupo</span></p>

@@ -8,6 +8,7 @@ from django.forms import DateField
 from escuela import admin
 from main.forms import CustomModelChoiceField
 from main.models import Profesor, Alumno, Persona
+from main.utils import CurrencyIntegerField
 from proyecto2 import settings
 from .models import Clase, Grupo,  Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscripcion,Asistencia
 
@@ -25,6 +26,7 @@ class FormularioClase(forms.ModelForm):
 
 #Formulario Grupo
 class FormularioGrupo(forms.ModelForm):
+    costo = CurrencyIntegerField(initial=0)
 
     class Meta:
         model = Grupo
