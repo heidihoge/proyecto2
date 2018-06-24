@@ -41,6 +41,7 @@
                             <th>Dirección</th>
                             <th>Teléfono</th>
                             <th>Otro contacto</th>
+                            <th>Fotocopia de Cédula</th>
                             <th>Estado</th>
                             <th>Tipo responsable</th>
 
@@ -59,6 +60,9 @@
                             <td>{{ titular.direccion }}</td>
                             <td>{{ titular.telefono1 }}</td>
                             <td>{{ titular.telefono2 }}</td>
+                            <td>{% if alumno.imagen %}
+                            <img height="100px" src="/media/{{ titular.persona.fotocopia_cedula }}">{% else %}sin
+                                        documento{% endif %}</td>
                             <td>{{ titular.estado }}</td>
                             <td>{{ titular.tipo_responsable }}</td>
 

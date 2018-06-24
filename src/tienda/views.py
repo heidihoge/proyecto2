@@ -793,6 +793,8 @@ def consulta_factura(request, nro_factura):
 
 def list_operaciones(request):
     operacion = OperacionCaja.objects.all()
+    #hoy = datetime.datetime.today()
+    #operacion = OperacionCaja.objects.filter(fecha=hoy)
 
     return render(request, 'operacion_caja.html', {'operaciones': operacion})
 
