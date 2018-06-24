@@ -96,7 +96,7 @@ class ProductoAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(Q(nombre__icontains=self.q) | Q(codigo__startswith=self.q))
 
-        return qs
+        return qs.order_by('pk')
 
 
     def _get_fields_as_json(self, result):
@@ -423,7 +423,6 @@ def validar_pago(request):
 
     return is_valid, errors
 
-@transaction.atomic
 def vender(request):
 
     venta = VentaCabecera()
@@ -448,6 +447,12 @@ def vender(request):
         formularioCliente = FormularioCliente(request.POST, request.FILES, prefix='cliente', instance=cliente)
         pagos_validacion = validar_pago(request)
         try:
+            # Ejecuta todos los is_valid, para calcular los errores
+            form.is_valid()
+            formularioDetalleSet.is_valid()
+            formularioCliente.is_valid()
+            formularioPago.is_valid()
+
             if form.is_valid() and len(formularioDetalleSet) > 0 \
                     and formularioDetalleSet.is_valid() and formularioCliente.is_valid() \
                     and formularioPago.is_valid() and pagos_validacion[0]:

@@ -23,6 +23,24 @@
             configurarICheck($('[name=metodo_pago]'));
             window.totalForms = $('#id_ventadetalle_set-TOTAL_FORMS');
             window.totalForms.val(0);
+            
+            useAutonumericCurrency('#id_pago-monto');
+            useAutonumericCurrency('#id_monto_total');
+            useAutonumericCurrency('#id_total_iva_10');
+            useAutonumericCurrency('#id_total_iva_5');
+            useAutonumericCurrency('#id_total_iva');
+            useAutonumericCurrency('#id_total_grav_exentas');
+            useAutonumericCurrency('#id_total_grav_10');
+            useAutonumericCurrency('#id_total_grav_5');
+            useAutonumericCurrency('#subtotal-exentas');
+            useAutonumericCurrency('#subtotal-iva-5');
+            useAutonumericCurrency('#subtotal-iva-10');
+            useAutonumericCurrency('#abonado');
+            useAutonumericCurrency('#vuelto');
+            setAutonumericCurrency('#abonado', 0);
+            setAutonumericCurrency('#vuelto', 0);
+
+
 
             $('#id_pago-monto').attr('readonly', true);
             $('#id_monto_total').attr('readonly', true);
@@ -30,7 +48,6 @@
             $('#id_total_iva_5').attr('readonly', true);
             $('#id_total_exentas').attr('readonly', true);
             $('#id_total_iva').attr('readonly', true);
-            $('#id_monto').attr('readonly', true);
             setMetodoPago('Efectivo');
 
 
@@ -141,6 +158,11 @@
                 calcularTotales();
             });
 
+            useAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-monto_exento');
+            useAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-monto_5');
+            useAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-monto_10');
+            useAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-precio');
+
             $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_exento]")).attr("readonly",true);
             $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_5]")).attr("readonly",true);
             $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_10]")).attr("readonly", true);
@@ -155,8 +177,8 @@
                 $(row.find("select")).replaceWith(productoDescripcion);
 
 
-                $(row.find("input[name=ventadetalle_set-" + formIdx + "-monto_10]")).val(cuenta.monto);
-                $(row.find("input[name=ventadetalle_set-" + formIdx + "-precio]")).val(cuenta.monto);
+                setAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-monto_10', cuenta.monto);
+                setAutonumericCurrency("#id_ventadetalle_set-" + formIdx + "-precio", cuenta.monto);
                 $(row.find("input#detalle-" + formIdx + "-producto-iva")).val("10%");
 
                 var cuentainput = $("<input type='hidden' name='ventadetalle_set-"  + formIdx + "-cuenta'></input>");
@@ -173,7 +195,7 @@
                 // al elegir producto, carga el precio y el tipo de impuesto (5, 10, exenta)
                 $('select[name=ventadetalle_set-' + formIdx + '-producto]').on('select2:select', function (event) {
                     var data = event.params.data.fields;
-                    $('input[name=ventadetalle_set-' + formIdx + '-precio]').val(data.precio_venta);
+                    setAutonumericCurrency('#id_ventadetalle_set-' + formIdx + '-precio', data.precio_venta);
                     $('#detalle-' + formIdx + '-producto-iva').val(data.iva);
                     calcularTotales();
                 });
@@ -196,31 +218,34 @@
             var monto_exento = 0, monto_5 = 0, monto_10 = 0, iva, monto;
             for(var i = 0; i < formIdx ; i ++ ) {
                 iva = $('#detalle-' + i + '-producto-iva').val();
-                monto = ($('#id_ventadetalle_set-' + i + '-cantidad').val() * $('#id_ventadetalle_set-' + i + '-precio').val()) || 0;
+
+                setAutonumericCurrency('#id_ventadetalle_set-' + i + '-monto_5', 0);
+                setAutonumericCurrency('#id_ventadetalle_set-' + i + '-monto_10', 0);
+                setAutonumericCurrency('#id_ventadetalle_set-' + i + '-monto_exento', 0);
+                monto = ($('#id_ventadetalle_set-' + i + '-cantidad').val() * getAutonumericCurrency('#id_ventadetalle_set-' + i + '-precio')) || 0;
                 if(iva === '5%') {
                     monto_5 += monto;
-                    $('input[name=ventadetalle_set-' + i + '-monto_5]').val(monto);
+                    setAutonumericCurrency('#id_ventadetalle_set-' + i + '-monto_5', monto);
                 } else if (iva === '10%') {
                     monto_10 += monto;
-                    $('input[name=ventadetalle_set-' + i + '-monto_10]').val(monto);
+                    setAutonumericCurrency('#id_ventadetalle_set-' + i + '-monto_10', monto);
                 } else {
                     monto_exento += monto;
-                    $('input[name=ventadetalle_set-' + i + '-monto_exento]').val(monto);
+                    setAutonumericCurrency('#id_ventadetalle_set-' + i + '-monto_exento', monto);
                 }
 
             }
-            $('#id_monto_total').val(monto_exento + monto_10 + monto_5);
-            $('#id_pago-monto').val(monto_exento + monto_10 + monto_5);
-            $('#id_total_grav_10').val(Math.round(monto_10));
-            $('#id_total_grav_5').val(Math.round(monto_5));
-            $('#id_total_grav_exentas').val(Math.round(monto_exento));
-            $('#id_total_iva_10').val(Math.round(monto_10 / 11));
-            $('#id_total_iva_5').val(Math.round(monto_5 / 21));
-            $('#id_total_iva').val(Math.round(monto_10 / 11) + Math.round(monto_5 / 21));
-            $('#subtotal-exentas').text(monto_exento);
-            $('#subtotal-iva-5').text(monto_5);
-            $('#subtotal-iva-10').text(monto_10);
-            $('#id_monto').val(monto_exento + monto_10 + monto_5);
+            setAutonumericCurrency('#id_monto_total', monto_exento + monto_10 + monto_5);
+            setAutonumericCurrency('#id_pago-monto', monto_exento + monto_10 + monto_5);
+            setAutonumericCurrency('#id_total_grav_10', Math.round(monto_10));
+            setAutonumericCurrency('#id_total_grav_5',Math.round(monto_5));
+            setAutonumericCurrency('#id_total_grav_exentas', Math.round(monto_exento));
+            setAutonumericCurrency('#id_total_iva_10', Math.round(monto_10 / 11));
+            setAutonumericCurrency('#id_total_iva_5', Math.round(monto_5 / 21));
+            setAutonumericCurrency('#id_total_iva', Math.round(monto_10 / 11) + Math.round(monto_5 / 21));
+            setAutonumericCurrency('#subtotal-exentas', monto_exento);
+            setAutonumericCurrency('#subtotal-iva-5', monto_5);
+            setAutonumericCurrency('#subtotal-iva-10', monto_10);
 
 
 
@@ -245,19 +270,23 @@
             mensaje.hide();
             var guardado = $('#guardar_pago');
             guardado.removeAttr("disabled");
-            var monto_total= $('#id_monto_total').val();
-            var abonado = $('#abonado').val() ;
+            var monto_total = getAutonumericCurrency('#id_monto_total');
+            var abonado = getAutonumericCurrency('#abonado');
 
             var vuelto = abonado-monto_total;
             // noinspection JSAnnotator
             if (vuelto < 0   )   {
 
+                setAutonumericCurrency('#vuelto', 0);
+
                 mensaje.show();
                 guardado.prop("disabled",true);
 
+            } else {
+                setAutonumericCurrency('#vuelto', vuelto);
+
             }
 
-            $('#vuelto').val(vuelto) ;
 
 
         }

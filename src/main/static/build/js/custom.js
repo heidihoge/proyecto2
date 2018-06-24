@@ -5035,6 +5035,41 @@ function init_echarts() {
     }
 
 }
+window.autonumeric = {};
+
+function useAutonumericCurrency(element) {
+    var options = {
+        currencySymbol: " ₲",
+        currencySymbolPlacement: "s",
+        decimalCharacter: ",",
+        decimalCharacterAlternative: ",",
+        decimalPlaces: 0,
+        digitGroupSeparator: ".",
+        minimumValue: "0",
+        outputFormat: "number"
+    };
+    if($(element).attr('type') === 'number') {
+        $(element).attr('type', 'text');
+    }
+
+    window.autonumeric = window.autonumeric || {};
+    window.autonumeric[element] = new AutoNumeric(element, options);
+
+}
+
+function getAutonumericCurrency(element) {
+    if(window.autonumeric.hasOwnProperty(element)) {
+        return window.autonumeric[element].getNumber();
+    }
+    console.warn("No autonumeric for "+ element);
+    return 0;
+}
+function setAutonumericCurrency(element, value) {
+    if(window.autonumeric.hasOwnProperty(element)) {
+        return window.autonumeric[element].set(value);
+    }
+    console.warn("No autonumeric for "+ element);
+}
 
 
 $(document).ready(function() {

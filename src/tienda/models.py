@@ -74,7 +74,7 @@ class CompraCabecera(models.Model):
     total_grav_exentas = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.id
+        return int(self.id)
 
 
 

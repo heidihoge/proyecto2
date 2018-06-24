@@ -163,12 +163,22 @@
                         {
                             label: "INGRESO",
                             backgroundColor: "#26b99a",
-                            data: ingresoData
+                            data: ingresoData,
+                            datalabels: {
+                                formatter: function () {
+                                    return "";
+                                }
+                            }
                         },
                         {
                             label: "EGRESO",
                             backgroundColor: "#9B59B7",
-                            data: egresoData
+                            data: egresoData,
+                            datalabels: {
+                                formatter: function () {
+                                    return "";
+                                }
+                            }
                         },
 
                     ],

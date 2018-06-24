@@ -13,6 +13,14 @@ from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabec
 # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
 # CompraCabecera,CompraDetalle,VentaCabecera,VentaDetalle,Pagos
 
+class CurrencyIntegerField(forms.IntegerField):
+    def to_python(self, value):
+        return super(CurrencyIntegerField, self).to_python(clean_stringnumber(value))
+
+def clean_stringnumber(number):
+    if type(number) == str:
+        return int(number.replace('.','').replace('₲', '').strip())
+    return number
 
 # Formulario factura
 class FomularioFactura(forms.ModelForm):
@@ -128,6 +136,15 @@ class FormularioVenta(forms.ModelForm):
 
 
 class FormularioVentaVerificar(forms.ModelForm):
+
+    monto_total = CurrencyIntegerField()
+    total_iva_5 = CurrencyIntegerField()
+    total_iva_10 = CurrencyIntegerField()
+    total_iva = CurrencyIntegerField()
+    total_grav_5 = CurrencyIntegerField()
+    total_grav_10 = CurrencyIntegerField()
+    total_grav_exentas = CurrencyIntegerField()
+
     class Meta:
         model = VentaCabecera
 
@@ -158,9 +175,10 @@ class FormularioVentaDetalle(forms.ModelForm):
         widget=autocomplete.ModelSelect2(url='producto-autocomplete',
                                          attrs={'data-language': 'es'})
     )
-    monto_5 = forms.IntegerField(initial=0)
-    monto_10 = forms.IntegerField(initial=0)
-    monto_exento = forms.IntegerField(initial=0)
+    precio = CurrencyIntegerField(initial=0)
+    monto_5 = CurrencyIntegerField(initial=0)
+    monto_10 = CurrencyIntegerField(initial=0)
+    monto_exento = CurrencyIntegerField(initial=0)
 
     def clean_producto(self):
         if isinstance(self.cleaned_data['producto'], str):
@@ -209,7 +227,6 @@ class FormularioPago(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FormularioPago, self).__init__(*args, **kwargs)
-        super().__init__()
         self.fields['ultimos_tarjeta'].widget.attrs['placeholder'] = '4 últimos dígito de tarjeta'
         self.fields['nro_autorizacion'].widget.attrs['placeholder'] = 'Nro Autorización Pago'
         self.fields['banco'].widget.attrs['placeholder'] = 'Nombre del Banco emisor'
@@ -219,7 +236,7 @@ class FormularioPago(forms.ModelForm):
 
 
 
-
+    monto = CurrencyIntegerField(initial=0)
     tarjeta = forms.CharField(required=False)
     nro_autorizacion = forms.CharField(required=False)
     ultimos_tarjeta = forms.CharField(required=False)
