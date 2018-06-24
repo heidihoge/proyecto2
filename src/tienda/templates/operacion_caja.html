@@ -25,7 +25,12 @@
 
 
                     <div class="x_content">
-
+                    Operaciones Caja: {{ total | intdot }} ₲
+                        <form method="GET" action="/tienda/caja"  class="form form-inline hidden-print">
+                            <label for="fecha">Fecha</label>
+                            <input class="form-control" type="text" value="{{ fecha }}" name="fecha" data-inputmask="'mask': '99/99/9999'">
+                            <input class="btn btn-primary" type="submit" value="Ver">
+                        </form>
                         <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap"
                                cellspacing="0"
                                width="100%">
@@ -36,9 +41,9 @@
 
                                 <th>Fecha</th>
                                 <th>Tipo transacción</th>
+                                <th>Monto</th>
                                 <th>Concepto</th>
                                 <th>Descripción</th>
-                                <th>Monto</th>
                                 <th>Acción</th>
 
                             </tr>
@@ -49,9 +54,9 @@
                                 <tr>
                                     <td>{{ operacion.fecha }}</td>
                                     <td>{{ operacion.tipo_transaccion }}</td>
+                                    <td>{{ operacion.monto | intdot }} ₲</td>
                                     <td>{{ operacion.concepto }}</td>
                                     <td>{{ operacion.descripcion }}</td>
-                                    <td>{{ operacion.monto | intdot }} ₲</td>
 
                                     <td><a class="btn btn-info btn-xs" href="/tienda/caja/{{ operacion.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"

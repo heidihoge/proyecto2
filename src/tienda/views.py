@@ -5,7 +5,7 @@ from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.db import transaction, IntegrityError
-from django.db.models import Q, Max
+from django.db.models import Q, Max, Sum
 from django.db.transaction import rollback
 from django.forms import inlineformset_factory, BaseFormSet, BaseInlineFormSet
 from django.shortcuts import render, redirect
@@ -800,11 +800,17 @@ def consulta_factura(request, nro_factura):
 # OPERACIONES EN CAJA
 
 def list_operaciones(request):
-    operacion = OperacionCaja.objects.all()
-    #hoy = datetime.datetime.today()
-    #operacion = OperacionCaja.objects.filter(fecha=hoy)
+    fecha = request.GET.get('fecha', None)
+    if not fecha:
+        fecha = datetime.date.today()
+    else:
+        fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
 
-    return render(request, 'operacion_caja.html', {'operaciones': operacion})
+    operacion = OperacionCaja.objects.filter(fecha=fecha)
+    entradas = operacion.filter(tipo_transaccion='ENTRADA').aggregate(total=Sum('monto'))
+    salidas = operacion.filter(tipo_transaccion='SALIDA').aggregate(total=Sum('monto'))
+    return render(request, 'operacion_caja.html', {'operaciones': operacion, 'fecha': fecha,
+                                                   'total': entradas['total'] - salidas['total']})
 
 
 
