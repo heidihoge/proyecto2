@@ -3,17 +3,20 @@
     {% load intdot %}
 
     <div class="page-title">
-        <div class="title_left">
-            <h3>Egresos</h3>
-        </div>
-        <div class="title_right">
+
+
+            <div style="font-size: 30px;
+                     font-weight: bold;
+                     color: #2A3F54;
+                          text-align: center;">
+                         Total Compra por Día: {{ total| intdot }} ₲
+
+            </div>
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
 
                     <a class="btn btn-primary pull-right" href="/tienda/compras/new"><i  class="fa fa-plus-square"></i> NUEVO EGRESO</a>
 
-                </div>
             </div>
-
     </div>
     <div class="clearfix"></div>
 
@@ -22,7 +25,16 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_content">
+                 <form method="GET" action="/tienda/compras"  class="form form-inline hidden-print">
 
+                            <label for="fecha">Fecha</label>
+                            <input class="form-control" type="text" value="{{ fecha }}" name="fecha" data-inputmask="'mask': '99/99/9999'" &nbsp>
+
+                            <input class="btn btn-primary" type="submit" value="Ver">
+
+                            <br>
+                        </form>
+                <br>
 
                     <div class="x_content">
 

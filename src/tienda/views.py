@@ -338,8 +338,27 @@ def cuentas(formset):
 
 
 def list_ventas(request):
-    venta = VentaCabecera.objects.all()
-    return render(request, 'ventas.html', {'ventas': venta})
+    fecha = request.GET.get('fecha', None)
+    if not fecha:
+        fecha = datetime.date.today()
+    else:
+        fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
+
+    ventas = VentaCabecera.objects.filter(fecha=fecha)
+
+
+
+    suma_ventas = ventas.aggregate(total=Sum('monto_total'))
+
+    monto_suma = suma_ventas['total']
+    if not monto_suma:
+        monto_suma = 0
+
+    return render(request, 'ventas.html', { 'fecha': fecha,'ventas': ventas,
+                                            'total': monto_suma})
+
+
+
 
 
 # se listan las ventas y se tiene accion cancelar, colocar solo disponible para admin
@@ -543,8 +562,31 @@ def vender(request):
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 
 def list_compras(request):
-    compras = CompraCabecera.objects.all()
-    return render(request, 'compras.html', {'compras': compras})
+
+    fecha = request.GET.get('fecha', None)
+    if not fecha:
+        fecha = datetime.date.today()
+    else:
+        fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
+
+    compras = CompraCabecera.objects.filter(fecha=fecha)
+
+
+
+    suma_compras = compras.aggregate(total=Sum('monto_total'))
+
+    monto_suma = suma_compras['total']
+    if not monto_suma:
+        monto_suma = 0
+
+    return render(request, 'compras.html', { 'fecha': fecha,'compras': compras,
+                                            'total': monto_suma})
+
+
+
+
+
+
 
 
 class RequiredFormSet(BaseInlineFormSet):
@@ -809,9 +851,17 @@ def list_operaciones(request):
     operacion = OperacionCaja.objects.filter(fecha=fecha)
     entradas = operacion.filter(tipo_transaccion='ENTRADA').aggregate(total=Sum('monto'))
     salidas = operacion.filter(tipo_transaccion='SALIDA').aggregate(total=Sum('monto'))
-    return render(request, 'operacion_caja.html', {'operaciones': operacion, 'fecha': fecha,
-                                                   'total': entradas['total'] - salidas['total']})
 
+    monto_salida = salidas['total']
+    monto_entrada = entradas['total']
+
+    if not monto_salida:
+        monto_salida = 0
+    if not monto_entrada:
+        monto_entrada = 0
+
+    return render(request, 'operacion_caja.html', {'operaciones': operacion, 'fecha': fecha,
+                                                   'total': monto_entrada -  monto_salida })
 
 
 
