@@ -3,6 +3,7 @@ import datetime
 
 from dateutil.relativedelta import relativedelta
 from django.db import connection
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -10,12 +11,117 @@ from django.shortcuts import render
 from escuela.models import Grupo
 from escuela.utils import dictfetch
 from proyecto2 import settings
+from tienda.models import CompraCabecera, VentaCabecera
+
 
 def get_date(fecha_string):
     return datetime.datetime.strptime(fecha_string, settings.DATE_INPUT_FORMATS[0]).date()
 
 def get_month(fecha_mes):
     return datetime.datetime.strptime(fecha_mes, settings.MONTH_INPUT_FORMATS[0]).date()
+
+# COMPRA
+
+
+def export_compra(resultados, totales, fecha):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="libro-compra-{0:02}-{1}.csv"'\
+        .format(fecha.month, fecha.year)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Nro Factura', 'Ruc', 'Proveedor', 'Exentas',
+                     'Gravada 5%', 'IVA 5%', 'Gravada 10%', 'IVA 10%', 'Total'])
+
+    for resultado in resultados:
+        writer.writerow([resultado.fecha, str(resultado.nro_factura), resultado.ruc_proveedor,
+                         resultado.proveedor, resultado.total_grav_exentas,
+                         resultado.total_grav_5, resultado.total_iva_5,
+                         resultado.total_grav_10, resultado.total_iva_10, resultado.monto_total ])
+
+    writer.writerow(['', '', '', 'Total:', totales['exentas'], totales['grav_5'], totales['iva_5'],
+                    totales['grav_10'], totales['iva_10'], totales['total']])
+    return response
+
+def compra(request):
+
+
+    accion = request.GET.get('action', 'Ver')
+
+    fecha_inicio = request.GET.get('mes', None)
+    if not fecha_inicio:
+        fecha_inicio = datetime.date.today().replace(day=1)
+    else:
+        fecha_inicio = get_month(fecha_inicio)
+
+    fecha_fin = (fecha_inicio + relativedelta(months=1, days=-1))
+
+    resultados = CompraCabecera.objects.filter(fecha__gte=fecha_inicio, fecha__lte=fecha_fin)
+
+    totales = resultados.aggregate(exentas=Sum('total_grav_exentas'), #
+                         grav_5=Sum('total_grav_5'),#
+                         grav_10=Sum('total_grav_10'),#
+                         iva_5=Sum('total_iva_5'),#
+                         iva_10=Sum('total_iva_10'),#
+                         total=Sum('monto_total'))
+
+    if accion == 'Excel':
+        return export_compra(resultados, totales, fecha_inicio)
+
+
+    context = { 'mes': '{0:02}/{1}'.format(fecha_inicio.month, fecha_inicio.year),
+                'resultados': resultados, 'totales': totales }
+    return render(request, "libro_compra.html", context)
+
+# VENTA
+
+def export_venta(resultados, totales, fecha):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="libro-venta-{0:02}-{1}.csv"'\
+        .format(fecha.month, fecha.year)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Nro Factura', 'Ruc Cliente', 'Nombre o Razón', 'Exentas',
+                     'Gravada 5%', 'IVA 5%', 'Gravada 10%', 'IVA 10%', 'Total'])
+
+    for resultado in resultados:
+        writer.writerow([resultado.fecha, str(resultado.nro_factura), resultado.cliente.ruc_cliente,
+                         resultado.cliente.nombre_razon, resultado.total_grav_exentas,
+                         resultado.total_grav_5, resultado.total_iva_5,
+                         resultado.total_grav_10, resultado.total_iva_10, resultado.monto_total ])
+
+    writer.writerow(['', '', '', 'Total:', totales['exentas'], totales['grav_5'], totales['iva_5'],
+                    totales['grav_10'], totales['iva_10'], totales['total']])
+    return response
+
+def venta(request):
+
+    accion = request.GET.get('action', 'Ver')
+
+    fecha_inicio = request.GET.get('mes', None)
+    if not fecha_inicio:
+        fecha_inicio = datetime.date.today().replace(day=1)
+    else:
+        fecha_inicio = get_month(fecha_inicio)
+
+    fecha_fin = (fecha_inicio + relativedelta(months=1, days=-1))
+
+    resultados = VentaCabecera.objects.filter(fecha__gte=fecha_inicio, fecha__lte=fecha_fin)
+
+    totales = resultados.aggregate(exentas=Sum('total_grav_exentas'), #
+                         grav_5=Sum('total_grav_5'),#
+                         grav_10=Sum('total_grav_10'),#
+                         iva_5=Sum('total_iva_5'),#
+                         iva_10=Sum('total_iva_10'),#
+                         total=Sum('monto_total'))
+
+    if accion == 'Excel':
+        return export_venta(resultados, totales, fecha_inicio)
+
+
+    context = { 'mes': '{0:02}/{1}'.format(fecha_inicio.month, fecha_inicio.year),
+                'resultados': resultados, 'totales': totales }
+    return render(request, "libro_venta.html", context)
+
 
 # ASISTENCIA
 

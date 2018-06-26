@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load intdot %}
+{% block content %}
+
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Libro compra {{ mes }}</h3>
+        </div>
+        <div class="title_right">
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                        <form method="GET" action="/reportes/compra" class="form form-inline hidden-print">
+                            <label for="fecha">Mes/Año </label>
+                            <input id="fecha" style="margin-bottom: 0.37em;margin-right: 0.5em;" name="mes" class="form-control" type="text" required value="{{ mes }}">
+                            <label for="ver" class="btn btn-primary"><i class="fa fa-search"></i> Ver</label>
+                            <input id="ver" type="submit" name="action" class="hidden" value="Ver">
+                            <label for="excel" class="btn btn-success"><i class="fa fa-download"></i> CSV</label>
+                            <input id="excel" type="submit" name="action" class="hidden" value="Excel">
+                            <button class="btn btn-default" onclick="print()"><i class="fa fa-print"></i> Print</button>
+                        </form>
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Nro Factura</th>
+                                <th>Ruc</th>
+                                <th>Proveedor</th>
+                                <th>Exentas</th>
+                                <th>Gravada 5%</th>
+                                <th>IVA 5%</th>
+                                <th>Gravada 10%</th>
+                                <th>IVA 10%</th>
+                                <th>Total</th>
+                                
+                            </tr>
+                            {% for resultado in resultados %}
+                            <tr class="data">
+                                <td>{{ resultado.fecha }}</td>
+                                <td>{{ resultado.nro_factura }}</td>
+                                <td>{{ resultado.ruc_proveedor }}</td>
+                                <td>{{ resultado.proveedor }}</td>
+                                <td>{{ resultado.total_grav_exentas | intdot }} ₲</td>
+                                <td>{{ resultado.total_grav_5 | intdot }} ₲</td>
+                                <td>{{ resultado.total_iva_5 | intdot }} ₲</td>
+                                <td>{{ resultado.total_grav_10 | intdot }} ₲</td>
+                                <td>{{ resultado.total_iva_10 | intdot }} ₲</td>
+                                <td>{{ resultado.monto_total | intdot }} ₲</td>
+                            
+
+                            </tr>
+                            {% endfor %}
+                            <tr class="data">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>Total:</strong></td>
+                                <td>{{ totales.exentas | default:0 | intdot }} ₲</td>
+                                <td>{{ totales.grav_5 | default:0 | intdot }} ₲</td>
+                                <td>{{ totales.iva_5 | default:0 | intdot }} ₲</td>
+                                <td>{{ totales.grav_10 | default:0 | intdot }} ₲</td>
+                                <td>{{ totales.iva_10 | default:0 | intdot }} ₲</td>
+                                <td>{{ totales.total | default:0 | intdot }} ₲</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        @media screen {
+            #chart-container{
+                height: 40rem;
+                display: block;
+            }
+        }
+        @media print {
+
+            @page {
+                size: auto;
+                margin-bottom: 1cm;
+                margin-top: 1cm;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+            .x_content, .x_content *, .page-title, .page-title * {
+                visibility: visible;
+            }
+
+            tr.data td {
+                page-break-inside: avoid;
+            }
+        }
+
+
+    </style>
+
+
+
+{% endblock %}>
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Finanzas </span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ block.super }}
+     <script>
+        $(document).ready(function(){
+            function toDate(date){
+                var partes = date.split("/");
+                return new Date(partes[2] + "-" + partes[1] + "-" + partes[0]);
+            }
+
+            $('[name=mes]').datepicker({
+                format: 'mm/yyyy',
+                viewMode: 'years',
+                minViewMode: 'months',
+                language: 'es'
+            });
+
+        });
+
+    </script>
+{% endblock %}
