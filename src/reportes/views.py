@@ -8,8 +8,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
-from escuela.models import Grupo
+from escuela.models import Grupo, Clase
 from escuela.utils import dictfetch
+from main.models import Persona
 from proyecto2 import settings
 from tienda.models import CompraCabecera, VentaCabecera
 
@@ -20,6 +21,88 @@ def get_date(fecha_string):
 def get_month(fecha_mes):
     return datetime.datetime.strptime(fecha_mes, settings.MONTH_INPUT_FORMATS[0]).date()
 
+# ALUMNOS POR GRUPO
+
+
+def export_alumnos_por_grupo(resultados, fecha):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="alumnos-por-grupo-{0:02}-{1:02}-{2}.csv"'\
+        .format(fecha.day, fecha.month, fecha.year)
+
+    writer = csv.writer(response)
+    writer.writerow(['Grupo', 'Profesor', 'Curso', 'Cupo máximo', 'Cantidad de alumnos'])
+
+    for resultado in resultados:
+        writer.writerow([resultado['grupo'].grupo_desc(), resultado['profesor'], resultado['curso'],
+                        resultado['grupo'].cupo_maximo, resultado['cantidad']])
+
+    return response
+
+def to_grupo_map(resultado):
+    return {
+        "grupo": Grupo(
+            cupo_maximo=resultado['cupo_maximo'],
+            hora_fin=resultado['hora_fin'],
+            hora_inicio=resultado['hora_inicio'],
+            lunes=resultado['lunes'],
+            martes=resultado['martes'],
+            miercoles=resultado['miercoles'],
+            jueves=resultado['jueves'],
+            viernes=resultado['viernes'],
+            sabado=resultado['sabado'],
+            domingo=resultado['domingo'],
+        ),
+        "profesor": "{1}, {0}".format(resultado['nombre'], resultado['apellido']),
+        "curso": resultado['nombre_curso'],
+        "cantidad": resultado['cantidad']
+    }
+
+def alumnos_por_grupo(request):
+
+    accion = request.GET.get('action', None)
+
+    fecha = datetime.date.today()
+
+    query = """
+    select
+      g.cupo_maximo,
+      g.hora_fin,
+      g.hora_inicio,
+      g.lunes,
+      g.martes,
+      g.miercoles,
+      g.jueves,
+      g.viernes,
+      g.sabado,
+      g.domingo,
+      prof.nombre as nombre,
+      prof.apellido as apellido,
+      c.nombre as nombre_curso,
+      count.cantidad
+    from (
+           select
+             grupo_id,
+             count(*) as cantidad
+           from escuela_inscripcion
+           where estado = 'A'
+           group by grupo_id
+         ) count
+      join escuela_grupo g on count.grupo_id = g.id
+      join escuela_clase c on g.id_clase_id = c.id
+      join main_persona prof on prof.id = g.id_profesor_id
+    order by c.nombre, g.hora_inicio;
+    """
+
+    cursor = connection.cursor()
+    cursor.execute(query, {})
+    resultados = dictfetch(cursor, 1000, 0)
+
+    if accion == 'Excel':
+        return export_alumnos_por_grupo(map(to_grupo_map, resultados), fecha)
+
+    context = { "resultados": map(to_grupo_map, resultados), 'fecha': fecha }
+
+    return render(request, "alumnos_por_grupo.html", context)
 # COMPRA
 
 

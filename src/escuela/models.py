@@ -51,6 +51,10 @@ class Grupo(models.Model):
             .format(self.id_clase.nombre, str(self.id_profesor), self.get_dias(),
                     format(self.hora_inicio, '%H:%M'), format(self.hora_fin, '%H:%M'))
 
+    def grupo_desc(self):
+        return "Dias: ({0}) - Horario: ({1} - {2})" \
+            .format(self.get_dias(), format(self.hora_inicio, '%H:%M'), format(self.hora_fin, '%H:%M'))
+
     def short_desc(self):
         return "Clase: {0} Dias: ({1}) Monto: {2}" \
             .format(self.id_clase.nombre,  self.get_dias(),

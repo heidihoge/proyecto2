@@ -26,50 +26,54 @@
                             <input id="excel" type="submit" name="action" class="hidden" value="Excel">
                             <button class="btn btn-default" onclick="print()"><i class="fa fa-print"></i> Print</button>
                         </form>
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Nro Factura</th>
-                                <th>Ruc</th>
-                                <th>Proveedor</th>
-                                <th>Exentas</th>
-                                <th>Gravada 5%</th>
-                                <th>IVA 5%</th>
-                                <th>Gravada 10%</th>
-                                <th>IVA 10%</th>
-                                <th>Total</th>
-                                
-                            </tr>
-                            {% for resultado in resultados %}
-                            <tr class="data">
-                                <td>{{ resultado.fecha }}</td>
-                                <td>{{ resultado.nro_factura }}</td>
-                                <td>{{ resultado.ruc_proveedor }}</td>
-                                <td>{{ resultado.proveedor }}</td>
-                                <td>{{ resultado.total_grav_exentas | intdot }} ₲</td>
-                                <td>{{ resultado.total_grav_5 | intdot }} ₲</td>
-                                <td>{{ resultado.total_iva_5 | intdot }} ₲</td>
-                                <td>{{ resultado.total_grav_10 | intdot }} ₲</td>
-                                <td>{{ resultado.total_iva_10 | intdot }} ₲</td>
-                                <td>{{ resultado.monto_total | intdot }} ₲</td>
-                            
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Nro Factura</th>
+                                    <th>Ruc</th>
+                                    <th>Proveedor</th>
+                                    <th>Exentas</th>
+                                    <th>Gravada 5%</th>
+                                    <th>IVA 5%</th>
+                                    <th>Gravada 10%</th>
+                                    <th>IVA 10%</th>
+                                    <th>Total</th>
 
-                            </tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for resultado in resultados %}
+                                <tr class="data">
+                                    <td>{{ resultado.fecha }}</td>
+                                    <td>{{ resultado.nro_factura }}</td>
+                                    <td>{{ resultado.ruc_proveedor }}</td>
+                                    <td>{{ resultado.proveedor }}</td>
+                                    <td>{{ resultado.total_grav_exentas | intdot }} ₲</td>
+                                    <td>{{ resultado.total_grav_5 | intdot }} ₲</td>
+                                    <td>{{ resultado.total_iva_5 | intdot }} ₲</td>
+                                    <td>{{ resultado.total_grav_10 | intdot }} ₲</td>
+                                    <td>{{ resultado.total_iva_10 | intdot }} ₲</td>
+                                    <td>{{ resultado.monto_total | intdot }} ₲</td>
+
+
+                                </tr>
                             {% endfor %}
-                            <tr class="data">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td><strong>Total:</strong></td>
-                                <td>{{ totales.exentas | default:0 | intdot }} ₲</td>
-                                <td>{{ totales.grav_5 | default:0 | intdot }} ₲</td>
-                                <td>{{ totales.iva_5 | default:0 | intdot }} ₲</td>
-                                <td>{{ totales.grav_10 | default:0 | intdot }} ₲</td>
-                                <td>{{ totales.iva_10 | default:0 | intdot }} ₲</td>
-                                <td>{{ totales.total | default:0 | intdot }} ₲</td>
-                            </tr>
                             </tbody>
+                            <tfoot>
+                                <tr class="data">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>Total:</strong></td>
+                                    <td>{{ totales.exentas | default:0 | intdot }} ₲</td>
+                                    <td>{{ totales.grav_5 | default:0 | intdot }} ₲</td>
+                                    <td>{{ totales.iva_5 | default:0 | intdot }} ₲</td>
+                                    <td>{{ totales.grav_10 | default:0 | intdot }} ₲</td>
+                                    <td>{{ totales.iva_10 | default:0 | intdot }} ₲</td>
+                                    <td>{{ totales.total | default:0 | intdot }} ₲</td>
+                                </tr>
+                            </tfoot>
                         </table>
                 </div>
             </div>
