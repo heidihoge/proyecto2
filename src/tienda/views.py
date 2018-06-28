@@ -138,10 +138,22 @@ class CuentaAutocomplete(autocomplete.Select2QuerySetView):
         # busca Cuentas sin pagar
         qs = Cuenta.objects.filter(pagado=False)
 
+        # if self.q:
+        #     qs = qs.filter(Q(inscripcion__alumno__cedula__istartswith=self.q) |
+        #                    Q(inscripcion__alumno__titular_cuenta__cedula__istartswith=self.q))
+        #
+        # return qs
+
+
+# al elegir que cuenta pagar poder buscar por nombre apellido o cedula del alumno o del titular
 
         if self.q:
             qs = qs.filter(Q(inscripcion__alumno__cedula__istartswith=self.q) |
-                           Q(inscripcion__alumno__titular_cuenta__cedula__istartswith=self.q))
+                           Q(inscripcion__alumno__titular_cuenta__cedula__istartswith=self.q) |
+                           Q(inscripcion__alumno__titular_cuenta__nombre__istartswith=self.q) |
+                           Q(inscripcion__alumno__titular_cuenta__apellido__istartswith=self.q) |
+                           Q(inscripcion__alumno__nombre__istartswith=self.q) |
+                           Q(inscripcion__alumno__apellido__istartswith=self.q) )
 
         return qs
 

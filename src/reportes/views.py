@@ -308,8 +308,8 @@ def balance(request):
     UNION
     select fecha, monto_total, 'SALIDA' as tipo_transaccion from tienda_compracabecera
     UNION
-    select fecha, monto_total, 'ENTRADA' as tipo_transaccion from tienda_ventacabecera) e
-    where e.fecha BETWEEN %(fecha_inicio)s AND %(fecha_fin)s
+    select fecha, monto_total, 'ENTRADA' as tipo_transaccion from tienda_ventacabecera where estado= 'A') e
+    where e.fecha BETWEEN %(fecha_inicio)s AND %(fecha_fin)s  
     GROUP BY fecha, tipo_transaccion
     ORDER BY fecha DESC 
     """
