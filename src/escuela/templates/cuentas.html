@@ -116,3 +116,29 @@
         }
     </script>
 {% endblock %}>
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Lista de Cuentas</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_cuentaslista.gif" alt="pasos_cuentaslista" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <br>
+    <hr>
+        <p><span style="color: #003366;"><strong>1. Lista de Cuentas :&nbsp;Se puede ver la lista de todas la cuentas pendientes y cobradas. </strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>2.  Filtrar la cantidad de cuentas en la pantalla.</strong></span></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>3. Buscar Cuenta <img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
+        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Nombre de Alumno, Vencimiento, Monto, Factura). </em></strong></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>4. Paginado de la lista. <img src="/static/img/anterior-siguiente.png" alt="anterior-siguiente" /></strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>4. Cantidad de registros por página. <img src="/static/img/paginado.png" alt="paginado" /></strong></span></p>
+{% endblock %}

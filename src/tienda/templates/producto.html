@@ -4,7 +4,7 @@
 
     <div class="page-title">
         <div class="title_left">
-            <h3>Nuevo Producto</h3>
+            <h3>Lista Producto</h3>
         </div>
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
@@ -122,26 +122,33 @@
 
 {#AYUDA#}
 {% block ayuda_titulo %}
-<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Ayuda para agregar Producto</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Lista de Productos</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-        <p style="text-align: center;">Se listan los productos y se puede agregar nuevos. Siga los siguientes pasos:&nbsp;</p>
-            <p style="text-align: center;">&nbsp;</p>
+<p style="text-align: center;"><span style="font-size: 14pt;">Podr&aacute; visualizar a todos los <strong>Productos</strong> con sus datos, además de poder agregar nuevos.</p>
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_productoslista.gif" alt="pasos_productoslista" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <br>
+        <hr>
+        <p><span style="color: #003366;"><strong>1. Lista de productos :&nbsp;Se puede ver la lista de todos los productos y realizar las siguientes acciones. </strong></span></p>
 
-        <p><span style="color: #003366;"><strong> Nuevo Producto : <img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></span></p>
-        <p>&bull; <strong><em> Complete de manera obligatoria los siguientes campos: </em></strong>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>2. Acciones que podemos realizar sobre cada registro de producto.</strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Editar producto : <img src="/static/img/editar.png" alt="editar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Eliminar producto : <img src="/static/img/eliminar.png" alt="eliminar" /></strong></span></p>
+        <p>&bull; <strong><em>El registro del prodcuto sera eliminado de forma <strong>permanente</strong>.</em></strong></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>3. Buscar producto <img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
+        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Nombre, Descripción, Precio, IVA, Existencia). </em></strong></p>
 
-        <table><ol><li> Codigo: sera puesto por la escuela para control interno.
-        <br></br><li>Nombre.
-        <br></br><li>Descripci&oacute;n.
-        <br></br><li>Control de Stock.
-        <br></br><li>Precio de Venta : el precio final por el cual sera vendido el producto.
-        <br></br><li>Costo : precio de compra del producto.
-        <br></br><li>IVA : <strong>5%, 10% o Excentas.</strong>
-        <br></br><li>Estado : debe estar <strong>activo</strong> para poder vender o <strong>inactivo</strong> si ya no se desea ver en el listado.
-        <br></br><li>Existencia: debe tener un numero mayor a cero dentro del sistema.
-        </ol></table></p>
 
-        <p>&bull;<strong><em> Y podemos guardar el producto <img src="/static/img/guardar.png" alt="guardar" /></em></strong></p>
-        <p>&bull; <strong><em> Complete de manera opcional el siguiente campo: </em></strong>Foto producto.</p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>4.  Filtrar la cantidad de productos en la pantalla.</strong></span></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>5.  Para crear nuevo producto, haga clic en el ícono <img src="/static/img/nuevo_producto.png" alt="nuevo_producto" /></strong></span></p>
+        <p>&bull; <strong><em>Una vez creado el registro de nuevo producto, este se encontrará en la lista. </em></strong></p>
 {% endblock %}

@@ -72,10 +72,25 @@
 
 {#AYUDA#}
 {% block ayuda_titulo %}
-<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Asistencia</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Asistencia de Alumnos</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-        <p><span style="color: #003366;"><strong>Debe elegir el Grupo para tomar asistencia de los alumnos.</strong></span></p>
-        <p><br />&bull; <strong><em>En el listado solo aparecen los alumnos que pertencen al grupo y el dia especifico</em></strong></p>
+        <img src="/static/img/pasos_asistencia.gif" alt="pasos_asistencia" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <br><br>
+<hr>
+        <p><span style="color: #003366;"><strong>Paso 1. Puede tomar asistencia del día o de cualquier otro que desee consultar.</strong></span></p>
+<hr>
+        <p><span style="color: #003366;"><strong>Paso 2. Elegir el grupo del cual desea tomar asistencia o consultar la asistencia de otros dias.</strong></span></p>
+<hr>
+        <p><span style="color: #003366;"><strong>Paso 3. Marcar presente dando clic a la casilla <img src="/static/img/casilla_presente.png" alt="casilla_presente" />
+<hr>
+        <p><span style="color: #003366;"><strong>Paso 4. Si está ausente, deje desmarcada la casilla y puede agregar el motivo en el campo comentario.</strong></span></p>
+<hr>
+        <p><span style="color: #003366;"><strong>Paso 5. Guardar el registro de asistencias  <img src="/static/img/guardar.png" alt="guardar" /></strong></span></p>
+
+        <p><br />&bull; <strong><em>En el listado solo aparecen los alumnos que pertencen al grupo y el día especifico.</em></strong></p>
 
 {% endblock %}

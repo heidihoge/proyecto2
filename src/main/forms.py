@@ -171,7 +171,7 @@ class EmpleadoForm(forms.ModelForm):
         self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del empleado'
         self.fields['telefono1'].widget.attrs['placeholder'] = 'Teléfono del empleado'
         self.fields['telefono2'].widget.attrs['placeholder'] = 'Contacto de emergencia del empleado'
-
+        self.fields['salario'].widget.attrs['placeholder'] = '1.500.000Gs'
 
 #Formulario Profesor
 class ProfesorForm(forms.ModelForm):
@@ -198,6 +198,7 @@ class ProfesorForm(forms.ModelForm):
         self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección del profesor'
         self.fields['telefono1'].widget.attrs['placeholder'] = 'Teléfono del profesor'
         self.fields['telefono2'].widget.attrs['placeholder'] = 'Contacto de emergencia del profesor'
+        self.fields['salario'].widget.attrs['placeholder'] = '1.500.000Gs'
         self.fields['especialidad'].widget.attrs['placeholder'] = 'Título o conocimientos'
 # #Formulario Cuenta
 # class CuentaForm(forms.ModelForm):

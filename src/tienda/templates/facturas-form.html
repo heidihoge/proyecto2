@@ -49,29 +49,33 @@
     </script>
 {% endblock %}
 
+
 {#AYUDA#}
 {% block ayuda_titulo %}
-<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Ayuda para agregar Talonario de Factura</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Factura</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-        <p style="text-align: center;">Se listan los talonarios vigentes y vencidos, puede agregar un nuevo <strong>Talonario vigente</strong>. Siga los siguientes pasos:&nbsp;</p>
-            <p style="text-align: center;">&nbsp;</p>
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_nuevo_talonario.gif" alt="pasos_nuevo_talonarior" width="800"  style="display: block; margin-left: auto;margin-right: auto;"/>
+        <hr>
+        <p><span style="color: #003366;"><strong> 1. Nombre de la escuela: Pecesitos de Jesús.
+        <br><br>2. RUC de la escuela.
+            <br><br>3. Actividad Económica "Educación".
+            <br><br>4. Direcci&oacute;n de la matriz y del establecimiento.
+            <br><br>5. Tel&eacute;fono de la escuela
+            <br><br>6. Numero de timbrado : El SET entregará el timbrado de 7 dígitos a través de las imprentas habilitadas. Ej: 1234567
+            <br><br>7. Punto de Emisi&oacute;n : Los tres primeros(001)corresponderán al código del establecimiento declarado en
+            el RUC (número de sucursal).<br> Los siguientes tres dígitos(002)corresponderán al punto de expedición (cajas de cobro).
+            Ej: 001-002.
+            <br><br>8. Nro inicial : numeración secuencial de 7 dígitos comienza con 0000001.
+            <br><br>9. Nro final : numeración secuencial de 7 dígitos finaliza con 9999999.
+            <br><br>10. Vigencia desde: Fecha inicio de vigencia de la factura, es otorgada por el SET.
+            <br><br>11. Vigencia hasta: Fecha fin de vigencia de la factura, es otorgada por el SET.
+            <br><br>12. Estado: "Activo" o "Inactivo".
 
-        <p><span style="color: #003366;"><strong> Agregar Nuevo Talonario : <img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></span></p>
-        <p>&bull; <strong><em> Complete de manera obligatoria los siguientes campos:
-        </em></strong>
-        <table><ol><li> Nombre
-        <br></br><li>RUC
-        <br></br><li>Actividad Economica
-        <br></br><li>Direcci&oacute;n
-        <br></br><li>Tel&eacute;fono
-        <br></br><li>Numero de timbrado : debe ser de 8 digitos. Asegúrese de que este valor sea menor o igual a  <strong>12345678</strong>
-        <br></br><li>Punto de Emisi&oacute;n : si la escuela tiene sucursales este numero variar&aacute; <strong>001-001</strong>
-        <br></br><li>Nro inicial : los primero numeros que van luego de los primeros 6 digitos  <strong>0000001</strong>
-        <br></br><li>Nro final : los ultimos numeros que van luego de los primeros 6 digitos <strong>9999999</strong>
-        <br></br><li>Vigencia desde: esta vigencia es otorgada por el SET.
-        <br></br><li>Vigencia hasta: esta vigencia es otorgada por el SET.
-        <br></br><li>Estado
-        </ol></table></p>
-        <p>&bull;<strong><em> Y podemos guardar el talonario <img src="/static/img/guardar.png" alt="guardar" /></em></strong></p>
+            <hr>
+             <p style="text-align: center;"> <span style="font-size: 12pt;"><strong>Acciones  : </strong></span></p>
+            <p> <br /><span style="color: #003366;"><strong>&bull; Guardar registro de factura, clic en : <img src="/static/img/guardar.png" alt="guardar" /></strong></span></p>
+            <p> <br /><span style="color: #003366;"><strong>&bull; Limpiar campos del registro , clic en : <img src="/static/img/limpiar.png" alt="limpiar" /></strong></span></p>
+            <p> <br /><span style="color: #003366;"><strong>&bull; Si no desea guardar el registro dar clic en : <img src="/static/img/cancelar.png" alt="cancelar" /></strong></span></p>
 {% endblock %}

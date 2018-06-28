@@ -155,20 +155,31 @@
     <script src="/static/venta.js"></script>
 {% endblock %}
 
+{#AYUDA#}
 {% block ayuda_titulo %}
-   <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Venta</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Venta</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-        <p style="text-align: center;">Siga los siguientes pasos para realizar una venta:&nbsp;</p>
-        <p style="text-align: center;">&nbsp;</p>
-        <p><span style="color: #003366;"><strong>Paso 1. Llenar el formulario de Venta : </strong></span></p>
-        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em> Fecha, RUC del Cliente, Talonario de Factura,
-            Tipo de Pago, M&eacute;todo de Pago</p>
-       <!-- <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Tel&eacute;fono, Otro contacto, Fotocopia de C&eacute;dula, Tipo Responsable</p>-->
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_para_vender.gif" alt="pasos_para_vender" width="800"  style="display: block; margin-left: auto;margin-right: auto;"/>
+        <hr>
+        <p><span style="color: #003366;"><strong> 1. Fecha: Se genera de forma automática con fecha del día.
+        <br><br>2. Condición de la Venta: Elegir Contado/Crédito.
+            <br><br>3. RUC Cliente: Números o puede ingresar XXX, si no tiene RUC.
+            <br><br>4. Nombre Razón: Nombre del cliente o de la empresa.
+            <br><br>5. Dirección: Lugar de residencia de la persona o de la empresa.
+            <br><br>6. Teléfono: personal, de la empesa u otro contacto.
+            <hr>
+            <br><span style="color: #003366;"><strong>7. Descripción de la Factura.</strong><img src="/static/img/icono_agregar_cuota.png" alt="icono_agregar_cuota" /></span></strong></span></p>
+        <p> <br /><span style="color: #003366;">&bull; Agregar un artículo y cargar de forma manual la cantidad de articulos a vender.</span></p>
+        <p> <br /><span style="color: #003366;">&bull; Agregar cuota del alumno.</span></p>
+        <p> <br /><span style="color: #003366;">&bull; O sacar campos de la descripción antes de generar la factura.</span></p><br>
+        <p>&bull; <strong><em>El monto total, subtotales, total IVA 5%, total IVA 10%, son calculados y generados de forma automática.</em></strong>.</strong></p>
+        <hr>
+        <br><span style="color: #003366;"><strong>8. Cancelar o Pagar. </strong></span></strong></span></p>
 
-        <p><span style="color: #003366;"><strong>Paso 2. Agregar cobro de cuota o venta de art&iacute;culo <img src="/static/img/agregar.png" alt="agregar" /> </strong></span></p>
-        <p>&bull; <em><strong>El monto total ser&aacute; agregado de forma autom&aacute;tica, seg&uacute;n el monto de la cuota o producto.</strong></em> </p>
-        <p><span style="color: #003366;"><strong>Paso 3. Guardar la venta <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Para generar la factura presione : <img src="/static/img/icono_pagar.png" alt="icono_pagar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Si no desea generar la factura presione : <img src="/static/img/cancelar.png" alt="cancelar" /></strong></span></p>
 {% endblock %}
 
 

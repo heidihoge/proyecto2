@@ -27,6 +27,14 @@ class FomularioFactura(forms.ModelForm):
         fields = ['nombre', 'ruc', 'actividad_economica', 'direccion', 'telefono', 'numero_timbrado', 'punto_emision',
                   'nro_inicial', 'nro_final', 'vigencia_desde', 'vigencia_hasta', 'estado']
 
+    def __init__(self, *args, **kwargs):
+        super(FomularioFactura, self).__init__(*args, **kwargs)
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre de la Escuela'
+        self.fields['ruc'].widget.attrs['placeholder'] = 'RUC de la Escuela'
+        self.fields['actividad_economica'].widget.attrs['placeholder'] = 'Educación'
+        self.fields['direccion'].widget.attrs['placeholder'] = 'Dirección de la escuela'
+        self.fields['telefono'].widget.attrs['placeholder'] = 'Teléfono de la escuela'
+        self.fields['punto_emision'].widget.attrs['placeholder'] = '001-001'
 
 # #Formulario Producto
 class FomularioProducto(forms.ModelForm):
@@ -54,10 +62,11 @@ class FomularioProducto(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FomularioProducto, self).__init__(*args, **kwargs)
-        self.fields['codigo'].widget.attrs['placeholder'] = 'Cédula del titular'
-        self.fields['nombre'].widget.attrs['placeholder'] = 'Cédula del titular'
-        self.fields['descripcion'].widget.attrs['placeholder'] = 'Nombre completo del titular'
-
+        self.fields['codigo'].widget.attrs['placeholder'] = 'Codigo de producto. Ej: VEST001.'
+        self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre del producto. Ej: Malla.'
+        self.fields['descripcion'].widget.attrs['placeholder'] = 'Descripción del producto, color, marca y tamaño.'
+        self.fields['precio_venta'].widget.attrs['placeholder'] = 'Precio de venta, el cuál debe ser mayor al precio de compra. Ej: 120.000GS.'
+        self.fields['costo'].widget.attrs['placeholder'] = 'Precio de adquisión del producto, el cuál es menor al precio de venta. Ej: 100.000GS.'
 
 # Formulario CompraCabecera
 class FormularioCompra(forms.ModelForm):
@@ -266,7 +275,11 @@ class FormularioOperacionCaja(forms.ModelForm):
         model = OperacionCaja
         fields = '__all__'
 
-
+    def __init__(self, *args, **kwargs):
+        super(FormularioOperacionCaja, self).__init__(*args, **kwargs)
+        self.fields['concepto'].widget.attrs['placeholder'] = 'Gastos o entrada de dinero para caja chica. Ej: Gastos Varios'
+        self.fields['descripcion'].widget.attrs['placeholder'] = 'Breve descripción del gasto'
+        self.fields['monto'].widget.attrs['placeholder'] = 'Monto del gasto realizado'
 
 
     tipo_transaccion = forms.ChoiceField(
