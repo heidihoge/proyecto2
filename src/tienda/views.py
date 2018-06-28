@@ -344,7 +344,7 @@ def list_ventas(request):
     else:
         fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
 
-    ventas = VentaCabecera.objects.filter(fecha=fecha)
+    ventas = VentaCabecera.objects.filter(fecha=fecha,estado='A')
 
 
 
@@ -355,6 +355,25 @@ def list_ventas(request):
         monto_suma = 0
 
     return render(request, 'ventas.html', { 'fecha': fecha,'ventas': ventas,
+                                            'total': monto_suma})
+
+def list_ventas_canceladas(request):
+    fecha = request.GET.get('fecha', None)
+    if not fecha:
+        fecha = datetime.date.today()
+    else:
+        fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
+
+    ventas = VentaCabecera.objects.filter(fecha=fecha,estado='IN')
+
+
+    suma_ventas = ventas.aggregate(total=Sum('monto_total'))
+
+    monto_suma = suma_ventas['total']
+    if not monto_suma:
+        monto_suma = 0
+
+    return render(request, 'ventas-canceladas.html', { 'fecha': fecha,'ventas': ventas,
                                             'total': monto_suma})
 
 

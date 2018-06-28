@@ -453,10 +453,12 @@ def delete_etiquetas_grupo(request, id):
 # ---------------------VISTA INSCRIPCION --------------------------------
 
 def list_inscripciones(request):
-    inscripcion = Inscripcion.objects.all()
+    inscripcion = Inscripcion.objects.filter(estado='A')
     return render(request, 'inscripciones.html', {'inscripciones': inscripcion})
 
-
+def list_inscripciones_inactivas(request):
+    inscripcion = Inscripcion.objects.filter(estado='IN')
+    return render(request, 'inscripciones-inactivas.html', {'inscripciones': inscripcion})
 
 def create_inscripcion(request):
     print(request.method)

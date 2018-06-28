@@ -8,7 +8,7 @@ from tienda.views import list_productos, create_producto, update_producto, delet
     comprar, list_compras, vender, \
     export_productos_csv, ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete, list_clientes, create_cliente, \
     delete_cliente, update_cliente, CuentaAutocomplete, list_ventas, consulta_factura, cancela_venta, list_operaciones, \
-    create_operacion, update_operacion, delete_operacion, reporte_compras
+    create_operacion, update_operacion, delete_operacion, reporte_compras, list_ventas_canceladas
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
 
 urlpatterns = [
@@ -42,6 +42,7 @@ urlpatterns = [
 
     path('ventas/new', vender, name='vender'),
     path('ventas', list_ventas, name='list_ventas'),
+    path('ventas/canceladas', list_ventas_canceladas, name='list_ventas_canceladas'),
     path('ventas/<str:nro_factura>', consulta_factura, name='consulta_factura'),
 
     path('ventas/<int:id>/cancelar', cancela_venta, name='cancela_venta'),
