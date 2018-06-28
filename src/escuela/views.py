@@ -18,6 +18,7 @@ from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm, TitularFormVerificar, AlumnoFormVerificar
 from main.models import Alumno, Persona, Titular
 from proyecto2 import settings
+from reportes.views import get_month
 from tienda.models import VentaCabecera
 
 menus = {
@@ -749,8 +750,17 @@ class GrupoAutocompleteAsistencia(GrupoAutocomplete):
 
 def list_cuentas(request):
 
+    mes = request.GET.get('mes', None)
     cuenta = Cuenta.objects.all()
-    return render(request, 'cuentas.html', {'cuentas': cuenta})
+
+    if mes:
+        fecha_inicio = get_month(mes)
+
+        fecha_fin = (fecha_inicio + relativedelta(months=1, days=-1))
+
+        cuenta = cuenta.filter(vencimiento__gte=fecha_inicio, vencimiento__lte=fecha_fin)
+
+    return render(request, 'cuentas.html', {'cuentas': cuenta, 'mes': mes})
 
 
 from datetime import datetime

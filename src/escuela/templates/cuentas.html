@@ -27,6 +27,13 @@
 
                     <div class="x_content">
 
+                        <form method="GET" action="/escuela/cuentas" class="form form-inline hidden-print">
+                            <label for="fecha">Mes/Año </label>
+                            <input id="fecha" style="margin-bottom: 0.37em;margin-right: 0.5em;" name="mes" class="form-control" type="text" value="{{ mes }}">
+                            <label for="ver" class="btn btn-primary"><i class="fa fa-search"></i> Ver</label>
+                            <input id="ver" type="submit" name="action" class="hidden" value="Ver">
+                        </form>
+
                         <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap"
                                cellspacing="0"
                                width="100%">
@@ -114,8 +121,23 @@
         function formEliminar(id){
             $('#eliminar-form').attr('action', '/escuela/cuentas/' + id + '/delete' );
         }
+
     </script>
 {% endblock %}>
+
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function () {
+            $('[name=mes]').datepicker({
+                format: 'mm/yyyy',
+                viewMode: 'years',
+                minViewMode: 'months',
+                language: 'es'
+            });
+        })
+    </script>
+{% endblock %}
 
 {#AYUDA#}
 {% block ayuda_titulo %}
