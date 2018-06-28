@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.db import transaction, IntegrityError, connection
 from django.db.models import Q, Max, Sum
+from django.db.models.functions import Coalesce
 from django.db.transaction import rollback
 from django.forms import inlineformset_factory, BaseFormSet, BaseInlineFormSet
 from django.shortcuts import render, redirect
@@ -359,29 +360,16 @@ def list_ventas(request):
         fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
 
     ventas = VentaCabecera.objects.filter(fecha=fecha,estado='A')
-    pagos = Pago.objects.filter(venta__estado='A',venta__fecha=fecha)
+    pagos = Pago.objects.filter(venta__estado='A', venta__fecha=fecha)
 
-    monto_efectivo = pagos.aggregate(total=Sum('monto_efectivo'))
-    monto_tarjeta = pagos.aggregate(total=Sum('monto_tarjeta'))
-    monto_cheque= pagos.aggregate(total=Sum('monto_cheque'))
+    monto_efectivo = pagos.aggregate(total=Coalesce(Sum('monto_efectivo'), 0))
+    monto_tarjeta = pagos.aggregate(total=Coalesce(Sum('monto_tarjeta'), 0))
+    monto_cheque= pagos.aggregate(total=Coalesce(Sum('monto_cheque'), 0))
+    suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
 
-    if not monto_efectivo['total']:
-        monto_efectivo = {'total': 0}
-
-    if not monto_tarjeta['total']:
-        monto_tarjeta = {'total': 0}
-
-    if not monto_cheque['total']:
-        monto_cheque = {'total': 0}
-
-    suma_ventas = ventas.aggregate(total=Sum('monto_total'))
-    monto_suma = suma_ventas['total']
-
-    if not monto_suma:
-        monto_suma = {'total' : 0}
 
     return render(request, 'ventas.html', { 'fecha': fecha,'ventas': ventas,
-                                            'total': monto_suma,
+                                            'total': suma_ventas,
                                             'totale': monto_efectivo,
                                             'totalt': monto_tarjeta,
                                             'totalch': monto_cheque})
