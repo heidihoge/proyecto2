@@ -29,7 +29,7 @@
 
                         <form method="GET" action="/escuela/cuentas" class="form form-inline hidden-print">
                             <label for="fecha">Mes/Año </label>
-                            <input id="fecha" style="margin-bottom: 0.37em;margin-right: 0.5em;" name="mes" class="form-control" type="text" value="{{ mes }}">
+                            <input id="fecha" style="margin-bottom: 0.37em;margin-right: 0.5em;" name="mes" class="form-control" type="text" {% if mes %}value="{{ mes }}"{% endif %}>
                             <label for="ver" class="btn btn-primary"><i class="fa fa-search"></i> Ver</label>
                             <input id="ver" type="submit" name="action" class="hidden" value="Ver">
                         </form>
