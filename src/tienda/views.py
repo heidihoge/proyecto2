@@ -361,27 +361,24 @@ def list_ventas(request):
     ventas = VentaCabecera.objects.filter(fecha=fecha,estado='A')
     pagos = Pago.objects.filter(venta__estado='A',venta__fecha=fecha)
 
-    if Pago.monto_efectivo:
-        monto_efectivo = pagos.aggregate(total=Sum('monto_efectivo'))
-    else:
-        monto_efectivo = 0
+    monto_efectivo = pagos.aggregate(total=Sum('monto_efectivo'))
+    monto_tarjeta = pagos.aggregate(total=Sum('monto_tarjeta'))
+    monto_cheque= pagos.aggregate(total=Sum('monto_cheque'))
 
-    if Pago.monto_tarjeta:
-        monto_tarjeta = pagos.aggregate(total=Sum('monto_tarjeta'))
-    else:
-        monto_tarjeta = 0
+    if not monto_efectivo['total']:
+        monto_efectivo = {'total': 0}
 
-    if Pago.monto_cheque:
-        monto_cheque = pagos.aggregate(total=Sum('monto_cheque'))
-    else:
-        monto_cheque = 0
+    if not monto_tarjeta['total']:
+        monto_tarjeta = {'total': 0}
 
+    if not monto_cheque['total']:
+        monto_cheque = {'total': 0}
 
     suma_ventas = ventas.aggregate(total=Sum('monto_total'))
-
     monto_suma = suma_ventas['total']
+
     if not monto_suma:
-        monto_suma = 0
+        monto_suma = {'total' : 0}
 
     return render(request, 'ventas.html', { 'fecha': fecha,'ventas': ventas,
                                             'total': monto_suma,
