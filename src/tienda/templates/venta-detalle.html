@@ -24,6 +24,10 @@
 
 
                     <div class="x_content">
+                        {% if cabecera.estado == 'IN' %}
+                            <div class="label label-danger">Cancelado</div>
+                        {% endif %}
+
                         <div class="">
                             <p style="margin:0">
                                 <strong>Timbrado Nro:</strong> <span

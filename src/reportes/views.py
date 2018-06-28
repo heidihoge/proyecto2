@@ -188,7 +188,7 @@ def venta(request):
 
     fecha_fin = (fecha_inicio + relativedelta(months=1, days=-1))
 
-    resultados = VentaCabecera.objects.filter(fecha__gte=fecha_inicio, fecha__lte=fecha_fin)
+    resultados = VentaCabecera.objects.filter(fecha__gte=fecha_inicio, fecha__lte=fecha_fin, estado='A')
 
     totales = resultados.aggregate(exentas=Sum('total_grav_exentas'), #
                          grav_5=Sum('total_grav_5'),#

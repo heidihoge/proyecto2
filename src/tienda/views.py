@@ -4,15 +4,17 @@ import logging
 from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
-from django.db import transaction, IntegrityError
+from django.db import transaction, IntegrityError, connection
 from django.db.models import Q, Max, Sum
 from django.db.transaction import rollback
 from django.forms import inlineformset_factory, BaseFormSet, BaseInlineFormSet
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from escuela.models import Cuenta
+from escuela.models import Cuenta, Grupo
+from escuela.utils import dictfetch
 from escuela.views import calcular_fecha
+from main.models import Persona
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
     FormularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
@@ -962,3 +964,93 @@ def delete_operacion(request, id):
         messages.success(request, 'operacion eliminado correctamente.')
 
     return redirect('list_operaciones')
+
+
+def estado_cuenta(request):
+
+    cedula = request.GET.get('cedula', None)
+
+    if request.method == 'POST':
+        inscripcion = request.POST['inscripcion']
+
+        # ultima cuenta de inscripción
+        ultima_cuenta = Cuenta.objects.filter(inscripcion_id=inscripcion).order_by('-vencimiento').first()
+
+        cuenta = Cuenta()
+        cuenta.inscripcion_id = inscripcion
+        cuenta.monto = ultima_cuenta.monto
+
+        cuenta.vencimiento = calcular_fecha(ultima_cuenta.vencimiento.day, ultima_cuenta.vencimiento)
+        print(ultima_cuenta.vencimiento)
+        print(cuenta.vencimiento)
+        cuenta.save()
+
+    resultados = []
+
+    persona = None
+
+    if cedula:
+
+        persona = Persona.objects.get(cedula=cedula)
+        query = """
+        select
+      pa.nombre alumno_nombre,
+      pa.apellido alumno_apellido,
+      pa.cedula alumno_cedula,
+      pt.nombre,
+      pt.apellido,
+      pt.cedula,
+      g.hora_fin,
+      g.hora_inicio,
+      g.lunes,
+      g.martes,
+      g.miercoles,
+      g.jueves,
+      g.viernes,
+      g.sabado,
+      g.domingo,
+      cl.nombre nombre_curso,
+      i.id inscripcion,
+      i.fecha_inicio,
+      i.fecha_fin,
+      i.estado,
+      cuenta.vencimiento,
+      cuenta.pagado
+from escuela_inscripcion i
+  join escuela_grupo g on i.grupo_id = g.id
+  join escuela_clase cl on g.id_clase_id = cl.id
+  join main_alumno a on i.alumno_id = a.persona_ptr_id
+  join main_titular t on a.titular_cuenta_id = t.persona_ptr_id
+  join main_persona pt on t.persona_ptr_id = pt.id
+  join main_persona pa on a.persona_ptr_id = pa.id
+  join escuela_cuenta cuenta on i.id = cuenta.inscripcion_id
+where (pt.cedula = %(cedula)s or pa.cedula = %(cedula)s) and i.estado = 'A'
+and cuenta.vencimiento = (select c.vencimiento
+                             from escuela_cuenta c
+                             where c.inscripcion_id = i.id
+                             order by c.vencimiento desc
+                             limit 1);
+        """
+        cursor = connection.cursor()
+        cursor.execute(query, {'cedula': cedula})
+        resultados = dictfetch(cursor, 1000, 0)
+
+        def agrega_grupo(resultado):
+            resultado['grupo'] = Grupo(
+                hora_fin=resultado['hora_fin'],
+                hora_inicio=resultado['hora_inicio'],
+                lunes=resultado['lunes'],
+                martes=resultado['martes'],
+                miercoles=resultado['miercoles'],
+                jueves=resultado['jueves'],
+                viernes=resultado['viernes'],
+                sabado=resultado['sabado'],
+                domingo=resultado['domingo'],
+            )
+            return resultado
+
+        resultados = map(agrega_grupo, resultados)
+
+    context = {'resultados': resultados, 'persona': persona, 'cedula': cedula}
+
+    return render(request, 'estado_cuenta.html', context=context)
