@@ -22,7 +22,8 @@ from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, 
     FormularioReporteCompras, FormularioPagoTarjeta, FormularioPagoCheque
 
 from .forms import  FomularioProducto
-from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja, Pago
+from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja, Pago, \
+    Recibo
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -564,7 +565,7 @@ def vender(request):
                 venta = form.save(commit=False)
                 venta.cliente = cliente
                 if credito:
-                    venta.estado = 'P'
+                    venta.estado = 'P' # pendiente
 
                 venta.save()
                 detalles = formularioDetalleSet.save()
@@ -913,11 +914,19 @@ def delete_cliente(request, ruc_cliente):
 def consulta_factura(request, nro_factura):
     cabecera = VentaCabecera.objects.get(nro_factura=nro_factura)
     pago = None
+    recibos = []
+    saldo = cabecera.monto_total
     if cabecera.tipo_pago == 'Contado':
         pago = Pago.objects.get(venta=cabecera)
+    elif cabecera.tipo_pago == 'Crédito':
+        recibos = Recibo.objects.filter(venta=cabecera)
+        for recibo in recibos:
+            saldo -= recibo.monto
+
     detalles = VentaDetalle.objects.filter(venta__nro_factura=nro_factura)
     talonario = cabecera.talonario_factura
-    context = {'detalles': detalles, 'talonario': talonario, 'cabecera': cabecera, 'pago': pago}
+    context = {'detalles': detalles, 'talonario': talonario, 'cabecera': cabecera,
+               'pago': pago, 'recibos': recibos, 'saldo': saldo}
     return render(request, 'venta-detalle.html', context)
 
 

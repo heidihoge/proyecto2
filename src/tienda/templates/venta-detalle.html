@@ -27,6 +27,12 @@
                         {% if cabecera.estado == 'IN' %}
                             <div class="label label-danger">Cancelado</div>
                         {% endif %}
+                        {% if cabecera.estado == 'P' %}
+                            <div class="label label-warning">Pendiente</div>
+                        {% endif %}
+                        {% if cabecera.estado == 'A' %}
+                            <div class="label label-success">Pagado</div>
+                        {% endif %}
 
                         <div class="">
                             <p style="margin:0">
@@ -79,9 +85,12 @@
                                 {% endif %}
                             {% else %}
                                 <strong>Plazo:</strong> <span>{{ cabecera.credito_plazo }} días</span><br>
+                                <strong>Saldo:</strong> <span>{{ saldo | intdot }} ₲</span><br>
                             {% endif %}
                         </div>
-                        <table class="table table-striped table-bordered dt-responsive nowrap"
+
+                        <h4>Detalle:</h4>
+                        <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap"
                                cellspacing="0"
                                width="100%">
 
@@ -108,7 +117,7 @@
                                             {{ detalle.producto.nombre }}
                                         {% endif %}
                                     </td>
-                                    <td class="text-right">{{ detalle.precio | intdot }} G
+                                    <td class="text-right">{{ detalle.precio | intdot }} ₲
                                         &nbsp;
                                     </td>
                                     <td class="text-right">
@@ -118,15 +127,76 @@
                                             {{ detalle.monto_5 | intdot }}
                                         {% else %}
                                             {{ detalle.monto_exento | intdot }}
-                                        {% endif %} G
+                                        {% endif %} ₲
                                     </td>
                                 </tr>
                             {% endfor %}
-                        </table>
-
-
                             </tbody>
                         </table>
+                    {% if cabecera.tipo_pago == 'Crédito' %}
+                        <h4>Recibos:</h4>
+                        <table id="datatable" class="table table-striped table-bordered dt-responsive nowrap display responsive"
+                               cellspacing="0"
+                               width="100%">
+
+                            <thead>
+
+                            <tr>
+                                    <th>Fecha</th>
+                                    <th>Nro recibo</th>
+                                    <th>Monto</th>
+                                    <th class="none">Métodos de pago</th>
+
+                            </tr>
+
+                            </thead>
+                            <tbody>
+
+                            {% for recibo in recibos %}
+                                <tr>
+                                    <td>{{ recibo.fecha }}</td>
+                                    <td>{{ recibo.nro_recibo }}</td>
+                                    <td class="text-right">{{ recibo.monto | intdot }} ₲</td>
+                                    <td><br>
+                                        {% if recibo.pago_efectivo %}
+                                            <strong><span>Metodo de pago:</span> <span class="pull-right">EFECTIVO</span></strong><br>
+                                            <span>Monto Efectivo:</span>
+                                            <span class="pull-right">{{ recibo.monto_efectivo | intdot }} ₲</span><br>
+                                            <span>Monto Abonado:</span>
+                                            <span class="pull-right">{{ recibo.monto_efectivo_abonado | intdot }} ₲</span>
+                                            <br>
+                                            <span>Monto Vuelto:</span>
+                                            <span class="pull-right">{{ recibo.monto_efectivo_vuelto | intdot }} ₲</span>
+                                            <br>
+                                        {% endif %}
+                                        {% if recibo.pago_tarjeta %}
+                                            <strong><span>Metodo de pago:</span> <span class="pull-right">TARJETA</span></strong><br>
+                                            <span>Monto Tarjeta:</span>
+                                            <span class="pull-right">{{ recibo.monto_tarjeta | intdot }} ₲</span><br>
+                                            <span>Tarjeta:</span><span class="pull-right">{{ recibo.tarjeta }}</span><br>
+                                            <span>Tarjeta Nro:</span>
+                                            <span class="pull-right">{{ recibo.ultimos_tarjeta }}</span><br>
+                                            <span>Cupón Nro:</span>
+                                            <span class="pull-right">{{ recibo.nro_autorizacion }}</span><br>
+                                        {% endif %}
+                                        {% if recibo.pago_cheque %}
+                                            <strong><span>Metodo de pago:</span> <span class="pull-right">CHEQUE</span></strong><br>
+                                            <span>Monto Cheque:</span>
+                                            <span class="pull-right">{{ recibo.monto_cheque | intdot }} ₲</span><br>
+                                            <span>Banco:</span><span class="pull-right">{{ recibo.banco }}</span><br>
+                                            <span>Cheque Nro:</span>
+                                            <span class="pull-right">{{ recibo.nro_cheque }}</span><br>
+                                            <span>Cuenta Nro:</span>
+                                            <span class="pull-right">{{ recibo.nro_cuenta }}</span><br>
+                                            <span>Librador:</span><span class="pull-right">{{ recibo.librador }}</span>
+                                            <br>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
                     <a class="btn btn-success dropdown-toggle btn-md "  onclick="print()">Imprimir</a>
                     <a class="btn btn-primary dropdown-toggle btn-md "    href="/tienda/ventas">Salir </a>
 
