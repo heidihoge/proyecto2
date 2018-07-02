@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+{% load intdot %}
+    <div class="page-title">
+
+
+            <div style="font-size: 30px;
+                     font-weight: bold;
+                     color: #2A3F54;
+                          text-align: center;">
+                        Total Venta del Día: {{ total.total | intdot }} ₲
+                </div>
+        <div style="font-size: 15px;
+                     font-weight: bold;
+                     color: #2A3F54;
+                          text-align: center;">
+                        <br>
+                        Total Efectivo: {{ totale.total| intdot   }} ₲
+                <br>
+                        Total Tarjeta: {{ totalt.total| intdot  }} ₲
+                <br>
+                        Total Cheque: {{ totalch.total| intdot  }} ₲
+
+            </div>
+            <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
+
+                    <a class="btn btn-primary pull-right" href="/tienda/ventas/new"><i  class="fa fa-plus-square"></i> NUEVA VENTA</a>
+
+            </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                  <form method="GET" action="/tienda/ventas/fechas"  class="form form-inline hidden-print">
+
+                            <label for="fecha">Fecha</label>
+                            <input class="form-control" type="text" value="{{ fecha_desde }}" name="fecha_desde" data-inputmask="'mask': '99/99/9999'" &nbsp>
+                            <input class="form-control" type="text" value="{{ fecha_hasta}}" name="fecha_hasta" data-inputmask="'mask': '99/99/9999'" &nbsp>
+
+                            <input class="btn btn-primary" type="submit" value="Ver">
+
+                            <br>
+                        </form>
+                <br>
+
+
+                    <div class="x_content">
+
+                        <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap"
+                               cellspacing="0"
+                               width="100%">
+
+                            <thead>
+
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Nro de Factura</th>
+                                <th>Cliente</th>
+                                <th>Gravadas 10%</th>
+                                <th>IVA 10%</th>
+                                <th>Gravadas 5%</th>
+                                <th>IVA 5%</th>
+                                <th>Excentas</th>
+                                <th>Total IVA</th>
+                                <th>Monto Total</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+
+                            </thead>
+                            <tbody>
+
+                            {% for venta in ventas     %}
+                                <tr>
+                                    <td>{{ venta.fecha }}</td>
+                                    <td>{{ venta.nro_factura }}</td>
+                                    <td>{{ venta.cliente.nombre_razon }}</td>
+                                    <td>{{ venta.total_grav_10| intdot }} ₲</td>
+                                    <td>{{ venta.total_iva_10| intdot }} ₲</td>
+                                    <td>{{ venta.total_grav_5| intdot }} ₲</td>
+                                    <td>{{ venta.total_iva_5| intdot }} ₲</td>
+                                    <td>{{ venta.total_grav_exentas| intdot }} ₲</td>
+                                    <td>{{ venta.total_iva| intdot }} ₲</td>
+                                    <td>{{ venta.monto_total| intdot }} ₲</td>
+                                    <td>{{ venta.estado }}</td>
+                                    <td>
+
+                                        <a button class="btn btn-primary btn-xs" href="/tienda/ventas/{{ venta.nro_factura }}">Detalle</a>
+                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"
+                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Cancelar</a>
+
+                                    </td>
+
+{#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ venta.id }}/update">Editar </a>#}
+{#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
+{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Eliminar</a></td>#}
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- eliminar modal -->
+    <div id="eliminar-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel2">Confirmación</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Esta seguro que desea cancelar esta Factura?</h4>
+
+                </div>
+                <div class="modal-footer">
+                    <form method="post" id="eliminar-form">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-danger" value="Cancelar Venta">
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function formEliminar(id){
+            $('#eliminar-form').attr('action', '/tienda/ventas/' + id + '/cancelar' );
+
+        }
+    </script>
+{% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Venta</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+<p style="text-align: center;"> <span style="font-size: 12pt;">Cargar los datos del empleado, según sean <strong>obligatorio u opcionales</strong>.</span></p>
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_cuentaslista.gif" alt="pasos_cuentaslista" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Guardar registro de empleado, clic en : <img src="/static/img/guardar.png" alt="guardar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Si no desea guardar el registro dar clic en : <img src="/static/img/cancelar.png" alt="cancelar" /></strong></span></p>
+{% endblock %}
