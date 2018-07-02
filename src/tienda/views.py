@@ -496,6 +496,8 @@ def vender(request):
 
     if request.method == 'POST':
 
+        credito = 'tipo_pago' in request.POST and 'Crédito' == request.POST['tipo_pago']
+
         form = FormularioVentaVerificar(request.POST, request.FILES,instance=venta)
         formularioDetalleSet = FormularioDetalleSet(request.POST, request.FILES, instance=venta)
         formularioPago = FormularioPago(request.POST, request.FILES, instance=pago,prefix='pago')
@@ -518,16 +520,20 @@ def vender(request):
 
             if form.is_valid() and len(formularioDetalleSet) > 0 \
                     and formularioDetalleSet.is_valid() and formularioCliente.is_valid() \
-                    and formularioPago.is_valid() and pagos_validacion[0]:
+                    and ((formularioPago.is_valid() and pagos_validacion[0]) or credito):
                 cliente = formularioCliente.save()
                 venta = form.save(commit=False)
                 venta.cliente = cliente
+                if credito:
+                    venta.estado = 'P'
+
                 venta.save()
                 detalles = formularioDetalleSet.save()
-                pago=formularioPago.save(commit=False)
-                pago.venta = venta
-                limpiar_pago(pago)
-                pago.save()
+                if not credito:
+                    pago=formularioPago.save(commit=False)
+                    pago.venta = venta
+                    limpiar_pago(pago)
+                    pago.save()
 
 
                 for detalle in detalles:
@@ -867,7 +873,9 @@ def delete_cliente(request, ruc_cliente):
 
 def consulta_factura(request, nro_factura):
     cabecera = VentaCabecera.objects.get(nro_factura=nro_factura)
-    pago = Pago.objects.get(venta=cabecera)
+    pago = None
+    if cabecera.tipo_pago == 'Contado':
+        pago = Pago.objects.get(venta=cabecera)
     detalles = VentaDetalle.objects.filter(venta__nro_factura=nro_factura)
     talonario = cabecera.talonario_factura
     context = {'detalles': detalles, 'talonario': talonario, 'cabecera': cabecera, 'pago': pago}

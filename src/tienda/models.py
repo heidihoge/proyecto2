@@ -114,6 +114,8 @@ class VentaCabecera(models.Model):
                  ('Crédito', 'Crédito'))
     tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO, default='Contado')
 
+    credito_plazo = models.IntegerField(default=0)
+
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField(default=datetime.date.today)
     monto_total = models.IntegerField(default=0)
@@ -124,7 +126,9 @@ class VentaCabecera(models.Model):
     total_grav_exentas = models.IntegerField(default=0)
     total_iva = models.IntegerField(default=0)
     ESTADO = (('A', 'ACTIVO'),
-              ('IN', 'INACTIVO'))
+              ('IN', 'INACTIVO'),
+              ('P', 'PENDIENTE'),
+              )
     estado = models.CharField(max_length=2, choices=ESTADO, default='A')
 
     def __str__(self):

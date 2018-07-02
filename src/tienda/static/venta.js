@@ -19,8 +19,30 @@
         }
         $(document).ready(function () {
             window.rowTemplate = $('#row-template');
-            configurarICheck($('[name=tipo_pago]'));
+            var tipoPago = $('[name=tipo_pago]');
+            configurarICheck(tipoPago);
+            var plazo = $('#id_credito_plazo');
+            plazo.attr('readonly', true);
+            var creditoBtn = $('#credito-btn');
+            creditoBtn.hide();
+            var pagoBtn = $('#pago-btn');
+            pagoBtn.show();
+
+            tipoPago.on('ifChecked', function (event) {
+                var tipo = $(this).val();
+                if (tipo === 'Contado') {
+                    plazo.attr('readonly', true);
+                    creditoBtn.hide();
+                    pagoBtn.show();
+                } else {
+                    plazo.removeAttr('readonly');
+                    creditoBtn.show();
+                    pagoBtn.hide();
+                }
+            });
+
             configurarICheck($('[name=metodo_pago]'));
+
             window.totalForms = $('#id_ventadetalle_set-TOTAL_FORMS');
             window.totalForms.val(0);
             
@@ -337,7 +359,7 @@
 
                         document.location.href = data.redirect;
                     } else {
-                        notifyError("Error al guardar pago, verifique los campos");
+                        notifyError("Error al guardar venta, verifique los campos");
                         if(data.clienteErrors) {
 
                             pagoModal.modal('hide');

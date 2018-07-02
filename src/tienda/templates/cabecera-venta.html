@@ -49,11 +49,17 @@
     <input type="hidden" name="nro_factura_punto_emision" id="id_nro_factura_punto_emision" value="{{ talonario.punto_emision }}">
     <input type="hidden" name="nro_factura_numero" value="{{ nro_factura }}" id="id_nro_factura_numero">
     <!-- Tipo de pago -->
-    <div class="form-group col-md-3 col-sm-3 col-xs-12 pull-right">
+    <div class="form-group col-md-2 col-sm-2 col-xs-12 pull-right">
+        {% include "forms/label.html" with field=form.credito_plazo %}
+        {% include "forms/integerfield.html" with field=form.credito_plazo %}
+        {% include "forms/field-errors.html" with field=form.credito_plazo %}
+    </div>
+    <div class="form-group col-md-2 col-sm-2 col-xs-12 pull-right">
         {% include "forms/label.html" with field=form.tipo_pago %}
         {{ form.tipo_pago }}
         {% include "forms/field-errors.html" with field=form.tipo_pago %}
     </div>
+
 </div>
 
 <!-- Cliente -->

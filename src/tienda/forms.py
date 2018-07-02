@@ -124,6 +124,7 @@ class FormularioVenta(forms.ModelForm):
         widget=forms.RadioSelect(choices=VentaCabecera.TIPO_PAGO),
         label="Condición de venta"
     )
+    credito_plazo = forms.IntegerField(initial=0)
 
     cliente = CustomModelChoiceField(
         label='Ruc Cliente',
@@ -140,7 +141,7 @@ class FormularioVenta(forms.ModelForm):
     class Meta:
         model = VentaCabecera
 
-        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
+        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'credito_plazo', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
                   'total_iva_5', 'total_iva_10','total_grav_5', 'total_grav_10', 'total_iva', 'total_grav_exentas']
 
@@ -160,7 +161,7 @@ class FormularioVentaVerificar(forms.ModelForm):
     class Meta:
         model = VentaCabecera
 
-        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'monto_total',
+        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'credito_plazo', 'monto_total',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
                   'total_iva_5', 'total_iva_10', 'total_grav_5', 'total_grav_10', 'total_grav_exentas', 'total_iva']
         exclude = ["cliente"]

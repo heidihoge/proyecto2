@@ -54,28 +54,31 @@
                             <strong>Fecha:</strong> <span>{{ cabecera.fecha }}</span><br>
                             <strong>Ruc cliente:</strong> <span>{{ cabecera.cliente.ruc_cliente }}</span><br>
                             <strong>Cliente:</strong> <span>{{ cabecera.cliente.nombre_razon }}</span><br>
-                            <strong>Metodo de pago:</strong><br>
-
-                            {% if pago.pago_efectivo %}
-                                <span>EFECTIVO</span><br>
-                                <strong>Monto Efectivo:</strong> <span>{{ pago.monto_efectivo | intdot }} ₲</span><br>
-                                <strong>Monto Abonado:</strong> <span>{{ pago.monto_efectivo_abonado | intdot }} ₲</span><br>
-                                <strong>Monto Vuelto:</strong> <span>{{ pago.monto_efectivo_vuelto | intdot }} ₲</span><br>
-                            {% endif %}
-                            {% if pago.pago_tarjeta %}
-                                <span>TARJETA</span><br>
-                                <strong>Monto Tarjeta:</strong> <span>{{ pago.monto_tarjeta | intdot }} ₲</span><br>
-                                <strong>Tarjeta:</strong> <span>{{ pago.tarjeta }}</span><br>
-                                <strong>Tarjeta Nro:</strong> <span>{{ pago.ultimos_tarjeta }}</span>
-                                <strong>Cupón Nro:</strong> <span>{{ pago.nro_autorizacion }}</span>
-                            {% endif %}
-                            {% if pago.pago_cheque %}
-                                <span>CHEQUE</span><br>
-                                <strong>Monto Cheque:</strong>{{ pago.monto_cheque | intdot }} ₲<span></span><br>
-                                <strong>Banco:</strong> <span>{{ pago.banco }}</span><br>
-                                <strong>Cheque Nro:</strong> <span>{{ pago.nro_cheque }}</span><br>
-                                <strong>Cuenta Nro:</strong> <span>{{ pago.nro_cuenta }}</span><br>
-                                <strong>Librador:</strong> <span>{{ pago.librador }}</span><br>
+                            <strong>Condición de venta: </strong><span>{{ cabecera.tipo_pago }}</span><br>
+                            {% if cabecera.tipo_pago == 'Contado' %}
+                                {% if pago.pago_efectivo %}
+                                    <span>EFECTIVO</span><br>
+                                    <strong>Monto Efectivo:</strong> <span>{{ pago.monto_efectivo | intdot }} ₲</span><br>
+                                    <strong>Monto Abonado:</strong> <span>{{ pago.monto_efectivo_abonado | intdot }} ₲</span><br>
+                                    <strong>Monto Vuelto:</strong> <span>{{ pago.monto_efectivo_vuelto | intdot }} ₲</span><br>
+                                {% endif %}
+                                {% if pago.pago_tarjeta %}
+                                    <span>TARJETA</span><br>
+                                    <strong>Monto Tarjeta:</strong> <span>{{ pago.monto_tarjeta | intdot }} ₲</span><br>
+                                    <strong>Tarjeta:</strong> <span>{{ pago.tarjeta }}</span><br>
+                                    <strong>Tarjeta Nro:</strong> <span>{{ pago.ultimos_tarjeta }}</span>
+                                    <strong>Cupón Nro:</strong> <span>{{ pago.nro_autorizacion }}</span>
+                                {% endif %}
+                                {% if pago.pago_cheque %}
+                                    <span>CHEQUE</span><br>
+                                    <strong>Monto Cheque:</strong>{{ pago.monto_cheque | intdot }} ₲<span></span><br>
+                                    <strong>Banco:</strong> <span>{{ pago.banco }}</span><br>
+                                    <strong>Cheque Nro:</strong> <span>{{ pago.nro_cheque }}</span><br>
+                                    <strong>Cuenta Nro:</strong> <span>{{ pago.nro_cuenta }}</span><br>
+                                    <strong>Librador:</strong> <span>{{ pago.librador }}</span><br>
+                                {% endif %}
+                            {% else %}
+                                <strong>Plazo:</strong> <span>{{ cabecera.credito_plazo }} días</span><br>
                             {% endif %}
                         </div>
                         <table class="table table-striped table-bordered dt-responsive nowrap"
@@ -233,7 +236,10 @@
             <span>Fecha:</span><span class="pull-right">{{ cabecera.fecha }}</span><br>
             <span>Ruc:</span><span class="pull-right">{{ cabecera.cliente.ruc_cliente }}</span><br>
             <span>Cliente:</span><span class="pull-right">{{ cabecera.cliente.nombre_razon }}</span><br>
-
+            <span>Condición de venta:</span><span class="pull-right">{{ cabecera.tipo_pago }}</span><br>
+            {% if cabecera.tipo_pago == 'Crédito' %}
+                <span>Plazo:</span><span class="pull-right">{{ cabecera.credito_plazo }} días</span><br>
+            {% endif %}
             {% if pago.pago_efectivo %}
                 <hr>
                 <span>Metodo de pago:</span> <span class="pull-right">EFECTIVO</span><br>
@@ -258,28 +264,6 @@
                 <span>Cuenta Nro:</span><span class="pull-right">{{ pago.nro_cuenta }}</span><br>
                 <span>Librador:</span><span class="pull-right">{{ pago.librador }}</span><br>
             {% endif %}
-
-{#        {% if pago.pago_efectivo %}#}
-{#                                <span>EFECTIVO</span><br>#}
-{#                                <strong>Monto Efectivo:</strong> <span>{{ pago.monto_efectivo | intdot }} ₲</span><br>#}
-{#                                <strong>Monto Abonado:</strong> <span>{{ pago.monto_efectivo_abonado | intdot }} ₲</span><br>#}
-{#                                <strong>Monto Vuelto:</strong> <span>{{ pago.monto_efectivo_vuelto | intdot }} ₲</span><br>#}
-{#                            {% endif %}#}
-{#                            {% if pago.pago_tarjeta %}#}
-{#                                <span>TARJETA</span><br>#}
-{#                                <strong>Monto Tarjeta:</strong> <span>{{ pago.monto_tarjeta | intdot }} ₲</span><br>#}
-{#                                <strong>Tarjeta:</strong> <span>{{ pago.tarjeta }}</span><br>#}
-{#                                <strong>Tarjeta Nro:</strong> <span>{{ pago.ultimos_tarjeta }}</span>#}
-{#                                <strong>Cupón Nro:</strong> <span>{{ pago.nro_autorizacion }}</span>#}
-{#                            {% endif %}#}
-{#                            {% if pago.pago_cheque %}#}
-{#                                <span>CHEQUE</span><br>#}
-{#                                <strong>Monto Cheque:</strong>{{ pago.monto_cheque | intdot }} ₲<span></span><br>#}
-{#                                <strong>Banco:</strong> <span>{{ pago.banco }}</span><br>#}
-{#                                <strong>Cheque Nro:</strong> <span>{{ pago.nro_cheque }}</span><br>#}
-{#                                <strong>Cuenta Nro:</strong> <span>{{ pago.nro_cuenta }}</span><br>#}
-{#                                <strong>Librador:</strong> <span>{{ pago.librador }}</span><br>#}
-{#                            {% endif %}#}
 
         </div>
 
