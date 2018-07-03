@@ -804,8 +804,8 @@ def export_productos_csv(request):
     response['Content-Disposition'] = 'attachment; filename="productos.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['codigo', 'nombre', 'foto_producto', 'descripcion', 'control_stock','precio_venta','costo','iva','estado'])
-    productos = Producto.objects.all().values_list('codigo', 'nombre','foto_producto','descripcion','precio_venta','costo','iva','estado')
+    writer.writerow(['codigo', 'nombre',  'descripcion', 'control_stock','precio_venta','costo','iva','estado'])
+    productos = Producto.objects.all().values_list('codigo', 'nombre','descripcion','control_stock','precio_venta','costo','iva','estado')
     for producto in productos:
         writer.writerow(producto)
 
