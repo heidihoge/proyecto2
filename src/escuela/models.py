@@ -132,6 +132,7 @@ class Cuenta(models.Model):
     monto_pagado = models.IntegerField(default=0)
     pagado = models.BooleanField(default=False)
     detalle = models.ForeignKey(VentaDetalle, on_delete=models.PROTECT, null=True)
+    referencia = models.CharField(max_length=100 , null=True,blank=True, default='' )
 
     def __str__(self):
         return "Alumno: {1} {0} Vto: {2}".format(str(self.inscripcion.grupo.short_desc()), str(self.inscripcion.alumno), str(self.vencimiento))

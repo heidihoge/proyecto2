@@ -46,7 +46,9 @@
                                 <th>Monto</th>
                                 <th>Monto Pagado</th>
                                 <th>Pagado</th>
-                                <th>Nro de factura</th>
+                                <th>Comprobante</th>
+                                <th>Referencia</th>
+                                <th>Acción</th>
 
                             </tr>
                             </thead>
@@ -69,14 +71,15 @@
                                     {% endif %}
                                 </td>
 
+                                   <td>{{cuenta.referencia  }}</td>
 
 
 
-{#                                    <td><a class="btn btn-info btn-xs" href="/escuela/cuentas/{{ cuenta.id }}/update">Editar </a>#}
-{##}
+                                    <td><a class="btn btn-info btn-xs" href="/escuela/cuentas/{{ cuenta.id }}/update">Editar </a>
+
 {#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
 {#                                           data-target="#eliminar-modal" onclick="formEliminar({{ cuenta.id }})">Eliminar</a></td>#}
-{#                                </tr>#}
+                                </tr>
                                 </tr>
                             {% endfor %}
 

@@ -791,7 +791,7 @@ def update_factura(request, id):
 
     return render(request, 'facturas-form.html', {'form': form, 'factura': factura})
 
-# probando reporte
+#  reporte
 
 import csv
 
@@ -853,6 +853,17 @@ def reporte_compras(request):
 
 from tienda.models import Cliente
 
+def export_clientes_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="clientes.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Nombre', 'RUC', 'Dirección', 'Teléfono'])
+    clientes = Cliente.objects.all().values_list('nombre_razon', 'ruc_cliente','direccion','telefono')
+    for cliente in clientes:
+        writer.writerow(cliente)
+
+    return response
 
 def list_clientes(request):
     clientes = Cliente.objects.all()

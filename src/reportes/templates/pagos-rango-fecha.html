@@ -30,14 +30,14 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_content">
-                  <form method="GET" action="/reportes/pagos/fechas"  class="form form-inline hidden-print">
+                  <form method="GET" action="/reportes/pagos/tarjetas"  class="form form-inline hidden-print">
 
                             <label for="fecha">Fecha</label>
                             <input class="form-control" type="text" value="{{ fecha_desde }}" name="fecha_desde" data-inputmask="'mask': '99/99/9999'" &nbsp>
                             <input class="form-control" type="text" value="{{ fecha_hasta}}" name="fecha_hasta" data-inputmask="'mask': '99/99/9999'" &nbsp>
                 <input class="btn btn-primary" type="submit" value="Ver">
                       <label for="excel" class="btn btn-success"><i class="fa fa-download"></i> CSV</label>
-                            <input id="excel" type="submit" name="action" class="hidden" value="Excel">
+                      <input id="excel" type="submit" name="action" class="hidden" value="Excel">
 
                             <br>
                         </form>
@@ -69,11 +69,11 @@
 
                                 {% for pagos in pagos     %}
                                     <tr>
-                                    <td>{{ pagos.venta.fecha }}</td>
-                                    <td>{{ pagos.monto_tarjeta | intdot }} ₲
-                                    <td>{{ pagos.tarjeta }}</td>
-                                    <td>{{ pagos.nro_autorizacion}}</td>
-                                    <td>{{ pagos.ultimos_tarjeta}}</td>
+                                    <td>{{ pagos.0 }}</td>
+                                    <td>{{ pagos.1 | intdot }} ₲
+                                    <td>{{ pagos.2 }}</td>
+                                    <td>{{ pagos.3}}</td>
+                                    <td>{{ pagos.4}}</td>
                                     </tr>
                                 {% endfor %}
 

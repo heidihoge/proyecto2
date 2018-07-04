@@ -85,7 +85,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 
-from .forms import FormularioClase,FormularioGrupo, FormularioAsistencia, FomularioEtiqueta, FomularioEtiquetaClase, FormularioEtiquetaGrupo, FormularioInscripcion
+from .forms import FormularioClase, FormularioGrupo, FormularioAsistencia, FomularioEtiqueta, FomularioEtiquetaClase, \
+    FormularioEtiquetaGrupo, FormularioInscripcion, FormularioCuenta
 from .models import Clase, Grupo, Etiqueta, EtiquetaGrupo, EtiquetaClase, Inscripcion, Asistencia, Cuenta
 
 
@@ -503,6 +504,8 @@ def list_inscripciones_baja(request):
 
 
 import datetime
+
+@permission_required('escuela.inscripcion_baja', raise_exception=True)
 def baja_inscripcion(request, id):
 
     try:
@@ -761,6 +764,43 @@ def list_cuentas(request):
         cuenta = cuenta.filter(vencimiento__gte=fecha_inicio, vencimiento__lte=fecha_fin)
 
     return render(request, 'cuentas.html', {'cuentas': cuenta, 'mes': mes})
+
+
+
+def update_cuenta(request, id):
+    try:
+        cuenta = Cuenta.objects.get(id=id)
+    except:
+        return redirect('404')
+    if request.method == 'POST':
+        form = FormularioCuenta(request.POST, request.FILES, instance=cuenta)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cuenta actualizada correctamente.')
+            return redirect('list_cuentas')
+        messages.error(request, 'Error al modificar Cuenta.')
+    else:
+        form = FormularioCuenta(instance=cuenta)
+
+    return render(request, 'cuentas-form.html', {'form': form, 'cuenta': cuenta})
+
+
+def delete_cuenta(request, id):
+    try:
+        clase = Clase.objects.get(id=id)
+    except:
+        return redirect('404')
+
+    if request.method == 'POST':
+        clase.delete()
+        messages.success(request, 'Clase eliminada correctamente.')
+
+    return redirect('list_clases')
+
+
+
+
 
 
 from datetime import datetime

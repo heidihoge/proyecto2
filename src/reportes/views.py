@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.db import connection
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.shortcuts import render
 
 # Create your views here.
@@ -346,12 +346,23 @@ def balance(request):
 
 
 # pagos en tarjetas
+def export_tarjeta_csv(pagos):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="reporte.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['venta', 'monto', 'tarjeta','nro_autorizacion','ultimos_tarjeta'])
+
+    for pago in pagos:
+        writer.writerow(list(pago))
+
+    return response
+
 
 def list_pagos_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
     accion = request.GET.get('action', 'Ver')
-
 
     if not fecha_desde :
         fecha_desde = datetime.date.today()
@@ -363,25 +374,18 @@ def list_pagos_fechas(request):
     else:
         fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
 
-    pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde, venta__fecha__lte=fecha_hasta ,pago_tarjeta=True)
+    pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde,
+                                venta__fecha__lte=fecha_hasta ,pago_tarjeta=True)\
+        .values_list('venta__fecha', 'monto','tarjeta','nro_autorizacion','ultimos_tarjeta')
 
-    #
-    # if accion == 'Excel':
-    #     return export_pago_tarjeta(pagos)
+    context = {'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta,
+               'pagos': pagos}
 
-    return render(request, 'pagos-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
-                                            'pagos': pagos})
+    if accion == 'Excel':
+        return export_tarjeta_csv(pagos)
+
+    return render(request, "pagos-rango-fecha.html", context)
 
 
 
 
-# def export_pago_tarjeta(pagos):
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="pago-tarjeta.csv"'
-#
-#     writer = csv.writer(response)
-#     writer.writerow(['Fecha', 'Monto', 'Tipo de Tarjeta', 'Nº de Autorización','Nº de Tarjeta'])
-#
-#     for pagos in pagos:
-#         writer.writerow(pagos['venta.fecha'], pagos['monto_tarjeta'], pagos['tarjeta'],pagos['nro_autorizacion'],pagos['ultimos_tarjeta'])
-#     return response

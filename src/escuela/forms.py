@@ -2,7 +2,7 @@
 from dal import autocomplete
 from django import forms
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.db.models import ManyToOneRel
+from django.db.models import ManyToOneRel, __all__
 from django.forms import DateField
 
 from escuela import admin
@@ -10,7 +10,7 @@ from main.forms import CustomModelChoiceField
 from main.models import Profesor, Alumno, Persona
 from main.utils import CurrencyIntegerField
 from proyecto2 import settings
-from .models import Clase, Grupo,  Etiqueta, EtiquetaClase, EtiquetaGrupo,Inscripcion,Asistencia
+from .models import Clase, Grupo, Etiqueta, EtiquetaClase, EtiquetaGrupo, Inscripcion, Asistencia, Cuenta
 
 
 #Formulario Clase
@@ -23,6 +23,17 @@ class FormularioClase(forms.ModelForm):
         super(FormularioClase, self).__init__(*args, **kwargs)
         self.fields['nombre'].widget.attrs['placeholder'] = 'Nombre del grupo. Ej: Natación Adultos'
         self.fields['descripcion'].widget.attrs['placeholder'] = 'Reseña del curso y a quien va dirigido incluso la edad'
+
+
+class FormularioCuenta(forms.ModelForm):
+    referencia = forms.CharField(required=False)
+    monto = CurrencyIntegerField(initial=0)
+    monto_pagado = CurrencyIntegerField(initial=0)
+    class Meta:
+        model = Cuenta
+        fields = ['vencimiento','monto','monto_pagado','pagado','referencia']
+
+
 
 #Formulario Grupo
 class FormularioGrupo(forms.ModelForm):
