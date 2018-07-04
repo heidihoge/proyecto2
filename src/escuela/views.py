@@ -105,11 +105,14 @@ class ClaseAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
+@login_required() #permiso login
+#@permission_required('escuela.clase_list', raise_exception=True)
 def list_clases(request):
     clase = Clase.objects.all()
     return render(request, 'clases.html', {'clases': clase})
 
-
+@login_required() #permiso login
+#@permission_required('escuela.clase_create', raise_exception=True)
 def create_clase(request):
     print(request.method)
     if request.method == 'POST':
@@ -127,7 +130,8 @@ def create_clase(request):
 
     return render(request, 'clases-form.html', {'form': form})
 
-
+@login_required() #permiso login
+#@permission_required('escuela.clase_update', raise_exception=True)
 def update_clase(request, id):
     try:
         clase = Clase.objects.get(id=id)
@@ -146,7 +150,8 @@ def update_clase(request, id):
 
     return render(request, 'clases-form.html', {'form': form, 'clase': clase})
 
-
+@login_required() #permiso login
+@permission_required('escuela.clase_delete', raise_exception=True)
 def delete_clase(request, id):
     try:
         clase = Clase.objects.get(id=id)
@@ -161,12 +166,14 @@ def delete_clase(request, id):
 
 
 # ---------------------VISTA GRUPO --------------------------------
-
+@login_required() #permiso login
+#@permission_required('escuela.grupos_list', raise_exception=True)
 def list_grupos(request):
     grupo = Grupo.objects.all()
     return render(request, 'grupos.html', {'grupos': grupo})
 
-
+@login_required() #permiso login
+#@permission_required('escuela.grupos_create', raise_exception=True)
 def create_grupo(request):
     print(request.method)
     if request.method == 'POST':
@@ -184,7 +191,8 @@ def create_grupo(request):
 
     return render(request, 'grupos-form.html', {'form': form})
 
-
+@login_required() #permiso login
+#@permission_required('escuela.grupos_update', raise_exception=True)
 def update_grupo(request, id):
     try:
         grupo = Grupo.objects.get(id=id)
@@ -203,7 +211,8 @@ def update_grupo(request, id):
 
     return render(request, 'grupos-form.html', {'form': form, 'clase': grupo})
 
-
+@login_required() #permiso login
+@permission_required('escuela.grupo_delete', raise_exception=True)
 def delete_grupo(request, id):
     try:
         grupo = Grupo.objects.get(id=id)
@@ -287,12 +296,12 @@ def delete_grupo(request, id):
 # ---------------------VISTA ETIQUETA --------------------------------
 
 
-
+@login_required() #permiso login
 def list_etiquetas(request):
     etiqueta = Etiqueta.objects.all()
     return render(request, 'etiquetas.html', {'etiquetas': etiqueta})
 
-
+@login_required() #permiso login
 def create_etiqueta(request):
     print(request.method)
     if request.method == 'POST':
@@ -310,7 +319,7 @@ def create_etiqueta(request):
 
     return render(request, 'etiquetas-form.html', {'form': form})
 
-
+@login_required() #permiso login
 def update_etiqueta(request, id):
     try:
         etiqueta = Etiqueta.objects.get(id=id)
@@ -329,7 +338,7 @@ def update_etiqueta(request, id):
 
     return render(request, 'etiquetas-form.html', {'form': form, 'etiquetas': etiqueta})
 
-
+@login_required() #permiso login
 def delete_etiqueta(request, id):
     try:
         etiqueta = Etiqueta.objects.get(id=id)
@@ -343,11 +352,12 @@ def delete_etiqueta(request, id):
     return redirect('list_etiquetas')
 
 # ---------------------VISTA ETIQUETA_CLASE --------------------------------
+@login_required() #permiso login
 def list_etiquetas_clase(request):
     etiqueta_clase = EtiquetaClase.objects.all()
     return render(request, 'etiqueta_clases.html', {'etiquetas_clases': etiqueta_clase})
 
-
+@login_required() #permiso login
 def create_etiquetas_clase(request):
     print(request.method)
     if request.method == 'POST':
@@ -365,7 +375,7 @@ def create_etiquetas_clase(request):
 
     return render(request, 'etiqueta_clases.html', {'form': form})
 
-
+@login_required() #permiso login
 def update_etiquetas_clase(request, id):
     try:
         etiqueta_clase = EtiquetaClase.objects.get(id=id)
@@ -384,7 +394,7 @@ def update_etiquetas_clase(request, id):
 
     return render(request, 'etiqueta_clases-form.html', {'form': form, 'etiquetas_clases': etiqueta_clase})
 
-
+@login_required() #permiso login
 def delete_etiquetas_clase(request, id):
     try:
         etiqueta_clase = EtiquetaClase.objects.get(id=id)
@@ -398,12 +408,12 @@ def delete_etiquetas_clase(request, id):
     return redirect('list_etiquetas_clase')
 
 # ---------------------VISTA ETIQUETA_GRUPO --------------------------------
-
+@login_required() #permiso login
 def list_etiquetas_grupo(request):
     etiqueta_grupo = EtiquetaGrupo.objects.all()
     return render(request, 'etiqueta_grupos.html', {'etiquetas_grupos': etiqueta_grupo})
 
-
+@login_required() #permiso login
 def create_etiquetas_grupo(request):
     print(request.method)
     if request.method == 'POST':
@@ -421,7 +431,7 @@ def create_etiquetas_grupo(request):
 
     return render(request, 'etiqueta_grupos.html', {'form': form})
 
-
+@login_required() #permiso login
 def update_etiquetas_grupo(request, id):
     try:
         etiqueta_grupo = EtiquetaGrupo.objects.get(id=id)
@@ -440,7 +450,7 @@ def update_etiquetas_grupo(request, id):
 
     return render(request, 'etiqueta_grupos-form.html', {'form': form, 'etiquetas_grupos': etiqueta_grupo})
 
-
+@login_required() #permiso login
 def delete_etiquetas_grupo(request, id):
     try:
         etiqueta_grupo = EtiquetaGrupo.objects.get(id=id)
@@ -454,14 +464,17 @@ def delete_etiquetas_grupo(request, id):
     return redirect('list_etiquetas_grupo')
 # ---------------------VISTA INSCRIPCION --------------------------------
 
+@login_required() #permiso login
 def list_inscripciones(request):
     inscripcion = Inscripcion.objects.filter(estado='A')
     return render(request, 'inscripciones.html', {'inscripciones': inscripcion})
 
+@login_required() #permiso login
 def list_inscripciones_inactivas(request):
     inscripcion = Inscripcion.objects.filter(estado='IN')
     return render(request, 'inscripciones-inactivas.html', {'inscripciones': inscripcion})
 
+@login_required() #permiso login
 def create_inscripcion(request):
     print(request.method)
     form_inscripcion = FormularioInscripcion()
@@ -476,6 +489,7 @@ def create_inscripcion(request):
     })
 
 
+@login_required() #permiso login
 def update_inscripcion(request, id):
     try:
         inscripcion = Inscripcion.objects.get(id=id)
@@ -504,7 +518,7 @@ def list_inscripciones_baja(request):
 
 
 import datetime
-
+@login_required()
 @permission_required('escuela.inscripcion_baja', raise_exception=True)
 def baja_inscripcion(request, id):
 
@@ -526,7 +540,7 @@ def baja_inscripcion(request, id):
 
 # ---------------------VISTA ASISTENCIA --------------------------------
 
-
+@login_required()
 def lista_asistencia(request):
     def alumno_json(alumno):
 
@@ -600,6 +614,7 @@ def lista_asistencia(request):
 
     return JsonResponse(ret, safe=False)
 
+@login_required()
 def guardar_inscripcion(request):
     if request.method == 'POST':
         titular = None
@@ -677,6 +692,7 @@ def guardar_inscripcion(request):
         return JsonResponse({"errores": errores}, safe=False)
     raise Http404()
 
+@login_required()
 def create_asistencia(request):
     print(request.method)
     if request.method == 'POST':
@@ -694,7 +710,7 @@ def create_asistencia(request):
 
     return render(request, 'asistencias-form.html', {'form': form})
 
-
+@login_required()
 def update_asistencia(request):
     if request.method == 'POST':
 
@@ -751,6 +767,8 @@ class GrupoAutocompleteAsistencia(GrupoAutocomplete):
 
 # ----------VISTA DE CUENTAS ----------------------------------------
 
+@login_required()
+#@permission_required('escuela.cuenta_list', raise_exception=True)
 def list_cuentas(request):
 
     mes = request.GET.get('mes', None)
@@ -766,7 +784,8 @@ def list_cuentas(request):
     return render(request, 'cuentas.html', {'cuentas': cuenta, 'mes': mes})
 
 
-
+@login_required()
+@permission_required('escuela.cuenta_update', raise_exception=True)
 def update_cuenta(request, id):
     try:
         cuenta = Cuenta.objects.get(id=id)
@@ -785,7 +804,8 @@ def update_cuenta(request, id):
 
     return render(request, 'cuentas-form.html', {'form': form, 'cuenta': cuenta})
 
-
+@login_required()
+@permission_required('escuela.cuenta_delete', raise_exception=True)
 def delete_cuenta(request, id):
     try:
         clase = Clase.objects.get(id=id)
@@ -794,7 +814,7 @@ def delete_cuenta(request, id):
 
     if request.method == 'POST':
         clase.delete()
-        messages.success(request, 'Clase eliminada correctamente.')
+        messages.success(request, 'Cuenta eliminada correctamente.')
 
     return redirect('list_clases')
 

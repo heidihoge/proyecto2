@@ -353,9 +353,9 @@ class FormularioOperacionCaja(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FormularioOperacionCaja, self).__init__(*args, **kwargs)
-        self.fields['concepto'].widget.attrs['placeholder'] = 'Gastos o entrada de dinero para caja chica. Ej: Gastos Varios'
-        self.fields['descripcion'].widget.attrs['placeholder'] = 'Breve descripción del gasto'
-        self.fields['monto'].widget.attrs['placeholder'] = 'Monto del gasto realizado'
+        self.fields['concepto'].widget.attrs['placeholder'] = 'Gastos o entrada de dinero para caja chica. Ej: Gastos Varios.'
+        self.fields['descripcion'].widget.attrs['placeholder'] = 'Breve descripción de la entrada o salida.'
+        self.fields['monto'].widget.attrs['placeholder'] = 'Monto del la entrada o salida.'
 
 
     tipo_transaccion = forms.ChoiceField(

@@ -16,13 +16,20 @@ class Clase(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=150)
 
+    class Meta:
+        permissions = (
+           ("clase_delete", "Dar de baja clase"),
+           ("clase_create", "Crear clase"),
+           ("clase_update", "Editar clase"),
+           ("clase_list", "Listar clase"),
+        )
 
     def __str__(self):
         return  self.nombre
 
+
+
 # grupo
-
-
 class Grupo(models.Model):
     id_clase = models.ForeignKey(Clase, on_delete=models.PROTECT,null=True)
     id_profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL,null=True)
@@ -37,6 +44,14 @@ class Grupo(models.Model):
     domingo = models.BooleanField(default=False, null=False, blank=True)
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
+
+    class Meta:
+        permissions = (
+            ("grupo_delete", "Dar de baja grupo"),
+            ("grupos_create", "Crear grupo"),
+            ("grupos_update", "Editar grupo"),
+            ("grupos_list", "Listar grupo"),
+        )
 
     def get_dias(self):
         dias = zip(['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
@@ -133,6 +148,13 @@ class Cuenta(models.Model):
     pagado = models.BooleanField(default=False)
     detalle = models.ForeignKey(VentaDetalle, on_delete=models.PROTECT, null=True)
     referencia = models.CharField(max_length=100 , null=True,blank=True, default='' )
+
+    class Meta:
+        permissions = (
+            ("cuenta_list", "Listar cuenta"),
+            ("cuenta_update", "Editar cuenta"),
+            ("cuenta_delete", "Dar de baja cuenta"),
+        )
 
     def __str__(self):
         return "Alumno: {1} {0} Vto: {2}".format(str(self.inscripcion.grupo.short_desc()), str(self.inscripcion.alumno), str(self.vencimiento))

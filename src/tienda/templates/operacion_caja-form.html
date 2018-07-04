@@ -60,15 +60,24 @@
 
 {#AYUDA#}
 {% block ayuda_titulo %}
-   <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Operaciones de Caja</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Operacion</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-        <p style="text-align: center;">Se puede visualizar las operaciones realizadas o agregar una nueva operaci&oacute;n. Siga los siguientes pasos</p>
-        <p style="text-align: center;">&nbsp;</p>
-
-        <p><span style="color: #003366;"><strong>Paso 1. Llenar el formulario de Operacion de Caja : </strong></span></p>
-        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em> Fecha, Concepto, Descripci&oacute;n,
-            Monto, Tipo de Transacci&oacute;n</p>
-       <!-- <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Tel&eacute;fono, Otro contacto, Fotocopia de C&eacute;dula, Tipo Responsable</p>-->
-        <p><span style="color: #003366;"><strong>Paso 2. Guardar la operacion realizada <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+<p style="text-align: center;"> <span style="font-size: 12pt;">Cargar campos de la transación, según sean <strong>obligatorio u opcionales</strong>.</span></p>
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_nueva_caja.gif" alt="pasos_nueva_caja" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <br><hr>
+        <p><span style="color: #003366;"><strong> 1. Fecha de la transaccion anteriores o actual.
+            <br><br>2. Concepto: descripción de la entrada o salida realizada.
+            <br><br>3. Descripci&oacute;n: breve descripción de la entrada o salida.
+            <br><br>4. Monto.
+            <br><br>5. Tipo de transacción: elegir ENTRADA / SALIDA.
+            <hr>
+        <p style="text-align: center;"> <span style="font-size: 12pt;"><strong>Acciones  : </strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Guardar registro de la transacción, clic en : <img src="/static/img/guardar.png" alt="guardar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Limpiar campos del registro , clic en : <img src="/static/img/limpiar.png" alt="limpiar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Si no desea guardar el registro dar clic en : <img src="/static/img/cancelar.png" alt="cancelar" /></strong></span></p>
 {% endblock %}

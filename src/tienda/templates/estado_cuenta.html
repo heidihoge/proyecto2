@@ -141,11 +141,30 @@
 
 {#AYUDA#}
 {% block ayuda_titulo %}
-    <p style="text-align: center;"><br/><span style="font-size: 16pt;"><strong><span
-            style="color: #003366;">Finanzas </span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Estado de Cuenta</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
+<p style="text-align: center;"><span style="font-size: 14pt;">Busca el estado de cuenta de la persona por <strong>nombre de la persona o número de cédula</strong>.</span></p>
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_estado_cuenta.gif" alt="pasos_estado_cuenta" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <br>
+        <hr>
+        <p><span style="color: #003366;"><strong>1. Buscar al titular o alumno por nombre o número de cédula. </strong></span></p>
 
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>2. Lista las cuentas pendientes.</strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>3. Genrerar cuenta: se crea de forma manual la siguente factura del titular o alumno.
+            <img src="/static/img/generar_cuenta.png" alt="generar_cuenta" /></strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>4.  Filtrar la cantidad de productos en la pantalla.</strong></span></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>5. Buscar estado de cuenta <img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
+        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Curso, Grupo, Titular, Alumno, Fecha). </em></strong></p>
 {% endblock %}
 
 {% block javascripts %}
@@ -165,3 +184,4 @@
 
     </script>
 {% endblock %}
+

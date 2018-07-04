@@ -112,18 +112,35 @@
 {% endblock %}
 
 
-{#AYUDA#}
+#AYUDA#}
 {% block ayuda_titulo %}
-   <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Operaciones de Caja</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Total Caja Chica</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-        <p style="text-align: center;">Se puede visualizar las operaciones realizadas o agregar una nueva operaci&oacute;n. Siga los siguientes pasos</p>
-        <p style="text-align: center;">&nbsp;</p>
+<p style="text-align: center;"><span style="font-size: 12pt;">Podr&aacute; visualizar a todas las <strong>entradas y salidas</strong> y agregar nuevas transacciones.</span></p>
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_caja_chica.gif" alt="pasos_caja_chica" width="800"  style="display: block;
+    margin-left: auto;
+    margin-right: auto;
+   "/>
+        <br><br>
 
-        <p><strong>Presione el signo&nbsp;<img src="/static/img/signo_mas.png" alt="signo_mas" /></strong></p>
-        <p><span style="color: #003366;"><strong>Paso 1. Llenar el formulario de Operacion de Caja : </strong></span></p>
-        <p>&bull; <em><strong>Complete de manera obligatoria los siguientes campos:</strong></em> Fecha, Concepto, Descripci&oacute;n,
-            Monto, Tipo de Transacci&oacute;n</p>
-       <!-- <p>&bull; <em><strong>Complete de manera opcional los siguientes campos:</strong></em> Tel&eacute;fono, Otro contacto, Fotocopia de C&eacute;dula, Tipo Responsable</p>-->
-        <p><span style="color: #003366;"><strong>Paso 2. Guardar la operacion realizada <img src="/static/img/guardar.png" alt="guardar" /> </strong></span></p>
+        <hr>
+        <p><span style="color: #003366;"><strong>1. Lista de Entradas\Salidas :&nbsp;Se puede ver todas las transacciones realizadas. </strong></span></p>
+        <hr>
+        <p><span style="color: #003366;"><strong>2. Acciones. </strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Editar : <img src="/static/img/editar.png" alt="editar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Eliminar : <img src="/static/img/eliminar.png" alt="eliminar" /></strong></span></p>
+        <p>&bull; <strong><em>El registro de la transación elegida será eliminada de forma <strong>permanente</strong>.</em></strong></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>Opcion 3.  Fecha de transacción: puede ingresar una fecha anterior a la actual.</strong></span></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>Opcion 4. : Buscar Transacción <img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
+        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Fecha, Tipo transacción, Monto, Concepto, Descripción). </em></strong></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>Opcion 5. : Para crear una nueva operación, dar clic en <img src="/static/img/nueva_operacion.png" alt="nueva_operacion" /></strong></span></p>
+        <p>&bull; <strong><em>Una vez creada la nueva operación, este se encontrará en la lista. </em></strong></p>
 {% endblock %}

@@ -29,6 +29,14 @@ class Factura(models.Model):
     def __str__(self):
         return "{0} ({1}-[{2}-{3}])".format(self.numero_timbrado, self.punto_emision, self.nro_inicial, self.nro_final)
 
+    class Meta:
+        permissions = (
+            ("factura_delete", "Dar de baja factura"),
+            ("factura_create", "Crear factura"),
+            ("factura_update", "Editar factura"),
+            ("factura_list", "Listar factura"),
+
+        )
 
 # producto
 
@@ -52,6 +60,15 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        permissions = (
+            ("producto_delete", "Dar de baja producto"),
+            ("producto_create", "Crear producto"),
+            ("producto_update", "Editar producto"),
+            ("producto_list", "Listar producto"),
+
+        )
 
 
 # compras
@@ -97,6 +114,14 @@ class Cliente(models.Model):
     def __str__(self):
         return self.ruc_cliente + " (" + self.nombre_razon + ")"
 
+    class Meta:
+        permissions = (
+            ("cliente_delete", "Dar de baja cliente"),
+            ("cliente_create", "Crear cliente"),
+            ("cliente_update", "Editar cliente"),
+            ("clientes_list", "Listar cliente"),
+
+        )
 
 # metodo de pago = tarjeta, cheque, efectivo
 # Forma de pago = contado , credito

@@ -190,3 +190,30 @@
 
     </script>
 {% endblock %}
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Registro de Egresos</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+    <p style="text-align: center;">&nbsp;</p>
+        <img src="/static/img/pasos_nuevo_egreso.gif" alt="pasos_nuevo_egreso" width="800"  style="display: block; margin-left: auto;margin-right: auto;"/>
+        <hr>
+        <p><span style="color: #003366;"><strong> 1. Fecha: se ingresa la fecha de la operación.
+        <br><br>2. RUC Proveedor: cargar con XXX o el que se encuentre en la factura/ticket.
+            <br><br>3. Proveedor: nombre razón o nombre del proveedor.
+            <br><br>4. Nro Factura: número de 13 digitos. Ej: 001-001-0000001
+            <br><br>5. Tipo Pago: Contado/Crédito.
+            <br><br>6. Descripción: breve descripción de la compra realizada.
+            <hr>
+            <br><span style="color: #003366;"><strong>7. Agregar o Sacar detalle de factura. </strong></span></strong></span></p>.<img src="/static/img/mas_menos.png" alt="mas_menos" />
+
+        <p> <br /><span style="color: #003366;">&bull; Agregar un artículo y cargar de forma manual la cantidad de artículos y el precio total.</span></p>
+        <p> <br /><span style="color: #003366;">&bull; Sacar campos de la descripción antes de crear la factura egreso.</span></p><br>
+        <p>&bull; <strong><em>El monto total, subtotales, total IVA 5%, total IVA 10%, IVA Total son calculados y generados de forma automática.</em></strong>.</strong></p>
+        <hr>
+        <p style="text-align: center;"> <span style="font-size: 12pt;"><strong>Acciones  : </strong></span></p>
+
+        <p> <br /><span style="color: #003366;"><strong>&bull; Para generar la factura presione : <img src="/static/img/guardar.png" alt="guardar" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Si no desea generar la factura presione : <img src="/static/img/cancelar.png" alt="cancelar" /></strong></span></p>
+{% endblock %}

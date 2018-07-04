@@ -7,6 +7,7 @@ from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse, request
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required, permission_required
 
 # Create your views here.
 from escuela.models import Grupo, Clase
@@ -24,7 +25,7 @@ def get_month(fecha_mes):
 
 # ALUMNOS POR GRUPO
 
-
+#@login_required() #permisos para login
 def export_alumnos_por_grupo(resultados, fecha):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="alumnos-por-grupo-{0:02}-{1:02}-{2}.csv"'\
@@ -39,6 +40,7 @@ def export_alumnos_por_grupo(resultados, fecha):
 
     return response
 
+#@login_required() #permisos para login
 def to_grupo_map(resultado):
     return {
         "grupo": Grupo(
@@ -58,6 +60,8 @@ def to_grupo_map(resultado):
         "cantidad": resultado['cantidad']
     }
 
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def alumnos_por_grupo(request):
 
     accion = request.GET.get('action', None)
@@ -107,6 +111,8 @@ def alumnos_por_grupo(request):
 # COMPRA
 
 
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def export_compra(resultados, totales, fecha):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="libro-compra-{0:02}-{1}.csv"'\
@@ -126,6 +132,9 @@ def export_compra(resultados, totales, fecha):
                     totales['grav_10'], totales['iva_10'], totales['total']])
     return response
 
+
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def compra(request):
 
 
@@ -158,6 +167,8 @@ def compra(request):
 
 # VENTA
 
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def export_venta(resultados, totales, fecha):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="libro-venta-{0:02}-{1}.csv"'\
@@ -177,6 +188,9 @@ def export_venta(resultados, totales, fecha):
                     totales['grav_10'], totales['iva_10'], totales['total']])
     return response
 
+
+@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def venta(request):
 
     accion = request.GET.get('action', 'Ver')
@@ -209,6 +223,8 @@ def venta(request):
 
 # ASISTENCIA
 
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def export_asistencia(resultados, fecha, grupo):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="asistencia-{0:02}-{1}-{2}.csv"'\
@@ -224,6 +240,8 @@ def export_asistencia(resultados, fecha, grupo):
     return response
 
 
+@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def asistencia(request):
     grupo_id = request.GET.get('grupo', None)
     action = request.GET.get('action', 'Ver')
@@ -278,7 +296,8 @@ def asistencia(request):
     return render(request, "asistencia.html", context)
 
 # BALANCE
-
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def export_balance(resultados, fecha):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="balance-{0:02}-{1}.csv"'.format(fecha.month, fecha.year)
@@ -291,6 +310,9 @@ def export_balance(resultados, fecha):
 
     return response
 
+
+@login_required() #permisos para login
+@permission_required('reporte.balance', raise_exception=True)
 def balance(request):
 
     accion = request.GET.get('action', 'Ver')
@@ -346,6 +368,8 @@ def balance(request):
 
 
 # pagos en tarjetas
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def export_tarjeta_csv(pagos):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="reporte.csv"'
@@ -358,7 +382,8 @@ def export_tarjeta_csv(pagos):
 
     return response
 
-
+@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
 def list_pagos_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)

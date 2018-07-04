@@ -112,7 +112,7 @@
 </div>
 <script>
         function formEliminar(id){
-            $('#eliminar-form').attr('action', '/titulares/delete/' + id);
+            $('#eliminar-form').attr('action', '/titulares/' + id + '/delete);
         }
 </script>
 {% endblock %}
@@ -122,7 +122,7 @@
 <p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Lista Titulares</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-<p style="text-align: center;">Podr&aacute; visualizar a todos los <strong>Titulares</strong> con sus datos, además de poder agregar nuevos.</p>
+<p style="text-align: center;"><span style="font-size: 14pt;">Podr&aacute; visualizar a todos los <strong>Titulares</strong> con sus datos, además de poder agregar nuevos.</span></p>
     <p style="text-align: center;">&nbsp;</p>
         <img src="/static/img/pasos_titulareslista.gif" alt="pasos_titulareslista" width="800"  style="display: block;
     margin-left: auto;

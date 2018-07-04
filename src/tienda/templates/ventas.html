@@ -147,15 +147,32 @@
 
 {#AYUDA#}
 {% block ayuda_titulo %}
-<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Nueva Venta</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Total de Ventas del Día</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-<p style="text-align: center;"> <span style="font-size: 12pt;">Cargar los datos del empleado, según sean <strong>obligatorio u opcionales</strong>.</span></p>
+<p style="text-align: center;"><span style="font-size: 14pt;">Podr&aacute; visualizar a todas <strong>Ventas del Día</strong> realizadas con descripción detallada.</span></p>
     <p style="text-align: center;">&nbsp;</p>
-        <img src="/static/img/pasos_cuentaslista.gif" alt="pasos_cuentaslista" width="800"  style="display: block;
+        <img src="/static/img/pasos_ventas_dia.gif" alt="pasos_ventas_dia" width="800"  style="display: block;
     margin-left: auto;
     margin-right: auto;
    "/>
-        <p> <br /><span style="color: #003366;"><strong>&bull; Guardar registro de empleado, clic en : <img src="/static/img/guardar.png" alt="guardar" /></strong></span></p>
-        <p> <br /><span style="color: #003366;"><strong>&bull; Si no desea guardar el registro dar clic en : <img src="/static/img/cancelar.png" alt="cancelar" /></strong></span></p>
+        <br><hr>
+        <p><span style="color: #003366;"><strong> 1. Fecha de la transaccion anteriores o actual.
+    <hr>
+        <p><span style="color: #003366;"><strong>2. Lista de ventas :&nbsp;Se puede ver la lista de todos las ventas y realizar las siguientes acciones. </strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>3. Acciones que podemos realizar sobre cada registro de ventas.</strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Ver detalle venta : <img src="/static/img/detalle.png" alt="detalle" /></strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Cancelar Venta : <img src="/static/img/cancelar_rojo.png" alt="cancelar_rojo" /></strong></span></p>
+        <p>&bull; <strong><em>Una vez cancelado el registro, podrá consular en <strong>Ventas canceladas</strong>.</em></strong></p>
+
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>4.  Filtrar la cantidad de productos en la pantalla.</strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>5. Buscar ventas <img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
+        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Nro de Factura, Cliente, Monto Total). </em></strong></p>
+    <hr>
+
+        <p><br /><span style="color: #003366;"><strong>6.  Para crear nueva venta, haga clic en el ícono <img src="/static/img/nueva_venta.png" alt="nueva_venta" /></strong></span></p>
+        <p>&bull; <strong><em>Una vez creada la nueva venta, este se encontrará en la lista. </em></strong></p>
 {% endblock %}

@@ -23,6 +23,8 @@ class Persona(models.Model):
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=2, choices=ESTADO, default='A')
 
+
+
     def __str__(self):
         return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
@@ -43,6 +45,14 @@ class Titular(Persona):
     def __str__(self):
         return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
+    class Meta:
+        permissions = (
+            ("titular_list", "Listar titular"),
+            ("titular_create", "Crear titular"),
+            ("titular_update", "Editar titular"),
+            ("titular_delete", "Dar de baja titular "),
+        )
+
 #Alumno
 
 class Alumno(Persona):
@@ -54,6 +64,16 @@ class Alumno(Persona):
     null=True)
     def __str__(self):
         return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
+
+    class Meta:
+        permissions = (
+            ("alumno_list", "Listar alumno"),
+            ("alumno_create", "Crear alumno"),
+            ("alumno_update", "Editar alumno"),
+            ("alumno_delete", "Dar de baja alumno"),
+        )
+
+
 #Empleado
 
 class Empleado(Persona):
@@ -62,10 +82,22 @@ class Empleado(Persona):
     def __str__(self):
         return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
+    class Meta:
+        permissions = (
+            ("empleado_delete", "Dar de baja empleado"),
+            ("empleado_create", "Crear empleado"),
+            ("empleado_update", "Editar empleado"),
+        )
+
 #Profesor
 class Profesor(Empleado):
     especialidad = models.CharField(max_length=50)
     def __str__(self):
         return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
-
+    class Meta:
+        permissions = (
+            ("profesor_delete", "Dar de baja empleado"),
+            ("profesor_create", "Crear profesor"),
+            ("profesor_update", "Editar profesor"),
+        )

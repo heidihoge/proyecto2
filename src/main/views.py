@@ -127,12 +127,12 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
 from .forms import PersonaForm, TitularFormVerificar, AlumnoFormVerificar
 from .models import Persona
 
-
+@login_required() #permisos para login
 def list_personas(request):
     persona = Persona.objects.all()
     return render(request, 'main/personas.html', {'personas': persona})
 
-
+@login_required() #permisos para login
 def create_persona(request):
     print(request.method)
     if request.method == 'POST':
@@ -150,7 +150,7 @@ def create_persona(request):
 
     return render(request, 'main/personas-form.html', {'form': form})
 
-
+@login_required() #permisos para login
 def update_persona(request, id):
     try:
         persona = Persona.objects.get(id=id)
@@ -169,7 +169,7 @@ def update_persona(request, id):
 
     return render(request, 'main/personas-form.html', {'form': form, 'persona': persona})
 
-
+@login_required() #permisos para login
 def delete_persona(request, id):
     try:
         persona = Persona.objects.get(id=id)
@@ -192,11 +192,14 @@ from .forms import TitularForm
 from .models import Titular
 
 
+@login_required() #permisos para login
+#@permission_required('titular_list', raise_exception=True)
 def list_titulares(request):
     titular = Titular.objects.all()
     return render(request, 'main/titulares.html', {'titulares': titular})
 
 
+@login_required() #permisos para login
 def verificar_titular(request):
     if request.method == 'POST':
         titular = None
@@ -217,6 +220,7 @@ def verificar_titular(request):
     raise Http404()
 
 
+@login_required() #permisos para login
 def verificar_alumnos(request):
     if request.method == 'POST':
         cantidad_alumnos = int(request.POST['alumnosCount'])
@@ -237,12 +241,15 @@ def verificar_alumnos(request):
         return JsonResponse(alumnos, safe=False)
     raise Http404()
 
+
+@login_required() #permisos para login
 def cargar_cupo(cupos, grupo):
     if grupo not in cupos:
         inscriptos = Inscripcion.objects.filter(Q(grupo=grupo) & Q(fecha_fin__isnull=True)).count()
         cupos[grupo] = grupo.cupo_maximo - inscriptos
 
 
+@login_required() #permisos para login
 def verificar_inscripcion(request):
     if request.method == 'POST':
         cantidad_alumnos = int(request.POST['alumnosCount'])
@@ -266,7 +273,8 @@ def verificar_inscripcion(request):
     raise Http404()
 
 
-@permission_required('add_titular', raise_exception=True)
+@login_required() #permisos para login
+#@permission_required('titular_create', raise_exception=True)
 def create_titular(request):
     print(request.method)
     if request.method == 'POST':
@@ -286,6 +294,8 @@ def create_titular(request):
     return render(request, 'main/titulares-form.html', {'form': form})
 
 
+@login_required() #permisos para login
+#@permission_required('titular_update', raise_exception=True)
 def update_titular(request, id):
     try:
         titular = Titular.objects.get(id=id)
@@ -304,7 +314,8 @@ def update_titular(request, id):
 
     return render(request, 'main/titulares-form.html', {'form': form, 'titular': titular})
 
-
+@login_required()
+@permission_required('titular_delete', raise_exception=True)
 def delete_titular(request, id):
     try:
         titular = Titular.objects.get(id=id)
@@ -326,11 +337,15 @@ from .forms import AlumnoForm
 from .models import Alumno
 
 
+@login_required() #permisos para login
+#@permission_required('main.alumno_list', raise_exception=True)
 def list_alumnos(request):
     alumno = Alumno.objects.all()
     return render(request, 'main/alumnos.html', {'alumnos': alumno})
 
 
+@login_required() #permisos para login
+#@permission_required('main.alumno_create', raise_exception=True)
 def create_alumno(request):
     print(request.method)
     if request.method == 'POST':
@@ -350,6 +365,8 @@ def create_alumno(request):
     return render(request, 'main/alumnos-form.html', {'form': form})
 
 
+@login_required() #permisos para login
+#@permission_required('main.alumno_update', raise_exception=True)
 def update_alumno(request, id):
     try:
         alumno = Alumno.objects.get(id=id)
@@ -369,6 +386,8 @@ def update_alumno(request, id):
     return render(request, 'main/alumnos-form.html', {'form': form, 'alumno': alumno})
 
 
+@login_required() #permisos para login
+@permission_required('alumno_delete', raise_exception=True)
 def delete_alumno(request, id):
     try:
         alumno = Alumno.objects.get(id=id)
@@ -397,7 +416,8 @@ def list_empleados(request):
     empleado = Empleado.objects.all()
     return render(request, 'main/empleados.html', {'empleados': empleado})
 
-
+@login_required() #permisos para login
+@permission_required('main.empleado_create', raise_exception=True)
 def create_empleado(request):
     print(request.method)
     if request.method == 'POST':
@@ -415,7 +435,8 @@ def create_empleado(request):
 
     return render(request, 'main/empleados-form.html', {'form': form})
 
-
+@login_required() #permisos para login
+@permission_required('main.empleado_update', raise_exception=True)
 def update_empleado(request, id):
     try:
         empleado = Empleado.objects.get(id=id)
@@ -434,7 +455,8 @@ def update_empleado(request, id):
 
     return render(request, 'main/empleados-form.html', {'form': form, 'empleado': empleado})
 
-
+@login_required() #permisos para login
+@permission_required('main.empleado_delete', raise_exception=True)
 def delete_empleado(request, id):
     try:
         empleado = Empleado.objects.get(id=id)
@@ -455,12 +477,15 @@ from django.shortcuts import render, redirect
 from .forms import ProfesorForm
 from .models import Profesor
 
-
+@login_required() #permisos para login
+#@permission_required('main.profesor_list', raise_exception=True)
 def list_profesores(request):
     profesor = Profesor.objects.all()
     return render(request, 'main/profesores.html', {'profesores': profesor})
 
 
+@login_required() #permisos para login
+@permission_required('main.profesor_create', raise_exception=True)
 def create_profesor(request):
     print(request.method)
     if request.method == 'POST':
@@ -479,6 +504,8 @@ def create_profesor(request):
     return render(request, 'main/profesores-form.html', {'form': form})
 
 
+@login_required() #permisos para login
+@permission_required('main.profesor_update', raise_exception=True)
 def update_profesor(request, id):
     try:
         profesor = Profesor.objects.get(id=id)
@@ -497,7 +524,8 @@ def update_profesor(request, id):
 
     return render(request, 'main/profesores-form.html', {'form': form, 'profesor': profesor})
 
-
+@login_required() #permisos para login
+@permission_required('main.profesor_delete', raise_exception=True)
 def delete_profesor(request, id):
     try:
         profesor = Profesor.objects.get(id=id)

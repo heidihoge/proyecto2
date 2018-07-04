@@ -11,6 +11,7 @@ from django.db.transaction import rollback
 from django.forms import inlineformset_factory, BaseFormSet, BaseInlineFormSet
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required, permission_required
 
 from escuela.models import Cuenta, Grupo
 from escuela.utils import dictfetch
@@ -221,13 +222,15 @@ class ClienteAutocomplete(autocomplete.Select2QuerySetView):
 
 from tienda.models import Factura
 
-
+@login_required() #permisos para login
+@permission_required('tienda.factura_list', raise_exception=True)
 def list_facturas(request):
     facturas = Factura.objects.all()
     inlineformset_factory
     return render(request, 'facturas.html', {'facturas': facturas})
 
-
+@login_required() #permisos para login
+@permission_required('factura_create', raise_exception=True)
 def create_factura(request):
     print(request.method)
     if request.method == 'POST':
@@ -245,7 +248,8 @@ def create_factura(request):
 
     return render(request, 'facturas-form.html', {'form': form})
 
-
+@login_required() #permisos para login
+@permission_required('tienda.factura_update', raise_exception=True)
 def update_factura(request, id):
     try:
         factura = Factura.objects.get(id=id)
@@ -256,7 +260,7 @@ def update_factura(request, id):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Factura actualizado correctamente.')
+            messages.success(request, 'Factura actualizada correctamente.')
             return redirect('list_facturas')
         messages.error(request, 'Error al modificar Factura.')
     else:
@@ -264,7 +268,8 @@ def update_factura(request, id):
 
     return render(request, 'facturas-form.html', {'form': form, 'factura': factura})
 
-
+@login_required() #permisos para login
+@permission_required('tienda.factura_delete', raise_exception=True)
 def delete_factura(request, id):
     try:
         factura = Factura.objects.get(id=id)
@@ -281,11 +286,14 @@ def delete_factura(request, id):
 
 
 # ---------------------VISTA PRODUCTO --------------------------------
+@login_required() #permisos para login
+@permission_required('tienda.producto_list', raise_exception=True)
 def list_productos(request):
     productos = Producto.objects.exclude(codigo='CUENTA')
     return render(request, 'producto.html', {'productos': productos})
 
-
+@login_required() #permisos para login
+@permission_required('tienda.producto_create', raise_exception=True)
 def create_producto(request):
 
     if request.method == 'POST':
@@ -304,7 +312,8 @@ def create_producto(request):
 
     return render(request, 'producto-form.html', {'form': form})
 
-
+@login_required() #permisos para login
+@permission_required('tienda.producto_update', raise_exception=True)
 def update_producto(request, codigo):
     try:
         producto = Producto.objects.get(codigo=codigo)
@@ -324,7 +333,8 @@ def update_producto(request, codigo):
 
     return render(request, 'producto-form.html', {'form': form, 'producto': producto})
 
-
+@login_required() #permisos para login
+@permission_required('tienda.producto_delete', raise_exception=True)
 def delete_producto(request, codigo):
     try:
         producto = Producto.objects.get(codigo=codigo)
@@ -344,7 +354,7 @@ def delete_producto(request, codigo):
 
 
 # ---------------------VISTA VENTA CABECERA --------------------------------
-
+#@login_required() #permisos para login
 def cuentas(formset):
     productos_cuenta = [] # indices de Productos que son cuenta
     for idx, form in enumerate(formset.cleaned_data):
@@ -353,7 +363,7 @@ def cuentas(formset):
 
     return productos_cuenta
 
-
+@login_required() #permisos para login
 def list_ventas(request):
     fecha = request.GET.get('fecha', None)
     if not fecha:
@@ -379,6 +389,7 @@ def list_ventas(request):
 
 # VENTAS POR RANGO DE FECHAS
 
+@login_required() #permisos para login
 def list_ventas_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
@@ -414,7 +425,7 @@ def list_ventas_fechas(request):
 
 
 
-
+@login_required() #permisos para login
 def list_ventas_canceladas(request):
     fecha = request.GET.get('fecha', None)
     if not fecha:
@@ -439,6 +450,7 @@ def list_ventas_canceladas(request):
 
 
 # se listan las ventas y se tiene accion cancelar, colocar solo disponible para admin
+@login_required() #permisos para login
 def cancela_venta(request, id):
     try:
         venta = VentaCabecera.objects.get(id=id)
@@ -470,7 +482,7 @@ def cancela_venta(request, id):
 
 
 
-
+#@login_required() #permisos para login
 def numero_factura(factura):
     """
     Funcion para obtener numero de la factura
@@ -490,7 +502,7 @@ def numero_factura(factura):
 
     return "{:07d}".format(siguiente)
 
-
+#@login_required() #permisos para login
 def limpiar_pago(pago):
     pass
     # if pago.metodo_pago == 'Efectivo':
@@ -517,7 +529,7 @@ def limpiar_pago(pago):
     #     pago.nro_autorizacion = None
     #     pago.ultimos_tarjeta = None
 
-
+#@login_required() #permisos para login
 def validar_recibo(request):
     is_valid = True
     errors = {}
@@ -543,7 +555,7 @@ def validar_recibo(request):
 
     return is_valid, errors
 
-
+#@login_required() #permisos para login
 def validar_pago(request):
     is_valid = True
     errors = {}
@@ -569,6 +581,7 @@ def validar_pago(request):
 
     return is_valid, errors
 
+#@login_required() #permisos para login
 def vender(request):
 
     venta = VentaCabecera()
@@ -685,7 +698,7 @@ def vender(request):
                                                 'cuenta': cuenta, 'formularioPago':formularioPago})
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
-
+#@login_required() #permisos para login
 def list_compras(request):
 
     fecha = request.GET.get('fecha', None)
@@ -713,13 +726,14 @@ def list_compras(request):
 
 
 
-
+#@login_required() #permisos para login
 class RequiredFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super(RequiredFormSet, self).__init__(*args, **kwargs)
         for form in self.forms:
             form.empty_permitted = False
 
+#@login_required() #permisos para login
 def comprar(request):
     compra = CompraCabecera()
 
@@ -747,6 +761,8 @@ def comprar(request):
 
     return render(request, 'compras-form.html', {'form': form, 'formularioDetalleSet': formularioDetalleSet})
 
+
+#@login_required() #permisos para login
 def update_compra(request, id):
     try:
         compra = CompraCabecera.objects.get(id=id)
@@ -769,14 +785,14 @@ def update_compra(request, id):
 
 
 # ---------------------VISTA COMPRA DETALLE --------------------------------
-
+#@login_required() #permisos para login
 def list_detalle_compra(request):
     detalle = CompraCabecera.objects.all()
     return render(request, 'compras-detalle.html', {'detalles': detalle})
 
 
 
-
+#@login_required() #permisos para login
 def agrega_detalle(request):
     if request.method == 'POST':
 
@@ -794,6 +810,7 @@ def agrega_detalle(request):
 
     return render(request, 'compras-form.html', {'form': form})
 
+#@login_required() #permisos para login
 def update_compra_detalle(request, id):
     try:
         detalle = CompraDetalle.objects.get(id=id)
@@ -815,7 +832,7 @@ def update_compra_detalle(request, id):
 
 
 
-
+#@login_required() #permisos para login
 def update_factura(request, id):
     try:
         factura = Factura.objects.get(id=id)
@@ -841,7 +858,7 @@ import csv
 from django.http import HttpResponse, JsonResponse
 from .models import Producto
 
-
+#@login_required() #permisos para login
 def export_productos_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="productos.csv"'
@@ -854,6 +871,7 @@ def export_productos_csv(request):
 
     return response
 
+#@login_required() #permisos para login
 def reporte_compras(request):
     form = FormularioReporteCompras()
     if request.method == 'POST':
@@ -896,6 +914,7 @@ def reporte_compras(request):
 
 from tienda.models import Cliente
 
+@login_required() #permisos para login
 def export_clientes_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="clientes.csv"'
@@ -908,12 +927,15 @@ def export_clientes_csv(request):
 
     return response
 
+@login_required() #permisos para login
+#@permission_required('escuela.clientes_list', raise_exception=True)
 def list_clientes(request):
     clientes = Cliente.objects.all()
 
     return render(request, 'clientes.html', {'clientes': clientes})
 
-
+@login_required() #permisos para login
+#@permission_required('escuela.cliente_create', raise_exception=True)
 def create_cliente(request):
     print(request.method)
     if request.method == 'POST':
@@ -932,7 +954,8 @@ def create_cliente(request):
     return render(request, 'clientes-form.html', {'form': form})
 
 
-
+@login_required() #permisos para login
+#@permission_required('escuela.cliente_update', raise_exception=True)
 def update_cliente(request, ruc_cliente):
     try:
         cliente = Cliente.objects.get(ruc_cliente=ruc_cliente)
@@ -951,7 +974,8 @@ def update_cliente(request, ruc_cliente):
 
     return render(request, 'clientes-form.html', {'form': form, 'cliente': cliente})
 
-
+@login_required() #permisos para login
+@permission_required('escuela.cliente_delete', raise_exception=True)
 def delete_cliente(request, ruc_cliente):
     try:
         cliente = Cliente.objects.get(ruc_cliente=ruc_cliente)
@@ -964,7 +988,7 @@ def delete_cliente(request, ruc_cliente):
 
     return redirect('list_clientes')
 
-
+@login_required() #permisos para login
 def consulta_factura(request, nro_factura):
     cabecera = VentaCabecera.objects.get(nro_factura=nro_factura)
     pago = None
@@ -1016,7 +1040,7 @@ def consulta_factura(request, nro_factura):
 
 
 # OPERACIONES EN CAJA
-
+@login_required() #permisos para login
 def list_operaciones(request):
     fecha = request.GET.get('fecha', None)
     if not fecha:
@@ -1040,7 +1064,7 @@ def list_operaciones(request):
                                                    'total': monto_entrada -  monto_salida })
 
 
-
+@login_required() #permisos para login
 def create_operacion(request):
     print(request.method)
     if request.method == 'POST':
@@ -1058,7 +1082,7 @@ def create_operacion(request):
 
     return render(request, 'operacion_caja-form.html', {'form': form})
 
-
+@login_required() #permisos para login
 def update_operacion(request, id):
     try:
         operacion = OperacionCaja.objects.get(id=id)
@@ -1077,7 +1101,7 @@ def update_operacion(request, id):
 
     return render(request, 'operacion_caja-form.html', {'form': form, 'operacion': operacion})
 
-
+@login_required() #permisos para login
 def delete_operacion(request, id):
     try:
         operacion = OperacionCaja.objects.get(id=id)
@@ -1090,7 +1114,7 @@ def delete_operacion(request, id):
 
     return redirect('list_operaciones')
 
-
+@login_required() #permisos para login
 def estado_cuenta(request):
 
     cedula = request.GET.get('cedula', None)
