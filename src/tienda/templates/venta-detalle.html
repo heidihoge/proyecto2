@@ -144,6 +144,7 @@
                             <tr>
                                     <th>Fecha</th>
                                     <th>Nro recibo</th>
+                                    <th>Cliente</th>
                                     <th>Monto</th>
                                     <th class="none">Métodos de pago</th>
 
@@ -156,6 +157,7 @@
                                 <tr>
                                     <td>{{ recibo.fecha }}</td>
                                     <td>{{ recibo.nro_recibo }}</td>
+                                    <td class="text-right">{{ recibo.nombre_cliente }}</td>
                                     <td class="text-right">{{ recibo.monto | intdot }} ₲</td>
                                     <td><br>
                                         {% if recibo.pago_efectivo %}
@@ -438,18 +440,21 @@
     <script>
 
         $(document).ready(function () {
-            useAutonumericCurrency('#saldo-recibo');
-            useAutonumericCurrency('#id_recibo-monto');
-            useAutonumericCurrency('#monto-restante');
-            useAutonumericCurrency('#id_recibo-monto_efectivo');
-            useAutonumericCurrency('#id_recibo-monto_efectivo_abonado');
-            useAutonumericCurrency('#id_recibo-monto_efectivo_vuelto');
-            useAutonumericCurrency('#id_recibo-monto_tarjeta');
-            useAutonumericCurrency('#id_recibo-monto_cheque');
+            if($('#id_recibo-monto').length > 0) {
 
-            $('#recibo input').on('change ifChanged keypress', function(){
-                logicaRecibo();
-            });
+                useAutonumericCurrency('#id_recibo-monto');
+                useAutonumericCurrency('#saldo-recibo');
+                useAutonumericCurrency('#monto-restante');
+                useAutonumericCurrency('#id_recibo-monto_efectivo');
+                useAutonumericCurrency('#id_recibo-monto_efectivo_abonado');
+                useAutonumericCurrency('#id_recibo-monto_efectivo_vuelto');
+                useAutonumericCurrency('#id_recibo-monto_tarjeta');
+                useAutonumericCurrency('#id_recibo-monto_cheque');
+
+                $('#recibo input').on('change ifChanged keypress', function(){
+                    logicaRecibo();
+                });
+            }
         });
 
         function formEliminar(id) {
