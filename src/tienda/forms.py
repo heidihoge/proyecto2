@@ -157,14 +157,26 @@ class FormularioVentaVerificar(forms.ModelForm):
     total_grav_5 = CurrencyIntegerField()
     total_grav_10 = CurrencyIntegerField()
     total_grav_exentas = CurrencyIntegerField()
+    credito_plazo = forms.IntegerField(initial=0, required=False)
 
     class Meta:
         model = VentaCabecera
 
-        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'credito_plazo', 'monto_total',
+        fields = ['talonario_factura', 'cliente', 'fecha', 'tipo_pago', 'credito_plazo', 'monto_total', 'credito_plazo',
                   'nro_factura', 'nro_factura_punto_emision', 'nro_factura_numero',
                   'total_iva_5', 'total_iva_10', 'total_grav_5', 'total_grav_10', 'total_grav_exentas', 'total_iva']
         exclude = ["cliente"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        tipo_pago = cleaned_data.get("tipo_pago")
+
+        if tipo_pago == 'Crédito':
+            credito_plazo = cleaned_data.get("credito_plazo")
+            if type(credito_plazo) != int or credito_plazo < 1:
+                self.add_error('credito_plazo', 'El plazo debe ser mayor a 0.')
+
 
 
 class FormularioCliente(forms.ModelForm):

@@ -366,6 +366,12 @@
                             setErrores(data.clienteErrors, 'cliente-')
 
                         }
+
+                        if(data.formErrors) {
+                            pagoModal.modal('hide');
+                            setErrores(data.formErrors, '')
+
+                        }
                         for (var i=0; i< data.detalleErrors.length; i++) {
                             if(!$.isEmptyObject(data.detalleErrors[i])) {
                                 pagoModal.modal('hide');
