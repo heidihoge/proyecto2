@@ -447,6 +447,21 @@ def cancela_venta(request, id):
 
     if request.method == 'POST':
         venta.estado = 'IN'
+
+        # Revierte cuentas pagadas
+        cuentas = Cuenta.objects.filter(detalle__venta=venta)
+        for cuenta in cuentas:
+            cuenta.pagado = False
+            cuenta.monto_pagado = 0
+            cuenta.save()
+
+        # Aumenta stock
+        detalles = VentaDetalle.objects.filter(venta=venta)
+        for detalle in detalles:
+            if detalle.producto.control_stock:
+                detalle.producto.existencia += detalle.cantidad
+                detalle.producto.save()
+
         venta.save()
         messages.success(request, 'VENTA CANCELADA CORRECTAMENTE.')
     return redirect('list_ventas')
