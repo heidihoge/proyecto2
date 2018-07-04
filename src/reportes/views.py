@@ -327,11 +327,16 @@ def balance(request):
 
     query = """
         select fecha, sum(monto) monto, tipo_transaccion from (
-      select fecha, monto, tipo_transaccion from tienda_operacioncaja
-    UNION
+    select fecha, monto, tipo_transaccion from tienda_operacioncaja
+      UNION
     select fecha, monto_total, 'SALIDA' as tipo_transaccion from tienda_compracabecera
-    UNION
-    select fecha, monto_total, 'ENTRADA' as tipo_transaccion from tienda_ventacabecera where estado= 'A') e
+      UNION
+    select fecha, monto_total, 'ENTRADA' as tipo_transaccion 
+      from tienda_ventacabecera where estado = 'A' and tipo_pago = 'Contado' 
+      UNION 
+    select r.fecha,  r.monto, 'ENTRADA' as tipo_transaccion from tienda_ventacabecera t
+      join tienda_recibo r on t.id = r.venta_id where t.estado in ('A', 'P') and t.tipo_pago = 'Crédito'
+        ) e
     where e.fecha BETWEEN %(fecha_inicio)s AND %(fecha_fin)s  
     GROUP BY fecha, tipo_transaccion
     ORDER BY fecha DESC 
