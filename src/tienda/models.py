@@ -207,6 +207,7 @@ class Pago(models.Model):
 class Recibo(models.Model):
     fecha = models.DateField(default=datetime.date.today)
     nro_recibo = models.CharField(max_length=32)
+    nombre_cliente = models.CharField(max_length=150, default='')
 
     venta = models.ForeignKey(VentaCabecera, on_delete=models.SET_NULL, null=True,blank=True)
 

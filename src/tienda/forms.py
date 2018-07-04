@@ -8,7 +8,7 @@ from main.forms import CustomModelChoiceField
 from main.utils import CurrencyIntegerField
 from proyecto2 import settings
 from .models import Factura, Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, \
-    Cliente, OperacionCaja, Pago
+    Cliente, OperacionCaja, Pago, Recibo
 
 
 # ,Timbrado,CategoriaProducto,Producto,Existencia,TipoPago,
@@ -216,6 +216,33 @@ class FormularioPagoTarjeta(forms.ModelForm):
         self.fields['nro_autorizacion'].required = True
         self.fields['ultimos_tarjeta'].required = True
 
+class FormularioReciboTarjeta(forms.ModelForm):
+    class Meta:
+        model = Recibo
+        fields = ['tarjeta', 'nro_autorizacion', 'ultimos_tarjeta']
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioReciboTarjeta, self).__init__(*args, **kwargs)
+        self.fields['tarjeta'].required = True
+        self.fields['nro_autorizacion'].required = True
+        self.fields['ultimos_tarjeta'].required = True
+
+class FormularioReciboCheque(forms.ModelForm):
+    class Meta:
+        model = Recibo
+        fields = ['banco', 'nro_cuenta', 'librador', 'serie_cheque',
+                  'nro_cheque', 'fecha_emision', 'fecha_venc']
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioReciboCheque, self).__init__(*args, **kwargs)
+        self.fields['banco'].required = True
+        self.fields['nro_cuenta'].required = True
+        self.fields['librador'].required = True
+        self.fields['serie_cheque'].required = True
+        self.fields['nro_cheque'].required = True
+        self.fields['fecha_emision'].required = True
+        self.fields['fecha_venc'].required = True
+
 class FormularioPagoCheque(forms.ModelForm):
     class Meta:
         model = Pago
@@ -266,6 +293,42 @@ class FormularioPago(forms.ModelForm):
     librador = forms.CharField(required=False)
     serie_cheque = forms.CharField(required=False)
     nro_cheque = forms.CharField(required=False)
+    fecha_emision = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
+    fecha_venc = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
+
+class FormularioRecibo(forms.ModelForm):
+    class Meta:
+        model = Recibo
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(FormularioRecibo, self).__init__(*args, **kwargs)
+        self.fields['ultimos_tarjeta'].widget.attrs['placeholder'] = '4 Últimos Dígito de Tarjeta'
+        self.fields['nro_autorizacion'].widget.attrs['placeholder'] = 'Nro Autorización Pago'
+        self.fields['banco'].widget.attrs['placeholder'] = 'Nombre del Banco Emisor'
+        self.fields['librador'].widget.attrs['placeholder'] = 'Nombre de Cliente'
+        self.fields['nro_cuenta'].widget.attrs['placeholder'] = 'Nro. Cuenta Bancaria'
+        self.fields['nro_cheque'].widget.attrs['placeholder'] = 'Nro. Cheque'
+        self.fields['serie_cheque'].widget.attrs['placeholder'] = 'Nro. de Serie del Cheque'
+
+    monto = CurrencyIntegerField(initial=0, label="Monto Recibo")
+    monto_efectivo = CurrencyIntegerField(initial=0)
+    monto_efectivo_abonado = CurrencyIntegerField(initial=0)
+    monto_efectivo_vuelto = CurrencyIntegerField(initial=0)
+    monto_tarjeta = CurrencyIntegerField(initial=0)
+    monto_cheque = CurrencyIntegerField(initial=0)
+    pago_efectivo = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'flat'}), required=False)
+    pago_tarjeta = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'flat'}), required=False)
+    pago_cheque = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'flat'}), required=False)
+    nombre_cliente = forms.CharField(required=False)
+    tarjeta = forms.CharField(required=False)
+    nro_autorizacion = forms.CharField(required=False)
+    ultimos_tarjeta = forms.CharField(required=False)
+    nro_cuenta = forms.CharField(required=False)
+    librador = forms.CharField(required=False)
+    serie_cheque = forms.CharField(required=False)
+    nro_cheque = forms.CharField(required=False)
+    fecha = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
     fecha_emision = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
     fecha_venc = forms.DateField(required=False, input_formats=settings.DATE_INPUT_FORMATS)
 

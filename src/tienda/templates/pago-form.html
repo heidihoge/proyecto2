@@ -17,6 +17,8 @@
 
         <div class="feedback-message">
             <span id='monto-cero-pago' class="text-danger" style="display:none">Monto Total es 0, verifique los detalles.</span>
+            <span id='monto-cero-recibo' class="text-danger" style="display:none">Monto Total es 0.</span>
+            <span id='monto-mayor-saldo-recibo' class="text-danger" style="display:none">Monto Total es mayor al saldo.</span>
         </div>
     </div>
     <div class="form-group col-md-6 col-sm-6 col-xs-12" >
@@ -85,7 +87,7 @@
             <div class="form-group col-md-4 col-sm-4 col-xs-12">
 
                 {% include "forms/label.html" with field=form.tarjeta %}
-                <select class="form-control" name="pago-tarjeta">
+                <select class="form-control" name="{{ form.tarjeta.html_name }}">
                     <option value="INFONET-DEBITO">INFONET - DEBITO</option>
                     <option value="INFONET-CREDITO">INFONET - CREDITO</option>
 

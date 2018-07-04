@@ -198,6 +198,10 @@
                         </table>
                     {% endif %}
                     <a class="btn btn-success dropdown-toggle btn-md "  onclick="print()">Imprimir</a>
+                    {% if cabecera.tipo_pago == 'Crédito' %}
+                        <a class="btn btn-success dropdown-toggle btn-md"
+                        data-toggle="modal" data-target="#recibo" onclick="logicaRecibo()">Agregar Recibo</a>
+                    {% endif %}
                     <a class="btn btn-primary dropdown-toggle btn-md "    href="/tienda/ventas">Salir </a>
 
 
@@ -235,6 +239,63 @@
         </div>
     </div>
 
+    <form id="recibo-form">
+        {% csrf_token %}
+        <!--    MODAL PAGO                    -->
+        <div class="modal fade " id="recibo" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Recibo</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group col-md-6 col-sm-6 col-xs-12" >
+
+
+                            {% include "forms/label.html" with field=formularioRecibo.fecha %}
+                            {% include "forms/datefield.html" with field=formularioRecibo.fecha %}
+                            {% include "forms/field-errors.html" with field=formularioRecibo.fecha %}
+
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6 col-xs-12" >
+
+
+                            {% include "forms/label.html" with field=formularioRecibo.nro_recibo %}
+                            {% include "forms/charfield.html" with field=formularioRecibo.nro_recibo %}
+                            {% include "forms/field-errors.html" with field=formularioRecibo.nro_recibo %}
+
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6 col-xs-12" >
+
+
+                            <label class="control-label" for="saldo-recibo">Saldo Factura<span
+            class="required"></span></label>
+                            <input class="form-control" type="text" id="saldo-recibo" value="{{ saldo }}" readonly>
+
+                        </div>
+                        <div class="form-group col-md-6 col-sm-6 col-xs-12" >
+
+
+                            {% include "forms/label.html" with field=formularioRecibo.nombre_cliente %}
+                            {% include "forms/charfield.html" with field=formularioRecibo.nombre_cliente %}
+                            {% include "forms/field-errors.html" with field=formularioRecibo.nombre_cliente %}
+
+                        </div>
+
+                        {% include "pago-form.html" with form=formularioRecibo %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="button"  id="guardar_pago" onclick="guardarRecibo()" class="btn btn-primary" >Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </form>
     <div id="ticket" class="text-center">
 
         <img class="img-responsive center-block" width="150em" src="/static/img/empresa.png">
@@ -343,11 +404,6 @@
 
     </div>
 
-    <script>
-        function formEliminar(id){
-            $('#eliminar-form').attr('action', '/tienda/compras/' + id + '/delete' );
-        }
-    </script>
 {% endblock %}
 {% block stylesheets %}
     {{ block.super }}
@@ -375,4 +431,219 @@
             }
         }
     </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ block.super }}
+    <script>
+
+        $(document).ready(function () {
+            useAutonumericCurrency('#saldo-recibo');
+            useAutonumericCurrency('#id_recibo-monto');
+            useAutonumericCurrency('#monto-restante');
+            useAutonumericCurrency('#id_recibo-monto_efectivo');
+            useAutonumericCurrency('#id_recibo-monto_efectivo_abonado');
+            useAutonumericCurrency('#id_recibo-monto_efectivo_vuelto');
+            useAutonumericCurrency('#id_recibo-monto_tarjeta');
+            useAutonumericCurrency('#id_recibo-monto_cheque');
+
+            $('#recibo input').on('change ifChanged keypress', function(){
+                logicaRecibo();
+            });
+        });
+
+        function formEliminar(id) {
+            $('#eliminar-form').attr('action', '/tienda/compras/' + id + '/delete');
+
+        }
+
+        function calculaVuelto() {
+            var mensaje= $('#vueltonegativo');
+            mensaje.hide();
+            var monto_total = getAutonumericCurrency('#id_recibo-monto_efectivo');
+            var abonado = getAutonumericCurrency('#id_recibo-monto_efectivo_abonado');
+
+            var vuelto = abonado-monto_total;
+            // noinspection JSAnnotator
+            if (vuelto < 0   )   {
+
+                setAutonumericCurrency('#id_recibo-monto_efectivo_vuelto', 0);
+
+                mensaje.show();
+
+                return {
+                    error: true
+                }
+
+            }
+
+            setAutonumericCurrency('#id_recibo-monto_efectivo_vuelto', vuelto);
+
+            return {
+                error: false
+            }
+        }
+
+        function logicaRecibo() {
+
+            var error = false;
+
+            function mediosDePago() {
+                var efectivo = $('#id_recibo-pago_efectivo').prop('checked');
+                var tarjeta = $('#id_recibo-pago_tarjeta').prop('checked');
+                var cheque = $('#id_recibo-pago_cheque').prop('checked');
+                var cantidad = [tarjeta, efectivo, cheque].filter(function(v){return v}).length;
+                return {
+                    cantidad: cantidad,
+                    efectivo: efectivo,
+                    tarjeta: tarjeta,
+                    cheque: cheque
+                }
+            }
+
+            var pagos = mediosDePago();
+
+            var saldo = getAutonumericCurrency('#saldo-recibo');
+
+            var montoTotal = getAutonumericCurrency('#id_recibo-monto');
+
+            var montoEfectivoInput = $('#id_recibo-monto_efectivo');
+            var montoTarjetaInput = $('#id_recibo-monto_tarjeta');
+            var montoChequeInput = $('#id_recibo-monto_cheque');
+            var mensajeMedioPago = $('#no-medio-pago');
+            var mensajeMayorATotal = $('#mayor-a-total-pago');
+            var mensajeMontoCero = $('#monto-cero-recibo');
+            var mensajeMontoMayorASaldo = $('#monto-mayor-saldo-recibo');
+            var botonGuardar = $('#guardar_pago');
+
+            botonGuardar.attr('disabled', true);
+
+            montoEfectivoInput.attr('readonly', true);
+            montoTarjetaInput.attr('readonly', true);
+            montoChequeInput.attr('readonly', true);
+            mensajeMedioPago.hide();
+            mensajeMayorATotal.hide();
+            mensajeMontoCero.hide();
+            mensajeMontoMayorASaldo.hide();
+
+            setAutonumericCurrency('#monto-restante', 0);
+
+            if (montoTotal === 0) {
+                error = true;
+                mensajeMontoCero.show();
+            }
+            if (montoTotal > saldo) {
+                error = true;
+                mensajeMontoMayorASaldo.show();
+            }
+
+            if (pagos.cantidad === 0) {
+                mensajeMedioPago.show();
+                error = true;
+            } else if (pagos.cantidad === 1) {
+                setAutonumericCurrency('#monto-restante', 0);
+                if (pagos.efectivo) {
+                    setAutonumericCurrency('#id_recibo-monto_efectivo', montoTotal);
+                    setAutonumericCurrency('#id_recibo-monto_tarjeta', 0);
+                    setAutonumericCurrency('#id_recibo-monto_cheque', 0);
+                }
+                else if (pagos.tarjeta) {
+                    setAutonumericCurrency('#id_recibo-monto_efectivo', 0);
+                    setAutonumericCurrency('#id_recibo-monto_tarjeta', montoTotal);
+                    setAutonumericCurrency('#id_recibo-monto_cheque', 0);
+                }
+                else if (pagos.cheque) {
+                    setAutonumericCurrency('#id_recibo-monto_efectivo', 0);
+                    setAutonumericCurrency('#id_recibo-monto_tarjeta', 0);
+                    setAutonumericCurrency('#id_recibo-monto_cheque', montoTotal);
+                }
+            } else {
+                var montoParcial = 0;
+                if(pagos.efectivo) {
+                    montoParcial += getAutonumericCurrency('#id_recibo-monto_efectivo');
+                }
+                if(pagos.tarjeta) {
+                    montoParcial += getAutonumericCurrency('#id_recibo-monto_tarjeta');
+                }
+                if(pagos.cheque) {
+                    montoParcial += getAutonumericCurrency('#id_recibo-monto_cheque');
+                }
+
+                if (montoTotal < montoParcial) {
+                    mensajeMayorATotal.show();
+                    error = true;
+                } else if (montoTotal > montoParcial) {
+                    error = true;
+                }
+                setAutonumericCurrency('#monto-restante', Math.max(montoTotal - montoParcial, 0));
+
+
+                montoEfectivoInput.removeAttr('readonly');
+                montoTarjetaInput.removeAttr('readonly');
+                montoChequeInput.removeAttr('readonly');
+            }
+
+            error = error || calculaVuelto().error;
+
+
+            if(!error) {
+                botonGuardar.removeAttr('disabled');
+            }
+
+        }
+
+
+
+        function guardarRecibo() {
+            var form = $('#recibo-form');
+            var formData = new FormData(form[0]);
+            var pagoModal = $("#recibo");
+            $('.feedback-message').html('');
+            $.post({
+                url: '/tienda/ventas/{{ cabecera.nro_factura }}',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+            .done(function (data) {
+                if(data.success){
+                    document.location.href = data.redirect;
+                    location.reload();
+                } else {
+                    notifyError("Error al guardar el recibo, verifique los campos");
+
+                    if(data.reciboErrors) {
+                        setErrores(data.reciboErrors, 'recibo-');
+                    }
+                    if(data.reciboErrorsExtra) {
+                        setErrores(data.reciboErrorsExtra, 'recibo-');
+                    }
+                }
+
+            });
+
+        }
+
+        function setErrores(errores, prefix) {
+            console.log(arguments);
+            Object.keys(errores).forEach(function(field){
+                var feedback = $('[name=' + prefix + field + ']')
+                    .siblings('.feedback-message');
+                feedback.html("");
+                errores[field].forEach(function(message) {
+                    feedback.append($('<p class="text-danger">' + message + '</p>'));
+                })
+            });
+        }
+        function notifyError(message) {
+            PNotify.prototype.options.delay = 3000;
+            new PNotify({
+                title: 'Error',
+                text: message,
+                type: 'error',
+                styling: 'bootstrap3'
+            });
+        }
+    </script>
 {% endblock %}

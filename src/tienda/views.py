@@ -19,7 +19,8 @@ from main.models import Persona
 from proyecto2 import settings
 from .forms import FomularioFactura, FormularioCompra, FormularioCompraDetalle, FormularioVentaDetalle, FormularioVenta, \
     FormularioCliente, FormularioVentaVerificar, FormularioOperacionCaja, FormularioPago, \
-    FormularioReporteCompras, FormularioPagoTarjeta, FormularioPagoCheque
+    FormularioReporteCompras, FormularioPagoTarjeta, FormularioPagoCheque, FormularioRecibo, FormularioReciboTarjeta, \
+    FormularioReciboCheque
 
 from .forms import  FomularioProducto
 from .models import Producto, CompraCabecera, CompraDetalle, VentaCabecera, VentaDetalle, Cliente, OperacionCaja, Pago, \
@@ -501,6 +502,33 @@ def limpiar_pago(pago):
     #     pago.nro_autorizacion = None
     #     pago.ultimos_tarjeta = None
 
+
+def validar_recibo(request):
+    is_valid = True
+    errors = {}
+    recibo = Recibo()
+    metodo_tarjeta = "recibo-pago_tarjeta" in request.POST
+    metodo_cheque = "recibo-pago_cheque" in request.POST
+
+    if metodo_tarjeta:
+        formTarjeta = FormularioReciboTarjeta(request.POST, request.FILES, instance=recibo, prefix='recibo')
+        is_valid = is_valid and formTarjeta.is_valid()
+        for error in formTarjeta.errors:
+            if error not in errors:
+                errors[error] = []
+            errors[error].append(formTarjeta.errors[error])
+
+    if metodo_cheque:
+        formCheque = FormularioReciboCheque(request.POST, request.FILES, instance=recibo, prefix='recibo')
+        is_valid = is_valid and formCheque.is_valid()
+        for error in formCheque.errors:
+            if error not in errors:
+                errors[error] = []
+            errors[error].append(formCheque.errors[error])
+
+    return is_valid, errors
+
+
 def validar_pago(request):
     is_valid = True
     errors = {}
@@ -927,6 +955,8 @@ def consulta_factura(request, nro_factura):
     pago = None
     recibos = []
     saldo = cabecera.monto_total
+    formularioRecibo = None
+
     if cabecera.tipo_pago == 'Contado':
         pago = Pago.objects.get(venta=cabecera)
     elif cabecera.tipo_pago == 'Crédito':
@@ -934,10 +964,38 @@ def consulta_factura(request, nro_factura):
         for recibo in recibos:
             saldo -= recibo.monto
 
+        recibo = Recibo()
+        if request.method == 'POST':
+            formularioRecibo = FormularioRecibo(request.POST, instance=recibo, prefix='recibo')
+
+            recibos_validacion = validar_recibo(request)
+            if formularioRecibo.is_valid() and recibos_validacion[0]:
+                recibo = formularioRecibo.save(commit=False)
+                recibo.venta = cabecera
+                if saldo - recibo.monto <= 0:
+                    cabecera.estado = 'A'
+                    cabecera.save()
+                recibo.save()
+                messages.success(request, 'Recibo guardado correctamente.')
+
+                return JsonResponse({'success': True, 'redirect': reverse('consulta_factura',
+                                                                          kwargs={'nro_factura': cabecera.nro_factura})},
+                                    safe=False)
+
+
+
+            else:
+                return JsonResponse({'success': False,
+                                     'reciboErrors': formularioRecibo.errors, 'reciboErrorsExtra': recibos_validacion[1]},
+                                    safe=False)
+        else:
+            recibo.monto = saldo
+            formularioRecibo = FormularioRecibo(instance=recibo, prefix='recibo')
+
     detalles = VentaDetalle.objects.filter(venta__nro_factura=nro_factura)
     talonario = cabecera.talonario_factura
     context = {'detalles': detalles, 'talonario': talonario, 'cabecera': cabecera,
-               'pago': pago, 'recibos': recibos, 'saldo': saldo}
+               'pago': pago, 'recibos': recibos, 'saldo': saldo, 'formularioRecibo': formularioRecibo}
     return render(request, 'venta-detalle.html', context)
 
 
