@@ -11,7 +11,7 @@ from .views import list_clases, list_etiquetas, list_etiquetas_clase, \
     delete_clase, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
     delete_grupo, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
     lista_asistencia, guardar_inscripcion, list_cuentas, baja_inscripcion, list_inscripciones_baja, \
-    list_inscripciones_inactivas, update_cuenta
+    list_inscripciones_inactivas, update_cuenta, delete_cuenta
 
 from main import views
 
@@ -75,6 +75,7 @@ urlpatterns = [
 
     path('cuentas', list_cuentas, name='list_cuentas'),
     path('cuentas/<int:id>/update', update_cuenta, name='update_cuenta'),
+    path('cuentas/<int:id>/delete', delete_cuenta, name='delete_cuenta'),
     # path('ventas/<str:nro_factura>', list_ventas ,name='list_ventas'),
 
 

@@ -808,15 +808,15 @@ def update_cuenta(request, id):
 @permission_required('escuela.cuenta_delete', raise_exception=True)
 def delete_cuenta(request, id):
     try:
-        clase = Clase.objects.get(id=id)
+        cuenta = Cuenta.objects.get(id=id)
     except:
         return redirect('404')
 
     if request.method == 'POST':
-        clase.delete()
+        cuenta.delete()
         messages.success(request, 'Cuenta eliminada correctamente.')
 
-    return redirect('list_clases')
+    return redirect('list_cuentas')
 
 
 
