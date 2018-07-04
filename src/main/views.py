@@ -100,7 +100,7 @@ class PersonaAutocomplete(autocomplete.Select2QuerySetView):
         qs = Persona.objects.all()
 
         if self.q:
-            qs = qs.filter(Q(cedula__istartswith=self.q) | Q(apellido__istartswith=self.q))
+            qs = qs.filter(Q(cedula__istartswith=self.q) | Q(apellido__istartswith=self.q)| Q(nombre__istartswith=self.q))
 
         return qs
 
