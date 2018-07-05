@@ -1,5 +1,6 @@
 import csv
 import datetime
+from itertools import chain
 
 from dateutil.relativedelta import relativedelta
 from django.db import connection
@@ -14,7 +15,7 @@ from escuela.models import Grupo, Clase
 from escuela.utils import dictfetch
 from main.models import Persona
 from proyecto2 import settings
-from tienda.models import CompraCabecera, VentaCabecera, Pago
+from tienda.models import CompraCabecera, VentaCabecera, Pago, Recibo
 
 
 def get_date(fecha_string):
@@ -406,10 +407,13 @@ def list_pagos_fechas(request):
 
     pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde,
                                 venta__fecha__lte=fecha_hasta ,pago_tarjeta=True)\
-        .values_list('venta__fecha', 'monto','tarjeta','nro_autorizacion','ultimos_tarjeta')
+        .values_list('venta__fecha', 'monto','tarjeta','nro_autorizacion','ultimos_tarjeta', 'venta__tipo_pago', 'venta__nro_factura')
+    recibos = Recibo.objects.filter(venta__estado__in=['A', 'P'], fecha__gte=fecha_desde,
+                        fecha__lte=fecha_hasta, pago_tarjeta=True) \
+        .values_list('venta__fecha', 'monto', 'tarjeta', 'nro_autorizacion', 'ultimos_tarjeta', 'venta__tipo_pago', 'venta__nro_factura')
 
     context = {'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta,
-               'pagos': pagos}
+               'pagos': list(chain(pagos, recibos))}
 
     if accion == 'Excel':
         return export_tarjeta_csv(pagos)

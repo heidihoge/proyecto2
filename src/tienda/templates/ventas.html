@@ -58,6 +58,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Nro de Factura</th>
+                                <th>Tipo de pago</th>
                                 <th>Cliente</th>
                                 <th>Gravadas 10%</th>
                                 <th>IVA 10%</th>
@@ -76,7 +77,8 @@
                             {% for venta in ventas     %}
                                 <tr>
                                     <td>{{ venta.fecha }}</td>
-                                    <td>{{ venta.nro_factura }}</td>
+                                    <td><a href="/tienda/ventas/{{ venta.nro_factura }}">{{ venta.nro_factura }}</a></td>
+                                    <td>{{ venta.tipo_pago }}</td>
                                     <td>{{ venta.cliente.nombre_razon }}</td>
                                     <td>{{ venta.total_grav_10| intdot }} ₲</td>
                                     <td>{{ venta.total_iva_10| intdot }} ₲</td>

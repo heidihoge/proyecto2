@@ -371,7 +371,7 @@ def list_ventas(request):
     else:
         fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
 
-    ventas = VentaCabecera.objects.filter(fecha=fecha,estado='A')
+    ventas = VentaCabecera.objects.filter(fecha=fecha,estado__in=['A'], tipo_pago='Contado')
     pagos = Pago.objects.filter(venta__estado='A', venta__fecha=fecha)
 
     monto_efectivo = pagos.aggregate(total=Coalesce(Sum('monto_efectivo'), 0))
@@ -404,7 +404,7 @@ def list_ventas_fechas(request):
     else:
         fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
 
-    ventas = VentaCabecera.objects.filter(estado='A',fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
+    ventas = VentaCabecera.objects.filter(estado='A', tipo_pago='Contado',fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
 
 
     pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde, venta__fecha__lte=fecha_hasta)

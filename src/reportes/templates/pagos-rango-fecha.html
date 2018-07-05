@@ -59,6 +59,8 @@
                               <th>Tipo Tarjeta</th>
                               <th>Nº de Autorización</th>
                               <th>Nº de Tarjeta</th>
+                              <th>Tipo de pago</th>
+                              <th>Nro de factura</th>
 
                             </tr>
 
@@ -74,6 +76,8 @@
                                     <td>{{ pagos.2 }}</td>
                                     <td>{{ pagos.3}}</td>
                                     <td>{{ pagos.4}}</td>
+                                    <td>{{ pagos.5}}</td>
+                                    <td><a href="/tienda/ventas/{{ pagos.6}}">{{ pagos.6}}</a></td>
                                     </tr>
                                 {% endfor %}
 
