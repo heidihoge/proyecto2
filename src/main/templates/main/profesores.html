@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <div class="page-title">
+   <div class="page-title">
         <div class="title_left">
-            <h3>Lista de Profesores</h3>
+            <h3>Lista de Alumnos</h3>
         </div>
         <div class="title_right">
+            <form>
             <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
+                     <a class="btn btn-success pull-right" href="/escuela/profesores/csv"><i  class="fa fa-download"></i> CSV</a>
+                 &nbsp;
 
-                    <a class="btn btn-primary pull-right" href="/profesores/new"><i  class="fa fa-plus-square"></i> NUEVO PROFESOR</a>
-
-                </div>
+                    <a class="btn btn-primary pull-right" href="/profesores/new"><i  class="fa fa-plus-square"></i> NUEVO PROFESOR </a>
             </div>
-
+            </form>
+        </div>
     </div>
     <div class="clearfix"></div>
 

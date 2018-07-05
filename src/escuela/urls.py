@@ -11,7 +11,8 @@ from .views import list_clases, list_etiquetas, list_etiquetas_clase, \
     delete_clase, delete_etiqueta, delete_etiquetas_clase, delete_etiquetas_grupo, \
     delete_grupo, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
     lista_asistencia, guardar_inscripcion, list_cuentas, baja_inscripcion, list_inscripciones_baja, \
-    list_inscripciones_inactivas, update_cuenta, delete_cuenta
+    list_inscripciones_inactivas, update_cuenta, delete_cuenta, export_alumnos_csv, export_profesores_csv, \
+    export_clases_csv
 
 from main import views
 
@@ -79,7 +80,9 @@ urlpatterns = [
     # path('ventas/<str:nro_factura>', list_ventas ,name='list_ventas'),
 
 
-
+     path('alumnos/csv', export_alumnos_csv, name='export_alumnos_csv'),
+     path('profesores/csv', export_profesores_csv, name='export_profesores_csv'),
+     path('clases/csv', export_clases_csv, name='export_clases_csv'),
 
 
 

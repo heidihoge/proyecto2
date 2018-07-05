@@ -1,5 +1,7 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
+
+
 from .views import list_alumnos, create_alumno, update_alumno, delete_alumno, list_personas, create_persona, \
     update_persona, delete_persona, list_empleados, update_empleado, create_empleado, delete_empleado, list_profesores, \
     create_profesor, update_profesor, delete_profesor, list_titulares, create_titular, update_titular, delete_titular, \
@@ -34,6 +36,7 @@ urlpatterns = [
     path('alumnos/<int:id>/update', update_alumno, name='update_alumno'),
     path('alumnos/<int:id>/delete', delete_alumno, name='delete_alumno'),
     path('alumnos/verificar', verificar_alumnos, name='verificar_alumnos'),
+
 
 
     path('empleados', list_empleados, name='list_empleados'),

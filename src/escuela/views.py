@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import csv
 import json
 from datetime import datetime, date
 
@@ -898,3 +899,44 @@ class CuotaJob(CronJobBase):
             cuenta.save()
 
 
+# EXPORTABLES
+
+def export_alumnos_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="alumnos.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['cedula','nombre','apellido','fecha_nacimiento','direccion','telefono','otro contacto'])
+    alumnos = Alumno.objects.all().values_list('cedula', 'nombre','apellido','fecha_nacimiento','direccion','telefono1','telefono2')
+    for alumno in alumnos:
+        writer.writerow(alumno)
+
+    return response
+
+
+
+def export_profesores_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="profesores.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['cedula','nombre','apellido','fecha_nacimiento','direccion','telefono','otro contacto'])
+    profesores = Alumno.objects.all().values_list('cedula', 'nombre','apellido','fecha_nacimiento','direccion','telefono1','telefono2')
+    for profesor in profesores:
+        writer.writerow(profesor)
+
+    return response
+
+
+
+def export_clases_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="clases.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['nombre de clase','descripción'])
+    clases = Clase.objects.all().values_list('nombre', 'descripcion')
+    for clase in clases:
+        writer.writerow(clase)
+
+    return response
