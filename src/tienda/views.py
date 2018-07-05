@@ -363,15 +363,50 @@ def cuentas(formset):
 
     return productos_cuenta
 
+def export_venta(resultados, fecha, fecha_fin=None, nombre='ventas-diarias'):
+    response = HttpResponse(content_type='text/csv')
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    fecha_2 = '-{0:02}-{1:02}-{2}'.format(fecha_fin.day, fecha_fin.month, fecha_fin.year) if fecha_fin else ''
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}{2}.csv"'\
+        .format(nombre, fecha_1, fecha_2)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Nro Factura', 'Tipo de pago', 'Ruc Cliente', 'Cliente', 'Gravada 10%', 'IVA 10%',
+                     'Gravada 5%', 'IVA 5%', 'Exentas', 'Total IVA', 'Monto Total', 'Estado'])
+
+    def texto_estado(estado):
+        if estado == 'A':
+            return 'Pagado'
+        if estado == 'P':
+            return 'Pendiente'
+        if estado == 'IN':
+            return 'Cancelado'
+        return estado
+
+    for resultado in resultados:
+        writer.writerow([resultado.fecha, str(resultado.nro_factura), resultado.tipo_pago,
+                         resultado.cliente.ruc_cliente,
+                         resultado.cliente.nombre_razon, resultado.total_grav_10,
+                         resultado.total_iva_10, resultado.total_grav_5,
+                         resultado.total_iva_5, resultado.total_grav_exentas, resultado.total_iva,
+                         resultado.monto_total, texto_estado(resultado.estado)])
+
+    return response
+
 @login_required() #permisos para login
 def list_ventas(request):
     fecha = request.GET.get('fecha', None)
+    action = request.GET.get('action', 'Ver')
     if not fecha:
         fecha = datetime.date.today()
     else:
         fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
 
     ventas = VentaCabecera.objects.filter(fecha=fecha,estado__in=['A'], tipo_pago='Contado')
+
+    if action == 'Excel':
+        return export_venta(ventas, fecha)
+
     pagos = Pago.objects.filter(venta__estado='A', venta__fecha=fecha)
 
     monto_efectivo = pagos.aggregate(total=Coalesce(Sum('monto_efectivo'), 0))
@@ -393,6 +428,7 @@ def list_ventas(request):
 def list_ventas_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
+    action = request.GET.get('action', 'Ver')
 
     if not fecha_desde :
         fecha_desde = datetime.date.today()
@@ -406,6 +442,8 @@ def list_ventas_fechas(request):
 
     ventas = VentaCabecera.objects.filter(estado='A', tipo_pago='Contado',fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
 
+    if action == 'Excel':
+        return export_venta(ventas, fecha_desde, fecha_hasta, nombre='ventas-rango')
 
     pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde, venta__fecha__lte=fecha_hasta)
 
@@ -422,10 +460,28 @@ def list_ventas_fechas(request):
                                             'totalt': monto_tarjeta,
                                             'totalch': monto_cheque})
 
+def export_recibo(resultados, fecha, fecha_fin=None, nombre='recibo-fecha'):
+    response = HttpResponse(content_type='text/csv')
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    fecha_2 = '-{0:02}-{1:02}-{2}'.format(fecha_fin.day, fecha_fin.month, fecha_fin.year) if fecha_fin else ''
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}{2}.csv"'\
+        .format(nombre, fecha_1, fecha_2)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Nro de Factura', 'Nro de Recibo', 'Cliente', 'Monto'])
+
+
+    for resultado in resultados:
+        writer.writerow([resultado.fecha, str(resultado.venta.nro_factura), resultado.nro_recibo,
+                         resultado.nombre_cliente, resultado.monto])
+
+    return response
+
 @login_required() #permisos para login
 def list_recibos_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
+    action = request.GET.get('action', 'Ver')
 
     if not fecha_desde :
         fecha_desde = datetime.date.today()
@@ -439,6 +495,9 @@ def list_recibos_fechas(request):
 
 
     recibos = Recibo.objects.filter(venta__estado__in=['A', 'P'], fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
+
+    if action == 'Excel':
+        return export_recibo(recibos, fecha_desde, fecha_hasta, nombre='recibos-fecha')
 
     monto_efectivo = recibos.aggregate(total=Coalesce(Sum('monto_efectivo'), 0))
     monto_tarjeta = recibos.aggregate(total=Coalesce(Sum('monto_tarjeta'), 0))
@@ -457,6 +516,7 @@ def list_recibos_fechas(request):
 def list_ventas_credito_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
+    action = request.GET.get('action', 'Ver')
 
     if not fecha_desde :
         fecha_desde = datetime.date.today()
@@ -472,11 +532,15 @@ def list_ventas_credito_fechas(request):
 
     ventas = VentaCabecera.objects.filter(estado__in=['A', 'P'], tipo_pago='Crédito', fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
 
+
     estado = request.GET.get('estado', 'TODOS')
     if estado == 'A':
         ventas = ventas.filter(estado='A')
     if estado == 'P':
         ventas = ventas.filter(estado='P')
+
+    if action == 'Excel':
+        return export_venta(ventas, fecha_desde, fecha_hasta, nombre='ventas-credito')
 
     suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
 
@@ -492,6 +556,7 @@ def list_ventas_credito_fechas(request):
 @login_required() #permisos para login
 def list_ventas_canceladas(request):
     fecha = request.GET.get('fecha', None)
+    action = request.GET.get('action', 'Ver')
     if not fecha:
         fecha = datetime.date.today()
     else:
@@ -499,6 +564,8 @@ def list_ventas_canceladas(request):
 
     ventas = VentaCabecera.objects.filter(fecha=fecha,estado='IN')
 
+    if action == 'Excel':
+        return export_venta(ventas, fecha, nombre='ventas-canceladas')
 
     suma_ventas = ventas.aggregate(total=Sum('monto_total'))
 
@@ -764,8 +831,8 @@ def vender(request):
 # ---------------------VISTA COMPRA CABECERA --------------------------------
 def export_compras(compras, fecha):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="compras-{0:02}-{1}.csv"'\
-        .format(fecha.month, fecha.year)
+    response['Content-Disposition'] = 'attachment; filename="compras-{0:02}-{1:02}-{2}.csv"'\
+        .format(fecha.day, fecha.month, fecha.year)
 
     writer = csv.writer(response)
     writer.writerow(['Fecha', 'Nro de Factura', 'Ruc', 'Proveedor', 'Descripción',
@@ -1124,8 +1191,8 @@ def consulta_factura(request, nro_factura):
 
 def export_operaciones(operaciones, fecha):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="operaciones-caja-{0:02}-{1}.csv"'\
-        .format(fecha.month, fecha.year)
+    response['Content-Disposition'] = 'attachment; filename="operaciones-caja-{0:02}-{1:02}-{2}.csv"'\
+        .format(fecha.day, fecha.month, fecha.year)
 
     writer = csv.writer(response)
     writer.writerow(['Fecha', 'Tipo transacción', 'Monto', 'Concepto', 'Descripción'])
@@ -1216,10 +1283,32 @@ def delete_operacion(request, id):
 
     return redirect('list_operaciones')
 
+def export_estado(resultados, cedula, nombre='estado-cuenta'):
+    response = HttpResponse(content_type='text/csv')
+    fecha = datetime.datetime.today()
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}-{2}.csv"'\
+        .format(nombre, cedula, fecha_1)
+
+    writer = csv.writer(response)
+    writer.writerow(['Curso', 'Grupo', 'Titular', 'Alumno', 'Fecha inicio',
+                     'Fecha fin', 'Última cuenta', 'Estado última cuenta'])
+
+
+    for resultado in resultados:
+        writer.writerow([resultado['nombre_curso'], resultado['grupo'].grupo_desc(),
+                         resultado['nombre'] + " " + resultado['apellido'] + " (" + resultado['cedula'] + ")",
+                         resultado['alumno_nombre'] + " " + resultado['alumno_apellido'] + " (" + resultado['alumno_cedula'] + ")",
+                         resultado['fecha_inicio'], resultado['fecha_fin'], resultado['vencimiento'],
+                         'Pagado' if resultado['pagado'] else 'Pendiente'])
+
+    return response
+
 @login_required() #permisos para login
 def estado_cuenta(request):
 
     cedula = request.GET.get('cedula', None)
+    action = request.GET.get('action', 'Ver')
 
     if request.method == 'POST':
         inscripcion = request.POST['inscripcion']
@@ -1301,6 +1390,9 @@ and cuenta.vencimiento = (select c.vencimiento
             return resultado
 
         resultados = map(agrega_grupo, resultados)
+
+        if action == 'Excel':
+            return export_estado(resultados, cedula)
 
     context = {'resultados': resultados, 'persona': persona, 'cedula': cedula}
 
