@@ -29,7 +29,10 @@
                             <label for="fecha">Fecha</label>
                             <input class="form-control" type="text" value="{{ fecha }}" name="fecha" data-inputmask="'mask': '99/99/9999'" &nbsp>
 
-                            <input class="btn btn-primary" type="submit" value="Ver">
+                            <label for="ver" class="btn btn-primary"><i class="fa fa-search"></i> Ver</label>
+                            <input id="ver" type="submit" name="action" class="hidden" value="Ver">
+                            <label for="excel" class="btn btn-success"><i class="fa fa-download"></i> CSV</label>
+                            <input id="excel" type="submit" name="action" class="hidden" value="Excel">
 
                             <br>
                         </form>

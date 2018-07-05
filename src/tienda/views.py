@@ -762,7 +762,26 @@ def vender(request):
                                                 'cuenta': cuenta, 'formularioPago':formularioPago})
 
 # ---------------------VISTA COMPRA CABECERA --------------------------------
-#@login_required() #permisos para login
+def export_compras(compras, fecha):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="compras-{0:02}-{1}.csv"'\
+        .format(fecha.month, fecha.year)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Nro de Factura', 'Ruc', 'Proveedor', 'Descripción',
+                     'Gravadas 10%', 'IVA 10%', 'Gravadas 5%', 'IVA 5%',
+                     'Exentas', 'Total IVA', 'Monto Total'])
+
+    for compra in compras:
+        writer.writerow([compra.fecha, compra.nro_factura, compra.ruc_proveedor,
+                         compra.proveedor, compra.descripcion,
+                         compra.total_grav_10, compra.total_iva_10,
+                         compra.total_grav_5, compra.total_iva_5,
+                         compra.total_grav_exentas, compra.total_iva, compra.monto_total])
+
+    return response
+
+@login_required() #permisos para login
 def list_compras(request):
 
     fecha = request.GET.get('fecha', None)
@@ -773,7 +792,9 @@ def list_compras(request):
 
     compras = CompraCabecera.objects.filter(fecha=fecha)
 
-
+    action = request.GET.get('action', 'Ver')
+    if action == 'Excel':
+        return export_compras(compras, fecha)
 
     suma_compras = compras.aggregate(total=Sum('monto_total'))
 
@@ -1101,20 +1122,37 @@ def consulta_factura(request, nro_factura):
                'pago': pago, 'recibos': recibos, 'saldo': saldo, 'formularioRecibo': formularioRecibo}
     return render(request, 'venta-detalle.html', context)
 
+def export_operaciones(operaciones, fecha):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="operaciones-caja-{0:02}-{1}.csv"'\
+        .format(fecha.month, fecha.year)
 
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Tipo transacción', 'Monto', 'Concepto', 'Descripción'])
+
+    for operacion in operaciones:
+        writer.writerow([operacion.fecha, operacion.tipo_transaccion, operacion.monto,
+                         operacion.concepto, operacion.descripcion])
+
+    return response
 
 # OPERACIONES EN CAJA
 @login_required() #permisos para login
 def list_operaciones(request):
+    action = request.GET.get('action', 'Ver')
     fecha = request.GET.get('fecha', None)
     if not fecha:
         fecha = datetime.date.today()
     else:
         fecha = datetime.datetime.strptime(fecha, settings.DATE_INPUT_FORMATS[0]).date()
 
-    operacion = OperacionCaja.objects.filter(fecha=fecha)
-    entradas = operacion.filter(tipo_transaccion='ENTRADA').aggregate(total=Sum('monto'))
-    salidas = operacion.filter(tipo_transaccion='SALIDA').aggregate(total=Sum('monto'))
+    operaciones = OperacionCaja.objects.filter(fecha=fecha)
+
+    if action == 'Excel':
+        return export_operaciones(operaciones, fecha)
+
+    entradas = operaciones.filter(tipo_transaccion='ENTRADA').aggregate(total=Sum('monto'))
+    salidas = operaciones.filter(tipo_transaccion='SALIDA').aggregate(total=Sum('monto'))
 
     monto_salida = salidas['total']
     monto_entrada = entradas['total']
@@ -1124,7 +1162,7 @@ def list_operaciones(request):
     if not monto_entrada:
         monto_entrada = 0
 
-    return render(request, 'operacion_caja.html', {'operaciones': operacion, 'fecha': fecha,
+    return render(request, 'operacion_caja.html', {'operaciones': operaciones, 'fecha': fecha,
                                                    'total': monto_entrada -  monto_salida })
 
 
