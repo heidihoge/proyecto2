@@ -422,6 +422,30 @@ def list_ventas_fechas(request):
                                             'totalt': monto_tarjeta,
                                             'totalch': monto_cheque})
 
+@login_required() #permisos para login
+def list_ventas_credito_fechas(request):
+    fecha_desde = request.GET.get('fecha_desde', None)
+    fecha_hasta = request.GET.get('fecha_hasta', None)
+
+    if not fecha_desde :
+        fecha_desde = datetime.date.today()
+    else:
+        fecha_desde = datetime.datetime.strptime(fecha_desde, settings.DATE_INPUT_FORMATS[0]).date()
+
+    if not fecha_hasta :
+        fecha_hasta = datetime.date.today()
+    else:
+        fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
+
+    ventas = VentaCabecera.objects.filter(estado__in=['A', 'P'], tipo_pago='Crédito', fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
+
+    suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
+
+
+    return render(request, 'ventas-credito-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
+                                            'ventas': ventas,
+                                            'total': suma_ventas})
+
 
 
 
