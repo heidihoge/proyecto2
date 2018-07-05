@@ -50,7 +50,7 @@ urlpatterns = [
     path('titulares/verificar', verificar_titular, name='verificar_titular'),
     path('titulares/new', create_titular, name='create_titular'),
     path('titulares/<int:id>/update', update_titular, name='update_titular'),
-    path('titulares/<int:id>/delete/', delete_titular, name='delete_titular'),
+    path('titulares/<int:id>/delete', delete_titular, name='delete_titular'),
 
 
 ]
