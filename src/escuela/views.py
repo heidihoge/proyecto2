@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, Http404
 from django.shortcuts import render, render_to_response, get_object_or_404
-from django.db import connection
+from django.db import connection, transaction
 from django.template import context, RequestContext
 from django_cron import CronJobBase, Schedule
 
@@ -157,10 +157,14 @@ def delete_clase(request, id):
         clase = Clase.objects.get(id=id)
     except:
         return redirect('404')
-
     if request.method == 'POST':
-        clase.delete()
-        messages.success(request, 'Clase eliminada correctamente.')
+        try:
+            clase.delete()
+            transaction.commit()
+            messages.success(request, 'Clase eliminado correctamente.')
+        except:
+            messages.error(request, 'La clase no puede ser eliminado, está siendo utilizado.')
+            transaction.set_rollback(True)
 
     return redirect('list_clases')
 
@@ -213,20 +217,22 @@ def update_grupo(request, id):
 
 @login_required() #permiso login
 @permission_required('escuela.grupo_delete', raise_exception=True)
+@transaction.non_atomic_requests
 def delete_grupo(request, id):
     try:
         grupo = Grupo.objects.get(id=id)
     except:
         return redirect('404')
-
     if request.method == 'POST':
         try:
-            grupo.delete()
+            with transaction.atomic():
+                grupo.delete()
             messages.success(request, 'Grupo eliminado correctamente.')
-        except:
-            messages.error(request, 'No puedes borrar el grupo, está siendo utilizado')
+        except Exception as e:
+            messages.error(request, 'El grupo no puede ser eliminado, está siendo utilizado.')
 
     return redirect('list_grupos')
+
 
 
 # # ---------------------VISTA DIA_HORA --------------------------------

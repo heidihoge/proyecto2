@@ -7,6 +7,7 @@ from dal import autocomplete
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, Http404
 from django.db.models import Q
@@ -316,17 +317,26 @@ def update_titular(request, id):
 
 @login_required()
 @permission_required('titular_delete', raise_exception=True)
+
+@transaction.non_atomic_requests
 def delete_titular(request, id):
     try:
         titular = Titular.objects.get(id=id)
     except:
         return redirect('404')
-
     if request.method == 'POST':
-        titular.delete()
-        messages.success(request, 'Titular eliminado correctamente.')
+        try:
+            with transaction.atomic():
+                titular.delete()
+            messages.success(request, 'Titular eliminado correctamente.')
+        except Exception as e:
+            messages.error(request, 'El Titular no puede ser eliminado, está siendo utilizado.')
 
     return redirect('list_titulares')
+
+
+
+
 
 
 # ---------------------VISTA ALUMNOS --------------------------------
@@ -388,6 +398,7 @@ def update_alumno(request, id):
 
 @login_required() #permisos para login
 @permission_required('alumno_delete', raise_exception=True)
+@transaction.non_atomic_requests
 def delete_alumno(request, id):
     try:
         alumno = Alumno.objects.get(id=id)
@@ -395,9 +406,10 @@ def delete_alumno(request, id):
         return redirect('404')
     if request.method == 'POST':
         try:
-            alumno.delete()
-            messages.success(request, 'Alumno eliminado correctamente.')
-        except:
+            with transaction.atomic():
+                alumno.delete()
+            messages.success(request, 'alumno eliminado correctamente.')
+        except Exception as e:
             messages.error(request, 'El alumno no puede ser eliminado, está siendo utilizado.')
 
     return redirect('list_alumnos')
@@ -457,18 +469,22 @@ def update_empleado(request, id):
 
 @login_required() #permisos para login
 @permission_required('main.empleado_delete', raise_exception=True)
+
+@transaction.non_atomic_requests
 def delete_empleado(request, id):
     try:
         empleado = Empleado.objects.get(id=id)
     except:
         return redirect('404')
-
     if request.method == 'POST':
-        empleado.delete()
-        messages.success(request, 'Empleado eliminado correctamente.')
+        try:
+            with transaction.atomic():
+                empleado.delete()
+            messages.success(request, 'empleado eliminado correctamente.')
+        except Exception as e:
+            messages.error(request, 'El empleado no puede ser eliminado, está siendo utilizado.')
 
     return redirect('list_empleados')
-
 
 # ---------------------VISTA PROFESORES --------------------------------
 from django.contrib import messages
@@ -526,15 +542,19 @@ def update_profesor(request, id):
 
 @login_required() #permisos para login
 @permission_required('main.profesor_delete', raise_exception=True)
+@transaction.non_atomic_requests
 def delete_profesor(request, id):
     try:
         profesor = Profesor.objects.get(id=id)
     except:
         return redirect('404')
-
     if request.method == 'POST':
-        profesor.delete()
-        messages.success(request, 'Profesor eliminado correctamente.')
+        try:
+            with transaction.atomic():
+                profesor.delete()
+            messages.success(request, 'profesor eliminado correctamente.')
+        except Exception as e:
+            messages.error(request, 'El profesor no puede ser eliminado, está siendo utilizado.')
 
     return redirect('list_profesores')
 
