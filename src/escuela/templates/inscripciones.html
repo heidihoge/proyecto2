@@ -48,7 +48,12 @@
                                     <td>{{ inscripcion.grupo }}</td>
                                     <td>{{ inscripcion.estado }}</td>
                                     <td>{{ inscripcion.fecha_inicio }}</td>
-                                    <td>{{ inscripcion.fecha_fin }}</td>
+
+                                    <td>
+                                        {% if inscripcion.fecha_fin %}
+                                        {{ inscripcion.fecha_fin }}
+                                        {% endif %}
+                                    </td>
 
 
 {#                                    <td><a class="btn btn-info btn-xs" href="/escuela/inscripciones/{{ inscripcion.id }}/update">Editar </a>#}

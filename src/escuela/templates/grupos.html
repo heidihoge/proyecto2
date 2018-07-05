@@ -38,13 +38,6 @@
                                 <th>Costo/mes</th>
                                 <th>Hora inicio</th>
                                 <th>Hora fin</th>
-{#                                <th>lunes</th>#}
-{#                                <th>martes</th>#}
-{#                                <th>miercoles</th>#}
-{#                                <th>jueves</th>#}
-{#                                <th>viernes</th>#}
-{#                                <th>sabado</th>#}
-{#                                <th>domingo</th>#}
 
                                 <th>Accion</th>
                             </tr>
@@ -58,13 +51,7 @@
                                     <td>{{ grupo.cupo_maximo }}</td>
                                     <td>{{ grupo.costo | intdot }} ₲</td>
                                     <td>{{ grupo.hora_inicio }}</td>-<td>{{ grupo.hora_fin }}</td>
-{#                                    <td>{{ grupo.lunes }}</td>#}
-{#                                    <td>{{ grupo.martes }}</td>#}
-{#                                    <td>{{ grupo.miercoles }}</td>#}
-{#                                    <td>{{ grupo.jueves }}</td>#}
-{#                                    <td>{{ grupo.viernes }}</td>#}
-{#                                    <td>{{ grupo.sabado }}</td>#}
-{#                                    <td>{{ grupo.domingo }}</td>#}
+
 
                                     <td><a class="btn btn-info btn-xs" href="/escuela/grupos/{{ grupo.id }}/update">Editar </a>
                                         <a button class="btn btn-danger btn-xs" data-toggle="modal"
