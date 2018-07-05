@@ -47,6 +47,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Nro de Factura</th>
+                                <th>Tipo de pago</th>
                                 <th>Cliente</th>
                                 <th>Gravadas 10%</th>
                                 <th>IVA 10%</th>
@@ -67,6 +68,7 @@
                                 <tr>
                                     <td>{{ venta.fecha }}</td>
                                     <td>{{ venta.nro_factura }}</td>
+                                    <td>{{ venta.tipo_pago }}</td>
                                     <td>{{ venta.cliente.nombre_razon }}</td>
                                     <td>{{ venta.total_grav_10| intdot }} ₲</td>
                                     <td>{{ venta.total_iva_10| intdot }} ₲</td>
@@ -75,7 +77,17 @@
                                     <td>{{ venta.total_grav_exentas| intdot }} ₲</td>
                                     <td>{{ venta.total_iva| intdot }} ₲</td>
                                     <td>{{ venta.monto_total| intdot }} ₲</td>
-                                    <td>{{ venta.estado }}</td>
+                                    <td>
+                                        {% if venta.estado == 'IN' %}
+                                            <div class="label label-danger">Cancelado</div>
+                                        {% endif %}
+                                        {% if venta.estado == 'P' %}
+                                            <div class="label label-warning">Pendiente</div>
+                                        {% endif %}
+                                        {% if venta.estado == 'A' %}
+                                            <div class="label label-success">Pagado</div>
+                                        {% endif %}
+                                    </td>
                                     </tr>
 
 {#                                        <a button class="btn btn-primary btn-xs" href="/tienda/ventas/{{ venta.nro_factura }}">Detalle</a>#}

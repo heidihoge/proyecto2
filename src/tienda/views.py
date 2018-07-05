@@ -423,6 +423,37 @@ def list_ventas_fechas(request):
                                             'totalch': monto_cheque})
 
 @login_required() #permisos para login
+def list_recibos_fechas(request):
+    fecha_desde = request.GET.get('fecha_desde', None)
+    fecha_hasta = request.GET.get('fecha_hasta', None)
+
+    if not fecha_desde :
+        fecha_desde = datetime.date.today()
+    else:
+        fecha_desde = datetime.datetime.strptime(fecha_desde, settings.DATE_INPUT_FORMATS[0]).date()
+
+    if not fecha_hasta :
+        fecha_hasta = datetime.date.today()
+    else:
+        fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
+
+
+    recibos = Recibo.objects.filter(venta__estado__in=['A', 'P'], fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
+
+    monto_efectivo = recibos.aggregate(total=Coalesce(Sum('monto_efectivo'), 0))
+    monto_tarjeta = recibos.aggregate(total=Coalesce(Sum('monto_tarjeta'), 0))
+    monto_cheque= recibos.aggregate(total=Coalesce(Sum('monto_cheque'), 0))
+    suma_ventas = recibos.aggregate(total=Coalesce(Sum('monto'), 0))
+
+
+    return render(request, 'recibos-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
+                                            'recibos': recibos,
+                                            'total': suma_ventas,
+                                            'totale': monto_efectivo,
+                                            'totalt': monto_tarjeta,
+                                            'totalch': monto_cheque})
+
+@login_required() #permisos para login
 def list_ventas_credito_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
@@ -437,14 +468,23 @@ def list_ventas_credito_fechas(request):
     else:
         fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
 
+
+
     ventas = VentaCabecera.objects.filter(estado__in=['A', 'P'], tipo_pago='Crédito', fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
+
+    estado = request.GET.get('estado', 'TODOS')
+    if estado == 'A':
+        ventas = ventas.filter(estado='A')
+    if estado == 'P':
+        ventas = ventas.filter(estado='P')
 
     suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
 
 
     return render(request, 'ventas-credito-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
                                             'ventas': ventas,
-                                            'total': suma_ventas})
+                                            'total': suma_ventas,
+                                            'estado': estado})
 
 
 

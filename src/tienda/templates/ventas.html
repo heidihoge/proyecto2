@@ -87,7 +87,17 @@
                                     <td>{{ venta.total_grav_exentas| intdot }} ₲</td>
                                     <td>{{ venta.total_iva| intdot }} ₲</td>
                                     <td>{{ venta.monto_total| intdot }} ₲</td>
-                                    <td>{{ venta.estado }}</td>
+                                    <td>
+                                        {% if venta.estado == 'IN' %}
+                                            <div class="label label-danger">Cancelado</div>
+                                        {% endif %}
+                                        {% if venta.estado == 'P' %}
+                                            <div class="label label-warning">Pendiente</div>
+                                        {% endif %}
+                                        {% if venta.estado == 'A' %}
+                                            <div class="label label-success">Pagado</div>
+                                        {% endif %}
+                                    </td>
                                     <td>
 
                                         <a button class="btn btn-primary btn-xs" href="/tienda/ventas/{{ venta.nro_factura }}">Detalle</a>

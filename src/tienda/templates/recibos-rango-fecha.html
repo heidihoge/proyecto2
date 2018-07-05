@@ -8,13 +8,25 @@
                      font-weight: bold;
                      color: #2A3F54;
                           text-align: center;">
-                        Total Venta : {{ total.total | intdot }} ₲
+                        Total Recibos : {{ total.total | intdot }} ₲
                 </div>
-            <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
-
-                    <a class="btn btn-primary pull-right" href="/tienda/ventas/new"><i  class="fa fa-plus-square"></i> NUEVA VENTA</a>
+        <div style="font-size: 15px;
+                     font-weight: bold;
+                     color: #2A3F54;
+                          text-align: center;">
+                        <br>
+                        Total Efectivo: {{ totale.total| intdot   }} ₲
+                <br>
+                        Total Tarjeta: {{ totalt.total| intdot  }} ₲
+                <br>
+                        Total Cheque: {{ totalch.total| intdot  }} ₲
 
             </div>
+            <div class="col-md-5 col-sm-5 col-xs-12 pull-right top_search">
+
+            <br>
+            </div>
+
     </div>
     <div class="clearfix"></div>
 
@@ -23,18 +35,12 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_content">
-                  <form method="GET" action="/tienda/ventas/credito/fechas"  class="form form-inline hidden-print">
+                  <form method="GET" action="/tienda/recibos/fechas"  class="form form-inline hidden-print">
 
                             <label for="fecha">Fecha</label>
                             <input class="form-control" type="text" value="{{ fecha_desde }}" name="fecha_desde" data-inputmask="'mask': '99/99/9999'" &nbsp>
                             <input class="form-control" type="text" value="{{ fecha_hasta}}" name="fecha_hasta" data-inputmask="'mask': '99/99/9999'" &nbsp>
-                            <label for="estado">Estado</label>
-                            <select class="form-control" id="estado" name="estado">
-                                <option value="TODOS" {% if estado == 'TODOS' or not estado %}selected{% endif %}>Todos</option>
-                                <option value="A" {% if estado == 'A' %}selected{% endif %}>Pagado</option>
-                                <option value="P" {% if estado == 'P' %}selected{% endif %}>Pendiente</option>
-{#                                <option value="IN" >Cancelado</option>#}
-                            </select>
+
                             <input class="btn btn-primary" type="submit" value="Ver">
 
                             <br>
@@ -53,57 +59,22 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Nro de Factura</th>
-                                <th>Tipo de pago</th>
+                                <th>Nro de Recibo</th>
                                 <th>Cliente</th>
-                                <th>Gravadas 10%</th>
-                                <th>IVA 10%</th>
-                                <th>Gravadas 5%</th>
-                                <th>IVA 5%</th>
-                                <th>Excentas</th>
-                                <th>Total IVA</th>
-                                <th>Monto Total</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
+                                <th>Monto</th>
                             </tr>
 
                             </thead>
                             <tbody>
 
-                            {% for venta in ventas     %}
+                            {% for recibo in recibos     %}
                                 <tr>
-                                    <td>{{ venta.fecha }}</td>
-                                    <td><a href="/tienda/ventas/{{ venta.nro_factura }}">{{ venta.nro_factura }}</a></td>
-                                    <td>{{ venta.tipo_pago }}</td>
-                                    <td>{{ venta.cliente.nombre_razon }}</td>
-                                    <td>{{ venta.total_grav_10| intdot }} ₲</td>
-                                    <td>{{ venta.total_iva_10| intdot }} ₲</td>
-                                    <td>{{ venta.total_grav_5| intdot }} ₲</td>
-                                    <td>{{ venta.total_iva_5| intdot }} ₲</td>
-                                    <td>{{ venta.total_grav_exentas| intdot }} ₲</td>
-                                    <td>{{ venta.total_iva| intdot }} ₲</td>
-                                    <td>{{ venta.monto_total| intdot }} ₲</td>
-                                    <td>
-                                    {% if venta.estado == 'IN' %}
-                                        <div class="label label-danger">Cancelado</div>
-                                    {% endif %}
-                                    {% if venta.estado == 'P' %}
-                                        <div class="label label-warning">Pendiente</div>
-                                    {% endif %}
-                                    {% if venta.estado == 'A' %}
-                                        <div class="label label-success">Pagado</div>
-                                    {% endif %}
-                                    </td>
-                                    <td>
+                                    <td>{{ recibo.fecha }}</td>
+                                    <td><a href="/tienda/ventas/{{ recibo.venta.nro_factura }}">{{ recibo.venta.nro_factura }}</a></td>
+                                    <td>{{ recibo.nro_recibo }}</td>
+                                    <td>{{ recibo.nombre_cliente }}</td>
+                                    <td>{{ recibo.monto | intdot }} ₲</td>
 
-                                        <a button class="btn btn-primary btn-xs" href="/tienda/ventas/{{ venta.nro_factura }}">Detalle</a>
-                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Cancelar</a>
-
-                                    </td>
-
-{#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ venta.id }}/update">Editar </a>#}
-{#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Eliminar</a></td>#}
                                 </tr>
                             {% endfor %}
 
