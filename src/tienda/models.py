@@ -140,6 +140,7 @@ class VentaCabecera(models.Model):
     tipo_pago = models.CharField(max_length=7, choices=TIPO_PAGO, default='Contado')
 
     credito_plazo = models.IntegerField(default=0)
+    fecha_vencimiento = models.DateField(default=datetime.date.today)
 
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField(default=datetime.date.today)

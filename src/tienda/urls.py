@@ -9,7 +9,8 @@ from tienda.views import list_productos, create_producto, update_producto, delet
     export_productos_csv, ClienteAutocomplete, FacturaAutocomplete, ProductoAutocomplete, list_clientes, create_cliente, \
     delete_cliente, update_cliente, CuentaAutocomplete, list_ventas, consulta_factura, cancela_venta, list_operaciones, \
     create_operacion, update_operacion, delete_operacion, reporte_compras, list_ventas_canceladas, estado_cuenta, \
-    list_ventas_fechas, export_clientes_csv, list_ventas_credito_fechas, list_recibos_fechas
+    list_ventas_fechas, export_clientes_csv, list_ventas_credito_fechas, list_recibos_fechas, \
+    list_ventas_credito_vencimiento_fechas
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
 
 urlpatterns = [
@@ -46,6 +47,7 @@ urlpatterns = [
     path('ventas/fechas', list_ventas_fechas, name='list_ventas_fechas'),
     path('recibos/fechas', list_recibos_fechas, name='list_recibo_fechas'),
     path('ventas/credito/fechas', list_ventas_credito_fechas, name='list_ventas_credito_fechas'),
+    path('ventas/credito/vencimiento/fechas', list_ventas_credito_vencimiento_fechas, name='list_ventas_credito_vencimiento_fechas'),
     path('ventas/canceladas', list_ventas_canceladas, name='list_ventas_canceladas'),
     path('ventas/<str:nro_factura>', consulta_factura, name='consulta_factura'),
 

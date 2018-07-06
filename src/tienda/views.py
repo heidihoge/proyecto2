@@ -393,6 +393,36 @@ def export_venta(resultados, fecha, fecha_fin=None, nombre='ventas-diarias'):
 
     return response
 
+def export_venta_vencimiento(resultados, fecha, fecha_fin=None, nombre='ventas-diarias'):
+    response = HttpResponse(content_type='text/csv')
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    fecha_2 = '-{0:02}-{1:02}-{2}'.format(fecha_fin.day, fecha_fin.month, fecha_fin.year) if fecha_fin else ''
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}{2}.csv"'\
+        .format(nombre, fecha_1, fecha_2)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha emisión', 'Fecha vencimiento', 'Nro Factura', 'Tipo de pago', 'Ruc Cliente', 'Cliente', 'Gravada 10%', 'IVA 10%',
+                     'Gravada 5%', 'IVA 5%', 'Exentas', 'Total IVA', 'Monto Total', 'Estado'])
+
+    def texto_estado(estado):
+        if estado == 'A':
+            return 'Pagado'
+        if estado == 'P':
+            return 'Pendiente'
+        if estado == 'IN':
+            return 'Cancelado'
+        return estado
+
+    for resultado in resultados:
+        writer.writerow([resultado.fecha, resultado.fecha_vencimiento, str(resultado.nro_factura), resultado.tipo_pago,
+                         resultado.cliente.ruc_cliente,
+                         resultado.cliente.nombre_razon, resultado.total_grav_10,
+                         resultado.total_iva_10, resultado.total_grav_5,
+                         resultado.total_iva_5, resultado.total_grav_exentas, resultado.total_iva,
+                         resultado.monto_total, texto_estado(resultado.estado)])
+
+    return response
+
 @login_required() #permisos para login
 def list_ventas(request):
     fecha = request.GET.get('fecha', None)
@@ -546,6 +576,45 @@ def list_ventas_credito_fechas(request):
 
 
     return render(request, 'ventas-credito-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
+                                            'ventas': ventas,
+                                            'total': suma_ventas,
+                                            'estado': estado})
+
+@login_required() #permisos para login
+def list_ventas_credito_vencimiento_fechas(request):
+    fecha_desde = request.GET.get('fecha_desde', None)
+    fecha_hasta = request.GET.get('fecha_hasta', None)
+    action = request.GET.get('action', 'Ver')
+
+    if not fecha_desde :
+        fecha_desde = datetime.date.today()
+    else:
+        fecha_desde = datetime.datetime.strptime(fecha_desde, settings.DATE_INPUT_FORMATS[0]).date()
+
+    if not fecha_hasta :
+        fecha_hasta = datetime.date.today()
+    else:
+        fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
+
+
+
+    ventas = VentaCabecera.objects.filter(estado__in=['A', 'P'], tipo_pago='Crédito', fecha_vencimiento__gte=fecha_desde,
+                                          fecha_vencimiento__lte=fecha_hasta)
+
+
+    estado = request.GET.get('estado', 'TODOS')
+    if estado == 'A':
+        ventas = ventas.filter(estado='A')
+    if estado == 'P':
+        ventas = ventas.filter(estado='P')
+
+    if action == 'Excel':
+        return export_venta_vencimiento(ventas, fecha_desde, fecha_hasta, nombre='ventas-credito-vencimiento')
+
+    suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
+
+
+    return render(request, 'ventas-credito-vencimiento-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
                                             'ventas': ventas,
                                             'total': suma_ventas,
                                             'estado': estado})
@@ -753,6 +822,7 @@ def vender(request):
                 venta.cliente = cliente
                 if credito:
                     venta.estado = 'P' # pendiente
+                    venta.fecha_vencimiento = venta.fecha + datetime.timedelta(days=venta.credito_plazo)
 
                 venta.save()
                 detalles = formularioDetalleSet.save()
