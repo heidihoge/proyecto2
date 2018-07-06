@@ -1066,7 +1066,7 @@ def reporte_compras(request):
 
 from tienda.models import Cliente
 
-@login_required() #permisos para login
+#@login_required() #permisos para login
 def export_clientes_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="clientes.csv"'

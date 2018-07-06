@@ -159,32 +159,37 @@
 
 {#AYUDA#}
 {% block ayuda_titulo %}
-<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Total de Ventas del Día</span></strong></span></p>
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">Ventas a Crédito</span></strong></span></p>
 {% endblock %}
 {% block ayuda_contenido %}
-<p style="text-align: center;"><span style="font-size: 14pt;">Podr&aacute; visualizar a todas <strong>Ventas del Día</strong> realizadas con descripción detallada.</span></p>
+<p style="text-align: center;"><span style="font-size: 14pt;">Podr&aacute; visualizar a todas <strong>Ventas a Crédito</strong> realizadas con descripción detallada.</span></p>
     <p style="text-align: center;">&nbsp;</p>
-        <img src="/static/img/pasos_ventas_fecha.gif" alt="pasos_ventas_fecha" width="800"  style="display: block;
+        <img src="/static/img/pasos_venta_credito.gif" alt="pasos_venta_credito" width="800"  style="display: block;
     margin-left: auto;
     margin-right: auto;
    "/>
         <br><hr>
         <p><span style="color: #003366;"><strong> 1. Rango de Fecha de la transacción anteriores o actual.
     <hr>
-        <p><span style="color: #003366;"><strong>2. Lista de ventas :&nbsp;Se puede ver la lista de todos las ventas y realizar las siguientes acciones. </strong></span></p>
+        <p><span style="color: #003366;"><strong>2. Estado :&nbsp;Elegir para visualizar las ventas crédito. (Todos, Pendiente, Pagado). </strong></span></p>
     <hr>
-        <p><br /><span style="color: #003366;"><strong>3. Acciones que podemos realizar sobre cada registro de ventas.</strong></span></p>
-        <p> <br /><span style="color: #003366;"><strong>&bull; Ver detalle venta : <img src="/static/img/detalle.png" alt="detalle" /></strong></span></p>
+        <p><span style="color: #003366;"><strong>3. Lista de ventas a crédito :&nbsp;Se puede ver la lista de todos las ventas crédito y con el estado
+            <img src="/static/img/estado_pagado.png" alt="estado_pagado" /> y / ó <img src="/static/img/estado_pendiente.png" alt="estado_pendiente" />. </strong></span></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>4. Acciones que podemos realizar sobre cada registro de ventas crédito.</strong></span></p>
+        <p> <br /><span style="color: #003366;"><strong>&bull; Ver detalle venta crédito: <img src="/static/img/detalle.png" alt="detalle" /></strong></span></p>
         <p> <br /><span style="color: #003366;"><strong>&bull; Cancelar Venta : <img src="/static/img/cancelar_rojo.png" alt="cancelar_rojo" /></strong></span></p>
         <p>&bull; <strong><em>Una vez cancelado el registro, podrá consular en <strong>Ventas canceladas</strong>.</em></strong></p>
 
     <hr>
-        <p><br /><span style="color: #003366;"><strong>4.  Filtrar la cantidad de productos en la pantalla.</strong></span></p>
+        <p><br /><span style="color: #003366;"><strong>5.  Filtrar la cantidad de ventas crédito.</strong></span></p>
     <hr>
-        <p><br /><span style="color: #003366;"><strong>5. Buscar ventas <img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
-        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Nro de Factura, Cliente, Monto Total). </em></strong></p>
+        <p><br /><span style="color: #003366;"><strong>6. Buscar ventas crédito<img src="/static/img/busqueda.png" alt="busqueda" /></strong></span></p>
+        <p>&bull; <strong><em>Puede buscar por cualquiera de lo campos (Nro Factura, Ruc Cliente, Cliente). </em></strong></p>
     <hr>
 
-        <p><br /><span style="color: #003366;"><strong>6.  Para crear nueva venta, haga clic en el ícono <img src="/static/img/nueva_venta.png" alt="nueva_venta" /></strong></span></p>
+        <p><br /><span style="color: #003366;"><strong>7.  Para crear nueva venta, haga clic en el ícono <img src="/static/img/nueva_venta.png" alt="nueva_venta" /></strong></span></p>
         <p>&bull; <strong><em>Una vez creada la nueva venta, este se encontrará en la lista. </em></strong></p>
+    <hr>
+        <p><br /><span style="color: #003366;"><strong>8. Exportar archivo a Excel <img src="/static/img/informe_excel.png" alt="informe_excel" /></strong></span></p>
 {% endblock %}
