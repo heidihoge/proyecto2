@@ -142,7 +142,7 @@ class CuentaAutocomplete(autocomplete.Select2QuerySetView):
             return Cuenta.objects.none()
 
         # busca Cuentas sin pagar
-        qs = Cuenta.objects.filter(pagado=False)
+        qs = Cuenta.objects.filter(pagado=False, inscripcion__estado='A')
 
         # if self.q:
         #     qs = qs.filter(Q(inscripcion__alumno__cedula__istartswith=self.q) |

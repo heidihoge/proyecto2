@@ -42,6 +42,7 @@
                             <tr>
 
                                 <th>Alumno</th>
+                                <th>Grupo</th>
                                 <th>Vencimiento</th>
                                 <th>Monto</th>
                                 <th>Monto Pagado</th>
@@ -57,6 +58,7 @@
                             {% for cuenta in cuentas %}
                             <tr>
                                 <td>{{ cuenta.inscripcion.alumno.cedula }} {{ cuenta.inscripcion.alumno.nombre }},{{ cuenta.inscripcion.alumno.apellido }}</td>
+                                <td>{{ cuenta.inscripcion.grupo }}</td>
                                 <td>{% if cuenta.vencio %}
                                     <div style="color: red">
                                     {{ cuenta.vencimiento }}</div>{% else %}{{ cuenta.vencimiento }}{% endif %}</td>
