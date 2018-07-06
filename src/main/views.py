@@ -36,7 +36,7 @@ def error404(request):
 
 
 def error403(request):
-    return render(request, 'errors/page_403.html', context={})
+    return render(request, '403.html', context={})
 
 
 # ---------------------VISTA PERSONAS --------------------------------

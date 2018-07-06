@@ -13,8 +13,8 @@ urlpatterns = [
     path('escuela/', include('escuela.urls')),
     path('tienda/', include('tienda.urls')),
     path('reportes/', include('reportes.urls')),
-    # path('404', views.error404, name='404'),
-    # path('403', views.error403, name='403'),
+    path('404', views.error404, name='404'),
+    path('403', views.error403, name='403'),
 ]
 
 

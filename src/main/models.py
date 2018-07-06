@@ -23,7 +23,17 @@ class Persona(models.Model):
               ('IN', 'INACTIVO'))
     estado = models.CharField(max_length=2, choices=ESTADO, default='A')
 
-
+    def edad(self):
+        today = datetime.date.today()
+        edad = today.year - self.fecha_nacimiento.year - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
+        if edad == 0:
+            meses = today.month - self.fecha_nacimiento.month
+            if meses <= 1:
+                return str(meses) + " mes"
+            return str(meses) + " meses"
+        if edad == 1:
+            return "1 año"
+        return str(edad) + " años"
 
     def __str__(self):
         return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
