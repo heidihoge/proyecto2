@@ -31,6 +31,7 @@
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Nro Factura</th>
+                                    <th>Tipo de pago</th>
                                     <th>Ruc Cliente</th>
                                     <th>Nombre o Razón</th>
                                     <th>Exentas</th>
@@ -46,7 +47,8 @@
                             {% for resultado in resultados %}
                             <tr class="data">
                                 <td>{{ resultado.fecha }}</td>
-                                <td>{{ resultado.nro_factura }}</td>
+                                <td><a href="/tienda/ventas/{{ resultado.nro_factura }}">{{ resultado.nro_factura }}</a></td>
+                                <td>{{ resultado.tipo_pago }}</td>
                                 <td>{{ resultado.cliente.ruc_cliente }}</td>
                                 <td>{{ resultado.cliente.nombre_razon }}</td>
                                 <td>{{ resultado.total_grav_exentas | intdot }} ₲</td>
@@ -62,6 +64,7 @@
                             </tbody>
                             <tfoot>
                                 <tr class="data">
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>

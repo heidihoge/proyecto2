@@ -176,16 +176,16 @@ def export_venta(resultados, totales, fecha):
         .format(fecha.month, fecha.year)
 
     writer = csv.writer(response)
-    writer.writerow(['Fecha', 'Nro Factura', 'Ruc Cliente', 'Nombre o Razón', 'Exentas',
+    writer.writerow(['Fecha', 'Nro Factura', 'Tipo de pago', 'Ruc Cliente', 'Nombre o Razón', 'Exentas',
                      'Gravada 5%', 'IVA 5%', 'Gravada 10%', 'IVA 10%', 'Total'])
 
     for resultado in resultados:
-        writer.writerow([resultado.fecha, str(resultado.nro_factura), resultado.cliente.ruc_cliente,
+        writer.writerow([resultado.fecha, str(resultado.nro_factura), resultado.tipo_pago, resultado.cliente.ruc_cliente,
                          resultado.cliente.nombre_razon, resultado.total_grav_exentas,
                          resultado.total_grav_5, resultado.total_iva_5,
                          resultado.total_grav_10, resultado.total_iva_10, resultado.monto_total ])
 
-    writer.writerow(['', '', '', 'Total:', totales['exentas'], totales['grav_5'], totales['iva_5'],
+    writer.writerow(['', '', '', '', 'Total:', totales['exentas'], totales['grav_5'], totales['iva_5'],
                     totales['grav_10'], totales['iva_10'], totales['total']])
     return response
 
@@ -204,7 +204,7 @@ def venta(request):
 
     fecha_fin = (fecha_inicio + relativedelta(months=1, days=-1))
 
-    resultados = VentaCabecera.objects.filter(fecha__gte=fecha_inicio, fecha__lte=fecha_fin, estado='A')
+    resultados = VentaCabecera.objects.filter(fecha__gte=fecha_inicio, fecha__lte=fecha_fin, estado__in=['A', 'P'])
 
     totales = resultados.aggregate(exentas=Sum('total_grav_exentas'), #
                          grav_5=Sum('total_grav_5'),#
