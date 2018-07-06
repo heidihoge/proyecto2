@@ -17,7 +17,7 @@ from django_cron import CronJobBase, Schedule
 
 from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm, TitularFormVerificar, AlumnoFormVerificar
-from main.models import Alumno, Persona, Titular
+from main.models import Alumno, Persona, Titular, Empleado
 from proyecto2 import settings
 from reportes.views import get_month
 from tienda.models import VentaCabecera
@@ -929,6 +929,29 @@ def export_profesores_csv(request):
 
 
 
+def export_empleados_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="empleados.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['cedula','nombre','apellido','fecha_nacimiento','direccion','telefono','otro contacto','salario'])
+    empleados = Empleado.objects.all().values_list('cedula', 'nombre','apellido','fecha_nacimiento','direccion','telefono1','telefono2','salario')
+    for empleado in empleados:
+        writer.writerow(empleado)
+
+    return response
+def export_titulares_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="titulares.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['cedula','nombre','apellido','fecha_nacimiento','direccion','telefono','otro contacto'])
+    titulares = Titular.objects.all().values_list('cedula', 'nombre','apellido','fecha_nacimiento','direccion','telefono1','telefono2')
+    for titular in titulares:
+        writer.writerow(titular)
+
+    return response
+
 def export_clases_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="clases.csv"'
@@ -938,5 +961,20 @@ def export_clases_csv(request):
     clases = Clase.objects.all().values_list('nombre', 'descripcion')
     for clase in clases:
         writer.writerow(clase)
+
+    return response
+
+
+
+
+def export_grupos_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="grupos.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Clase','Profesor','Cupo máximo', 'Costo/Mes'])
+    grupos = Grupo.objects.all().values_list('id_clase__nombre', 'id_profesor__nombre','cupo_maximo','costo')
+    for grupo in grupos:
+        writer.writerow(grupo)
 
     return response

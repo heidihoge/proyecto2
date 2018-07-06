@@ -12,7 +12,7 @@ from .views import list_clases, list_etiquetas, list_etiquetas_clase, \
     delete_grupo, ClaseAutocomplete, GrupoAutocomplete, GrupoAutocompleteAsistencia, \
     lista_asistencia, guardar_inscripcion, list_cuentas, baja_inscripcion, list_inscripciones_baja, \
     list_inscripciones_inactivas, update_cuenta, delete_cuenta, export_alumnos_csv, export_profesores_csv, \
-    export_clases_csv
+    export_clases_csv, export_grupos_csv, export_titulares_csv, export_empleados_csv
 
 from main import views
 
@@ -82,7 +82,10 @@ urlpatterns = [
 
      path('alumnos/csv', export_alumnos_csv, name='export_alumnos_csv'),
      path('profesores/csv', export_profesores_csv, name='export_profesores_csv'),
+     path('titulares/csv', export_titulares_csv, name='export_titulares_csv'),
+     path('empleados/csv', export_empleados_csv, name='export_empleados_csv'),
      path('clases/csv', export_clases_csv, name='export_clases_csv'),
+     path('grupos/csv', export_grupos_csv, name='export_grupos_csv'),
 
 
 
