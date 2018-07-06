@@ -376,12 +376,16 @@ def balance(request):
 # pagos en tarjetas
 #@login_required() #permisos para login
 #@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
-def export_tarjeta_csv(pagos):
+def export_tarjeta_csv(pagos, fecha, fecha_fin, nombre='cobros-tarjeta'):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="reporte.csv"'
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    fecha_2 = '-{0:02}-{1:02}-{2}'.format(fecha_fin.day, fecha_fin.month, fecha_fin.year) if fecha_fin else ''
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}{2}.csv"'\
+        .format(nombre, fecha_1, fecha_2)
 
     writer = csv.writer(response)
-    writer.writerow(['venta', 'monto', 'tarjeta','nro_autorizacion','ultimos_tarjeta'])
+    writer.writerow(['Fecha', 'Monto', 'Tipo Tarjeta','Nro de autorización','Nro de tarjeta',
+                     'Tipo de pago', 'Nro de factura'])
 
     for pago in pagos:
         writer.writerow(list(pago))
@@ -390,7 +394,7 @@ def export_tarjeta_csv(pagos):
 
 @login_required() #permisos para login
 #@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
-def list_pagos_fechas(request):
+def list_pagos_tarjeta_fechas(request):
     fecha_desde = request.GET.get('fecha_desde', None)
     fecha_hasta = request.GET.get('fecha_hasta', None)
     accion = request.GET.get('action', 'Ver')
@@ -407,19 +411,78 @@ def list_pagos_fechas(request):
 
     pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde,
                                 venta__fecha__lte=fecha_hasta ,pago_tarjeta=True)\
-        .values_list('venta__fecha', 'monto','tarjeta','nro_autorizacion','ultimos_tarjeta', 'venta__tipo_pago', 'venta__nro_factura')
+        .values_list('venta__fecha', 'monto_tarjeta','tarjeta','nro_autorizacion','ultimos_tarjeta', 'venta__tipo_pago', 'venta__nro_factura')
     recibos = Recibo.objects.filter(venta__estado__in=['A', 'P'], fecha__gte=fecha_desde,
                         fecha__lte=fecha_hasta, pago_tarjeta=True) \
-        .values_list('venta__fecha', 'monto', 'tarjeta', 'nro_autorizacion', 'ultimos_tarjeta', 'venta__tipo_pago', 'venta__nro_factura')
+        .values_list('venta__fecha', 'monto_tarjeta', 'tarjeta', 'nro_autorizacion', 'ultimos_tarjeta', 'venta__tipo_pago', 'venta__nro_factura')
+
+    # Combina pagos y recibos
+    pagos = list(chain(pagos, recibos))
+
+    if accion == 'Excel':
+        return export_tarjeta_csv(pagos, fecha_desde, fecha_hasta)
+
+    context = { 'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta,
+               'pagos': pagos }
+
+    return render(request, "pagos-rango-fecha.html", context)
+
+
+@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
+def list_pagos_cheque_fechas(request):
+    fecha_desde = request.GET.get('fecha_desde', None)
+    fecha_hasta = request.GET.get('fecha_hasta', None)
+    accion = request.GET.get('action', 'Ver')
+
+    if not fecha_desde :
+        fecha_desde = datetime.date.today()
+    else:
+        fecha_desde = datetime.datetime.strptime(fecha_desde, settings.DATE_INPUT_FORMATS[0]).date()
+
+    if not fecha_hasta :
+        fecha_hasta = datetime.date.today()
+    else:
+        fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
+
+    pagos = Pago.objects.filter(venta__estado='A',venta__fecha__gte=fecha_desde,
+                                venta__fecha__lte=fecha_hasta ,pago_cheque=True)\
+        .values_list('venta__fecha', 'monto_cheque','banco','nro_cuenta','librador', 'serie_cheque',
+                     'nro_cheque', 'fecha_emision', 'fecha_venc',
+                     'venta__tipo_pago', 'venta__nro_factura')
+    recibos = Recibo.objects.filter(venta__estado__in=['A', 'P'], fecha__gte=fecha_desde,
+                        fecha__lte=fecha_hasta, pago_cheque=True) \
+        .values_list('venta__fecha', 'monto_cheque', 'banco', 'nro_cuenta', 'librador', 'serie_cheque',
+                     'nro_cheque', 'fecha_emision', 'fecha_venc',
+                     'venta__tipo_pago', 'venta__nro_factura')
 
     context = {'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta,
                'pagos': list(chain(pagos, recibos))}
 
     if accion == 'Excel':
-        return export_tarjeta_csv(pagos)
+        return export_cheque_csv(pagos, fecha_desde, fecha_hasta)
 
-    return render(request, "pagos-rango-fecha.html", context)
+    return render(request, "pagos-cheque-rango-fecha.html", context)
 
 
 
+# pagos en tarjetas
+#@login_required() #permisos para login
+#@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
+def export_cheque_csv(pagos, fecha, fecha_fin, nombre='cobros-cheque'):
+    response = HttpResponse(content_type='text/csv')
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    fecha_2 = '-{0:02}-{1:02}-{2}'.format(fecha_fin.day, fecha_fin.month, fecha_fin.year) if fecha_fin else ''
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}{2}.csv"'\
+        .format(nombre, fecha_1, fecha_2)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Monto', 'Banco','Nro de cuenta','Librador',
+                     'Nro de serie', 'Nro de cheque', 'Fecha emisión', 'Fecha vencimiento',
+                     'Tipo de pago', 'Nro de factura'])
+
+    for pago in pagos:
+        writer.writerow(list(pago))
+
+    return response
 
