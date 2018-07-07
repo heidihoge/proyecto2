@@ -71,7 +71,7 @@
                             {% for venta in ventas     %}
                                 <tr>
                                     <td>{{ venta.fecha }}</td>
-                                    <td>{{ venta.nro_factura }}</td>
+                                   <td><a href="/tienda/ventas/{{ venta.nro_factura }}">{{ venta.nro_factura }}</a></td>
                                     <td>{{ venta.tipo_pago }}</td>
                                     <td>{{ venta.cliente.ruc_cliente }}</td>
                                     <td>{{ venta.cliente.nombre_razon }}</td>
