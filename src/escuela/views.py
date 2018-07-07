@@ -978,3 +978,15 @@ def export_grupos_csv(request):
         writer.writerow(grupo)
 
     return response
+
+def export_inscripciones_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inscripciones_activas.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Grupo','Nombre', 'Apellido','Fecha Inicio'])
+    inscripciones = Inscripcion.objects.filter(estado = 'A').values_list('grupo', 'alumno__nombre', 'alumno__apellido','fecha_inicio')
+    for inscripcion in inscripciones:
+        writer.writerow(inscripcion)
+
+    return response

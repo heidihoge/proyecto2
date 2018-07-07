@@ -54,7 +54,7 @@ class ProfesorAutocomplete(autocomplete.Select2QuerySetView):
         qs = Profesor.objects.all()
 
         if self.q:
-            qs = qs.filter(Q(nombre__istartswith=self.q) | Q(cedula__isstartwith=self.q))
+            qs = qs.filter(Q(nombre__istartswith=self.q) | Q(cedula__isstartwith=self.q) | Q(apellido__istartswith=self.q))
 
         return qs
 

@@ -287,7 +287,7 @@ def delete_factura(request, id):
 
 # ---------------------VISTA PRODUCTO --------------------------------
 @login_required() #permisos para login
-@permission_required('tienda.producto_list', raise_exception=True)
+#@permission_required('tienda.producto_list', raise_exception=True)
 def list_productos(request):
     productos = Producto.objects.exclude(codigo='CUENTA')
     return render(request, 'producto.html', {'productos': productos})
@@ -481,6 +481,7 @@ def list_ventas_fechas(request):
     monto_tarjeta = pagos.aggregate(total=Coalesce(Sum('monto_tarjeta'), 0))
     monto_cheque= pagos.aggregate(total=Coalesce(Sum('monto_cheque'), 0))
     suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
+    saludo = 'HOLA ROCIO'
 
 
     return render(request, 'ventas-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
@@ -488,7 +489,8 @@ def list_ventas_fechas(request):
                                             'total': suma_ventas,
                                             'totale': monto_efectivo,
                                             'totalt': monto_tarjeta,
-                                            'totalch': monto_cheque})
+                                            'totalch': monto_cheque,
+                                                        'saludo':saludo})
 
 def export_recibo(resultados, fecha, fecha_fin=None, nombre='recibo-fecha'):
     response = HttpResponse(content_type='text/csv')
