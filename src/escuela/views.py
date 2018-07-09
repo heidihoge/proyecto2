@@ -17,7 +17,7 @@ from django_cron import CronJobBase, Schedule
 
 from escuela.utils import dictfetch
 from main.forms import TitularForm, AlumnoForm, TitularFormVerificar, AlumnoFormVerificar
-from main.models import Alumno, Persona, Titular, Empleado
+from main.models import Alumno, Persona, Titular, Empleado, Profesor
 from proyecto2 import settings
 from reportes.views import get_month
 from tienda.models import VentaCabecera
@@ -921,7 +921,7 @@ def export_profesores_csv(request):
 
     writer = csv.writer(response)
     writer.writerow(['cedula','nombre','apellido','fecha_nacimiento','direccion','telefono','otro contacto'])
-    profesores = Alumno.objects.all().values_list('cedula', 'nombre','apellido','fecha_nacimiento','direccion','telefono1','telefono2')
+    profesores = Profesor.objects.all().values_list('cedula', 'nombre','apellido','fecha_nacimiento','direccion','telefono1','telefono2')
     for profesor in profesores:
         writer.writerow(profesor)
 

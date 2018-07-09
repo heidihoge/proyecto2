@@ -5052,6 +5052,8 @@ function useAutonumericCurrency(element) {
         $(element).attr('type', 'text');
     }
 
+
+
     window.autonumeric = window.autonumeric || {};
     window.autonumeric[element] = new AutoNumeric(element, options);
 
