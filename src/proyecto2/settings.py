@@ -182,6 +182,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_env","media_root")
 
 DATE_INPUT_FORMATS = ['%d/%m/%Y']
 MONTH_INPUT_FORMATS = ['%m/%Y']
+YEAR_INPUT_FORMATS = ['%Y']
 DATE_FORMAT = 'd/m/Y'
 
 
