@@ -393,6 +393,33 @@ def export_venta(resultados, fecha, fecha_fin=None, nombre='ventas-diarias'):
 
     return response
 
+
+def export_compra(resultados, fecha, fecha_fin=None, nombre='compras-diarias'):
+    response = HttpResponse(content_type='text/csv')
+    fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
+    fecha_2 = '-{0:02}-{1:02}-{2}'.format(fecha_fin.day, fecha_fin.month, fecha_fin.year) if fecha_fin else ''
+    response['Content-Disposition'] = 'attachment; filename="{0}-{1}{2}.csv"'\
+        .format(nombre, fecha_1, fecha_2)
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha', 'Nro Factura', 'Descripción', 'Ruc Proveedor', 'Nombre Proveedor', 'Gravada 10%', 'IVA 10%',
+                    'Gravada 5%', 'IVA 5%', 'Exentas', 'Total IVA', 'Monto Total'])
+
+
+
+    for resultado in resultados:
+        writer.writerow([resultado.fecha, str(resultado.nro_factura), resultado.tipo_pago,
+                         resultado.ruc_proveedor,
+                         resultado.proveedor, resultado.total_grav_10,
+                         resultado.total_iva_10, resultado.total_grav_5,
+                         resultado.total_iva_5, resultado.total_grav_exentas, resultado.total_iva,
+                         resultado.monto_total])
+
+    return response
+
+
+
+
 def export_venta_vencimiento(resultados, fecha, fecha_fin=None, nombre='ventas-diarias'):
     response = HttpResponse(content_type='text/csv')
     fecha_1 = '{0:02}-{1:02}-{2}'.format(fecha.day, fecha.month, fecha.year)
@@ -481,7 +508,7 @@ def list_ventas_fechas(request):
     monto_tarjeta = pagos.aggregate(total=Coalesce(Sum('monto_tarjeta'), 0))
     monto_cheque= pagos.aggregate(total=Coalesce(Sum('monto_cheque'), 0))
     suma_ventas = ventas.aggregate(total=Coalesce(Sum('monto_total'), 0))
-    saludo = 'HOLA ROCIO'
+
 
 
     return render(request, 'ventas-rango-fecha.html', { 'fecha_desde': fecha_desde,'fecha_hasta': fecha_hasta,
@@ -489,8 +516,39 @@ def list_ventas_fechas(request):
                                             'total': suma_ventas,
                                             'totale': monto_efectivo,
                                             'totalt': monto_tarjeta,
-                                            'totalch': monto_cheque,
-                                                        'saludo':saludo})
+                                            'totalch': monto_cheque
+                                                        })
+
+
+def list_compras_fechas(request):
+    fecha_desde = request.GET.get('fecha_desde', None)
+    fecha_hasta = request.GET.get('fecha_hasta', None)
+    action = request.GET.get('action', 'Ver')
+
+    if not fecha_desde:
+        fecha_desde = datetime.date.today()
+    else:
+        fecha_desde = datetime.datetime.strptime(fecha_desde, settings.DATE_INPUT_FORMATS[0]).date()
+
+    if not fecha_hasta:
+        fecha_hasta = datetime.date.today()
+    else:
+        fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
+
+    compras = CompraCabecera.objects.filter( fecha__gte=fecha_desde,
+                                          fecha__lte=fecha_hasta)
+
+    if action == 'Excel':
+        return export_compra(compras, fecha_desde, fecha_hasta, nombre='compras-rango')
+
+
+
+
+
+    return render(request, 'compras-rango-fecha.html', {'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta
+
+                                                       })
+
 
 def export_recibo(resultados, fecha, fecha_fin=None, nombre='recibo-fecha'):
     response = HttpResponse(content_type='text/csv')

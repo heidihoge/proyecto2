@@ -5038,6 +5038,7 @@ function init_echarts() {
 window.autonumeric = {};
 
 function useAutonumericCurrency(element) {
+
     var options = {
         currencySymbol: " ₲",
         currencySymbolPlacement: "s",
@@ -5050,6 +5051,7 @@ function useAutonumericCurrency(element) {
     };
     if($(element).attr('type') === 'number') {
         $(element).attr('type', 'text');
+
     }
 
 

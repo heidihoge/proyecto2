@@ -10,7 +10,7 @@ from tienda.views import list_productos, create_producto, update_producto, delet
     delete_cliente, update_cliente, CuentaAutocomplete, list_ventas, consulta_factura, cancela_venta, list_operaciones, \
     create_operacion, update_operacion, delete_operacion, reporte_compras, list_ventas_canceladas, estado_cuenta, \
     list_ventas_fechas, export_clientes_csv, list_ventas_credito_fechas, list_recibos_fechas, \
-    list_ventas_credito_vencimiento_fechas
+    list_ventas_credito_vencimiento_fechas, list_compras_fechas
 from tienda.views import list_facturas,create_factura, delete_factura, update_factura, update_compra
 
 urlpatterns = [
@@ -45,6 +45,7 @@ urlpatterns = [
     path('ventas/new', vender, name='vender'),
     path('ventas', list_ventas, name='list_ventas'),
     path('ventas/fechas', list_ventas_fechas, name='list_ventas_fechas'),
+
     path('recibos/fechas', list_recibos_fechas, name='list_recibo_fechas'),
     path('ventas/credito/fechas', list_ventas_credito_fechas, name='list_ventas_credito_fechas'),
     path('ventas/credito/vencimiento/fechas', list_ventas_credito_vencimiento_fechas, name='list_ventas_credito_vencimiento_fechas'),
@@ -60,6 +61,7 @@ urlpatterns = [
 
     path('compras/reporte', reporte_compras, name='reporte_compras'),
     path('compras', list_compras, name='list_compras'),
+    path('compras/fechas', list_compras_fechas, name='list_compras_fechas'),
     path('compras/new', comprar, name='comprar'),
     path('compras/<int:id>/update', update_compra, name='update_compra'),
     path('productos/csv', export_productos_csv, name='export_productos_csv'),

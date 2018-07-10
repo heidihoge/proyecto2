@@ -27,7 +27,8 @@ class Persona(models.Model):
         today = datetime.date.today()
         edad = today.year - self.fecha_nacimiento.year - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
         if edad == 0:
-            meses = today.month - self.fecha_nacimiento.month
+            meses = 12 - (self.fecha_nacimiento.month - today.month )
+            # 12-9= 3   7 - 9 = -2
             if meses <= 1:
                 return str(meses) + " mes"
             return str(meses) + " meses"
@@ -73,7 +74,7 @@ class Alumno(Persona):
     blank=True,
     null=True)
     def __str__(self):
-        return "{1} {2} ({0})".format(self.cedula, self.nombre, self.apellido)
+        return "{1}, {2} ({0})".format(self.cedula, self.nombre, self.apellido)
 
     class Meta:
         permissions = (

@@ -972,8 +972,8 @@ def export_grupos_csv(request):
     response['Content-Disposition'] = 'attachment; filename="grupos.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Clase','Profesor','Cupo máximo', 'Costo/Mes'])
-    grupos = Grupo.objects.all().values_list('id_clase__nombre', 'id_profesor__nombre','cupo_maximo','costo')
+    writer.writerow(['Clase','Profesor','Cupo máximo', 'Costo/Mes','Hora_inicio','Hora_fin'])
+    grupos = Grupo.objects.all().values_list('id_clase__nombre', 'id_profesor__nombre','cupo_maximo','costo','hora_inicio','hora_fin')
     for grupo in grupos:
         writer.writerow(grupo)
 
