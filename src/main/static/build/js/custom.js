@@ -5037,10 +5037,10 @@ function init_echarts() {
 }
 window.autonumeric = {};
 
-function useAutonumericCurrency(element) {
-
+function useAutonumericCurrency(element,simbolo) {
+    simbolo = (typeof simbolo !== 'undefined' ) ? simbolo: ' ₲';
     var options = {
-        currencySymbol: " ₲",
+        currencySymbol: simbolo,
         currencySymbolPlacement: "s",
         decimalCharacter: ",",
         decimalCharacterAlternative: ",",

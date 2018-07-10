@@ -38,6 +38,7 @@
                                 <th>Profesor</th>
                                 <th>Cupo máximo</th>
                                 <th>Costo/mes</th>
+                                <th>Dias</th>
                                 <th>Hora inicio</th>
                                 <th>Hora fin</th>
 
@@ -52,7 +53,9 @@
                                     <td>{{ grupo.id_profesor }}</td>
                                     <td>{{ grupo.cupo_maximo }}</td>
                                     <td>{{ grupo.costo | intdot }} ₲</td>
-                                    <td>{{ grupo.hora_inicio }}</td>-<td>{{ grupo.hora_fin }}</td>
+                                    <td>{{ grupo.get_dias }}</td>
+                                    <td>{{ grupo.hora_inicio }}</td>
+                                    <td>{{ grupo.hora_fin }}</td>
 
 
                                     <td><a class="btn btn-info btn-xs" href="/escuela/grupos/{{ grupo.id }}/update">Editar </a>
