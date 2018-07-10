@@ -3,18 +3,22 @@ import datetime
 from itertools import chain
 
 from dateutil.relativedelta import relativedelta
+from django.core.mail import EmailMessage
 from django.db import connection
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse, request
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
 
 # Create your views here.
 from escuela.models import Grupo, Clase
 from escuela.utils import dictfetch
 from main.models import Persona
 from proyecto2 import settings
+from proyecto2.settings import EMAIL_RECIPIENTS, DATE_INPUT_FORMATS
+from reportes import email_utils
 from tienda.models import CompraCabecera, VentaCabecera, Pago, Recibo
 
 
@@ -546,3 +550,25 @@ def export_cheque_csv(pagos, fecha, fecha_fin, nombre='cobros-cheque'):
 
     return response
 
+@login_required()
+@permission_required('reporte.balance', raise_exception=True)
+def enviar_mail_balance(request):
+    hoy = datetime.date.today()
+
+    email = EmailMessage(
+        'Balance del dia ' + hoy.strftime(DATE_INPUT_FORMATS[0]),
+        'Adjunto balance diario.\n' + str(request.user),
+        'reporte@aquasoft.com',
+        EMAIL_RECIPIENTS,
+        reply_to=['no-reply@aquasoft.com']
+    )
+
+    email.attach(filename='ventas-diaras.csv', content=email_utils.ventas_diaras(), mimetype='text/csv')
+    email.attach(filename='compras-diaras.csv', content=email_utils.compras_diaras(), mimetype='text/csv')
+    email.attach(filename='caja-chica-diaro.csv', content=email_utils.caja_chica_diaras(), mimetype='text/csv')
+
+    email.send(fail_silently=True)
+
+    messages.success(request, 'Balance del dia ' + hoy.strftime(DATE_INPUT_FORMATS[0]) + ' enviado!')
+
+    return redirect("/")
