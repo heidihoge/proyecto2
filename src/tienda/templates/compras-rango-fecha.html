@@ -50,11 +50,11 @@
                             <thead>
 
                             <tr>
+
                                 <th>Fecha</th>
-                                <th>Nro de Factura</th>
                                 <th>Tipo de pago</th>
-                                <th>Ruc Cliente</th>
-                                <th>Cliente</th>
+                                <th>Ruc Proveedor</th>
+                                <th>Proveedor</th>
                                 <th>Gravadas 10%</th>
                                 <th>IVA 10%</th>
                                 <th>Gravadas 5%</th>
@@ -62,50 +62,30 @@
                                 <th>Exentas</th>
                                 <th>Total IVA</th>
                                 <th>Monto Total</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
+
+
                             </tr>
 
                             </thead>
                             <tbody>
 
-                            {% for venta in ventas     %}
+                            {% for compra in compras     %}
                                 <tr>
-                                    <td>{{ venta.fecha }}</td>
-                                    <td><a href="/tienda/ventas/{{ venta.nro_factura }}">{{ venta.nro_factura }}</a></td>
-                                    <td>{{ venta.tipo_pago }}</td>
-                                    <td>{{ venta.cliente.ruc_cliente }}</td>
-                                    <td>{{ venta.cliente.nombre_razon }}</td>
-                                    <td>{{ venta.total_grav_10| intdot }} ₲</td>
-                                    <td>{{ venta.total_iva_10| intdot }} ₲</td>
-                                    <td>{{ venta.total_grav_5| intdot }} ₲</td>
-                                    <td>{{ venta.total_iva_5| intdot }} ₲</td>
-                                    <td>{{ venta.total_grav_exentas| intdot }} ₲</td>
-                                    <td>{{ venta.total_iva| intdot }} ₲</td>
-                                    <td>{{ venta.monto_total| intdot }} ₲</td>
-                                    <td>
-                                        {% if venta.estado == 'IN' %}
-                                            <div class="label label-danger">Cancelado</div>
-                                        {% endif %}
-                                        {% if venta.estado == 'P' %}
-                                            <div class="label label-warning">Pendiente</div>
-                                        {% endif %}
-                                        {% if venta.estado == 'A' %}
-                                            <div class="label label-success">Pagado</div>
-                                        {% endif %}
-                                    </td>
-                                    <td>
 
-                                        <a button class="btn btn-primary btn-xs" href="/tienda/ventas/{{ venta.nro_factura }}">Detalle</a>
-                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"
-                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Cancelar</a>
+                                    <td>{{ compra.fecha }}</td>
+                                    <td>{{ compra.tipo_pago }}</td>
+                                    <td>{{ compra.ruc_proveedor }}</td>
+                                    <td>{{ compra.proveedor }}</td>
+                                    <td>{{ compra.total_grav_10| intdot }} ₲</td>
+                                    <td>{{ compra.total_iva_10| intdot }} ₲</td>
+                                    <td>{{ compra.total_grav_5| intdot }} ₲</td>
+                                    <td>{{ compra.total_iva_5| intdot }} ₲</td>
+                                    <td>{{ compra.total_grav_exentas| intdot }} ₲</td>
+                                    <td>{{ compra.total_iva| intdot }} ₲</td>
+                                    <td>{{ compra.monto_total| intdot }} ₲</td>
 
-                                    </td>
 
-{#                                    <td><a class="btn btn-info btn-xs" href="/tienda/compras/{{ venta.id }}/update">Editar </a>#}
-{#                                        <a button class="btn btn-danger btn-xs" data-toggle="modal"#}
-{#                                           data-target="#eliminar-modal" onclick="formEliminar({{ venta.id }})">Eliminar</a></td>#}
-                                </tr>
+
                             {% endfor %}
 
                             </tbody>

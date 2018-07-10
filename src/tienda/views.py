@@ -535,19 +535,14 @@ def list_compras_fechas(request):
     else:
         fecha_hasta = datetime.datetime.strptime(fecha_hasta, settings.DATE_INPUT_FORMATS[0]).date()
 
-    compras = CompraCabecera.objects.filter( fecha__gte=fecha_desde,
+    compras = CompraCabecera.objects.filter(fecha__gte=fecha_desde,
                                           fecha__lte=fecha_hasta)
 
     if action == 'Excel':
         return export_compra(compras, fecha_desde, fecha_hasta, nombre='compras-rango')
 
-
-
-
-
-    return render(request, 'compras-rango-fecha.html', {'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta
-
-                                                       })
+    return render(request, 'compras-rango-fecha.html', {'fecha_desde': fecha_desde, 'fecha_hasta': fecha_hasta,
+                                                        'compras':compras})
 
 
 def export_recibo(resultados, fecha, fecha_fin=None, nombre='recibo-fecha'):
