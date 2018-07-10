@@ -24,6 +24,9 @@ def get_date(fecha_string):
 def get_month(fecha_mes):
     return datetime.datetime.strptime(fecha_mes, settings.MONTH_INPUT_FORMATS[0]).date()
 
+def get_year(fecha_anio):
+    return datetime.datetime.strptime(fecha_anio, settings.YEAR_INPUT_FORMATS[0]).date()
+
 # ALUMNOS POR GRUPO
 
 #@login_required() #permisos para login
@@ -299,9 +302,10 @@ def asistencia(request):
 # BALANCE
 #@login_required() #permisos para login
 #@permission_required('reporte.alumnos_por_grupo', raise_exception=True)
-def export_balance(resultados, fecha):
+def export_balance(resultados, fecha, nombre=None):
+    nombre = '{0:02}-{1}'.format(fecha.month, fecha.year) if not nombre else nombre
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="balance-{0:02}-{1}.csv"'.format(fecha.month, fecha.year)
+    response['Content-Disposition'] = 'attachment; filename="balance-{0}.csv"'.format(nombre)
 
     writer = csv.writer(response)
     writer.writerow(['Fecha', 'Monto', 'Tipo de transacción'])
@@ -367,6 +371,62 @@ def balance(request):
     context = { 'mes': '{0:02}/{1}'.format(fecha_inicio.month, fecha_inicio.year),
                 'resultados': resultados, 'dates': dates, 'ingreso': ingreso, 'egreso': egreso, 'ganancia': ganancia }
     return render(request, "balance.html", context)
+
+@login_required() #permisos para login
+@permission_required('reporte.balance', raise_exception=True)
+def balance_anio(request):
+
+    accion = request.GET.get('action', 'Ver')
+
+    fecha_inicio = request.GET.get('anio', None)
+    if not fecha_inicio:
+        fecha_inicio = datetime.date.today().replace(day=1, month=1)
+    else:
+        fecha_inicio = get_year(fecha_inicio)
+
+    fecha_fin = (fecha_inicio + relativedelta(years=1, days=-1))
+
+    query = """
+    select to_char(fecha, 'MM/YYYY') fecha, sum(monto) monto, tipo_transaccion from (
+    select fecha, monto, tipo_transaccion from tienda_operacioncaja
+      UNION
+    select fecha, monto_total, 'SALIDA' as tipo_transaccion from tienda_compracabecera
+      UNION
+    select fecha, monto_total, 'ENTRADA' as tipo_transaccion
+      from tienda_ventacabecera where estado = 'A' and tipo_pago = 'Contado' 
+      UNION 
+    select r.fecha,  r.monto, 'ENTRADA' as tipo_transaccion from tienda_ventacabecera t
+      join tienda_recibo r on t.id = r.venta_id where t.estado in ('A', 'P') and t.tipo_pago = 'Crédito'
+        ) e
+    where e.fecha BETWEEN %(fecha_inicio)s AND %(fecha_fin)s  
+    GROUP BY to_char(fecha, 'MM/YYYY'), tipo_transaccion
+    ORDER BY fecha DESC
+    """
+    cursor = connection.cursor()
+    cursor.execute(query, { 'fecha_inicio': fecha_inicio, 'fecha_fin': fecha_fin })
+    resultados = dictfetch(cursor, 100, 0)
+
+    if accion == 'Excel':
+        return export_balance(resultados, fecha_inicio, nombre=fecha_inicio.year)
+
+    ingreso = sum(map(lambda x:x["monto"] , filter(lambda x: x["tipo_transaccion"] == 'ENTRADA', resultados)))
+    egreso = sum(map(lambda x:x["monto"] , filter(lambda x: x["tipo_transaccion"] == 'SALIDA', resultados)))
+    ganancia = ingreso - egreso
+
+
+
+    datequery = """
+       select to_char(dd::date, 'MM/YYYY') as date from generate_series
+        (%(fecha_inicio)s
+        , %(fecha_fin)s 
+        , '1 month'::interval) dd
+    """
+    cursor.execute(datequery, {'fecha_inicio': fecha_inicio, 'fecha_fin': fecha_fin})
+    dates = dictfetch(cursor, 100, 0)
+
+    context = { 'anio': '{0}'.format(fecha_inicio.year),
+                'resultados': resultados, 'dates': dates, 'ingreso': ingreso, 'egreso': egreso, 'ganancia': ganancia }
+    return render(request, "balance_anio.html", context)
 
 
 

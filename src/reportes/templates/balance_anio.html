@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load intdot %}
+{% block content %}
+
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Balance {{ anio }}</h3>
+        </div>
+        <div class="title_right">
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                        <form method="GET" action="/reportes/balance_anio" class="form form-inline hidden-print">
+                            <label for="fecha">Año </label>
+                            <input id="fecha" style="margin-bottom: 0.37em;margin-right: 0.5em;" name="anio" class="form-control" type="text" required value="{{ anio }}">
+                            <label for="ver" class="btn btn-primary"><i class="fa fa-search"></i> Ver</label>
+                            <input id="ver" type="submit" name="action" class="hidden" value="Ver">
+                            <label for="excel" class="btn btn-success"><i class="fa fa-download"></i> CSV</label>
+                            <input id="excel" type="submit" name="action" class="hidden" value="Excel">
+                            <button class="btn btn-default" onclick="print()"><i class="fa fa-print"></i> Print</button>
+                        </form>
+                        <div class="row tile_count">
+                            <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
+                                <h4 class="count_top"><i class="glyphicon glyphicon-arrow-up"></i> Ingreso</h4>
+                                <div class="count">{{ ingreso | intdot }} ₲</div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
+                                <h4 class="count_top"><i class="glyphicon glyphicon-arrow-down"></i> Egreso</h4>
+                                <div class="count">{{ egreso | intdot }} ₲</div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4 tile_stats_count text-center">
+                                <h4 class="count_top"><i class="fa fa-line-chart"></i> Ganancia</h4>
+                                <div class="count">{{ ganancia | intdot }} ₲</div>
+                            </div>
+                        </div>
+                        <div id="chart-container">
+                            <canvas  style="width: 100%; height: 100%" id="chart"></canvas>
+                        </div>
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Tipo transacción</th>
+                            </tr>
+                            {% for resultado in resultados %}
+                            <tr class="data">
+                                <td>{{ resultado.fecha }}</td>
+                                <td>{{ resultado.monto | intdot }} ₲</td>
+                                <td>{{ resultado.tipo_transaccion }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        @media screen {
+            #chart-container{
+                height: 40rem;
+                display: block;
+            }
+        }
+        @media print {
+
+            @page {
+                size: auto;
+                margin-bottom: 1cm;
+                margin-top: 1cm;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+            .x_content, .x_content *, .page-title, .page-title * {
+                visibility: visible;
+            }
+
+            tr.data td {
+                page-break-inside: avoid;
+            }
+        }
+
+
+    </style>
+
+
+
+{% endblock %}>
+
+{#AYUDA#}
+{% block ayuda_titulo %}
+<p style="text-align: center;"><br /><span style="font-size: 16pt;"><strong><span style="color: #003366;">REPORTE</span></strong></span></p>
+{% endblock %}
+{% block ayuda_contenido %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ block.super }}
+     <script>
+        $(document).ready(function(){
+            var ctx = document.getElementById("chart");
+            function toDate(date){
+                var partes = date.split("/");
+                return new Date(partes[2] + "-" + partes[1] + "-" + partes[0]);
+            }
+            var data = [
+                    {% for resultado in resultados %}
+                        {"x": "{{ resultado.fecha }}", "y": {{resultado.monto}},
+                            "tipo": "{{ resultado.tipo_transaccion }}" },
+                    {% endfor %}
+                ];
+
+            var dates = [
+                {% for date in dates %}
+                        '{{ date.date }}',
+                {% endfor %}
+            ];
+            var ingreso = {};
+            var egreso = {};
+            data.map(function (d) {
+                if(d.tipo === 'SALIDA') {
+                    egreso[d.x] = d.y;
+                } else {
+                    ingreso[d.x] = d.y;
+                }
+            });
+
+            var egresoData = dates.map(function (fecha){
+               if (fecha in egreso) {
+                   return egreso[fecha];
+               }
+               return 0;
+            });
+
+            window.egresoData = egresoData;
+            window.egreso = egreso;
+            var ingresoData = dates.map(function (fecha){
+               if (fecha in ingreso) {
+                   return ingreso[fecha];
+               }
+               return 0;
+            });
+
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates.map(function (d) {
+                        return d;
+                    }),
+                    datasets: [
+
+                        {
+                            label: "INGRESO",
+                            backgroundColor: "#26b99a",
+                            data: ingresoData,
+                            datalabels: {
+                                formatter: function () {
+                                    return "";
+                                }
+                            }
+                        },
+                        {
+                            label: "EGRESO",
+                            backgroundColor: "#9B59B7",
+                            data: egresoData,
+                            datalabels: {
+                                formatter: function () {
+                                    return "";
+                                }
+                            }
+                        },
+
+                    ],
+                    options: {
+                        responsive: false,
+                    }
+                },
+            });
+
+            $('[name=anio]').datepicker({
+                format: 'yyyy',
+                viewMode: 'years',
+                minViewMode: 'years',
+                language: 'es'
+            });
+
+            function beforePrint () {
+                for (var id in Chart.instances) {
+                    if(Chart.instances.hasOwnProperty(id)) {
+                        Chart.instances[id].resize();
+                    }
+                }
+            }
+
+            if (window.matchMedia) {
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function (mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    }
+                })
+            }
+{##}
+{#            window.onbeforeprint = beforePrint;#}
+        });
+
+    </script>
+{% endblock %}

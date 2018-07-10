@@ -1,10 +1,12 @@
 from django.urls import path
 
-from reportes.views import balance, asistencia, compra, venta, alumnos_por_grupo, list_pagos_tarjeta_fechas, export_tarjeta_csv, \
-    list_pagos_cheque_fechas, export_cheque_csv
+from reportes.views import balance, asistencia, compra, venta, alumnos_por_grupo, list_pagos_tarjeta_fechas, \
+    export_tarjeta_csv, \
+    list_pagos_cheque_fechas, export_cheque_csv, balance_anio
 
 urlpatterns = [
     path('balance', balance, name='balance'),
+    path('balance_anio', balance_anio, name='balance_anio'),
     path('asistencia', asistencia, name='asistencia'),
     path('compra', compra, name='compra'),
     path('venta', venta, name='venta'),
